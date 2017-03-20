@@ -60,6 +60,7 @@ class KeysControl: NSObject {
     var lastKeyControlTime: Date
     var t9Communicator: T9
     var storedKeySequence: String
+    var storedBoolSequence: [Bool]
     var numberJustPressed: String
     var inputsDelay: TimeInterval {
         get{
@@ -70,6 +71,7 @@ class KeysControl: NSObject {
         lastKeyControlTime = Date()
         storedInputs = ""
         storedKeySequence = ""
+        storedBoolSequence = [Bool]()
         numberJustPressed = ""
         t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 4, numResults: 4, numCacheResults: 0, cacheSize: 0)
         super.init()
@@ -78,7 +80,7 @@ class KeysControl: NSObject {
     // This function calls the t9Driver to getSuggestions. It keeps a working string of the keySequence
     // thus far and adds the number most recently pressed.
     // IGNORE the NSLog statements (they're just for printing)
-    func t9Toggle(mode: String, tag: Int) -> Array<String> {
+    func t9Toggle(mode: String, tag: Int, shiftState: Bool) -> Array<String> {
         var suggestions = [String]()
         numberJustPressed = String(tag)
         print(numberJustPressed)
@@ -86,12 +88,12 @@ class KeysControl: NSObject {
         storedKeySequence += numberJustPressed
         NSLog(storedKeySequence)
         lastKeyControlTime = Date()
-        var shS = [Bool]()
+        storedBoolSequence.append(shiftState)
         var intKS = [Int]()
         for ch in storedKeySequence.characters {
             intKS.append(Int(String(ch))!)
         }
-        suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: shS)
+        suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         NSLog("Suggestions size in Keys.swift is: ")
         NSLog(String(suggestions.count))
         return suggestions
@@ -108,12 +110,12 @@ class KeysControl: NSObject {
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
             NSLog(storedKeySequence)
-            var shS = [Bool]()
+            storedBoolSequence.removeLast()
             var intKS = [Int]()
             for ch in storedKeySequence.characters {
                 intKS.append(Int(String(ch))!)
             }
-            return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: shS)
+            return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         } else {
             //idk this doesn't work with number mode as of now
         }
