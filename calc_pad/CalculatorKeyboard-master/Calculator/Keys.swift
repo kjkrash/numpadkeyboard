@@ -182,6 +182,7 @@ class KeysControl: NSObject {
         currentInput = ""
         storedInputs = ""
         storedKeySequence = ""
+        storedBoolSequence = [Bool]()
         pointerAddress = 0
         previousTag = -1
         lastKeyControlTime = Date()
