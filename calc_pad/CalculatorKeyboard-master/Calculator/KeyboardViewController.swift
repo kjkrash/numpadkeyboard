@@ -621,6 +621,7 @@ extension KeyboardViewController {
                 }
                 shiftStateIndex += 1
             }
+            shiftedWord += suggestionsToRender[1].substring(from: keyscontrol.storedBoolSequence.count)
             predict2.setTitle(shiftedWord, for: .normal)
             predict2.setTitleColor(Color.black, for: .normal)
         }
@@ -638,6 +639,7 @@ extension KeyboardViewController {
                 }
                 shiftStateIndex += 1
             }
+            shiftedWord += suggestionsToRender[2].substring(from: keyscontrol.storedBoolSequence.count)
             predict3.setTitle(shiftedWord, for: .normal)
             predict3.setTitleColor(Color.black, for: .normal)
         }
@@ -663,6 +665,7 @@ extension KeyboardViewController {
                 }
                 shiftStateIndex += 1
             }
+            shiftedWord += suggestionsToRender[3].substring(from: keyscontrol.storedBoolSequence.count)
             predict4.setTitle(shiftedWord, for: .normal)
             predict4.setTitleColor(Color.black, for: .normal)
         }
@@ -724,9 +727,12 @@ extension KeyboardViewController {
     
     /// When user specified accurate alphabet character in top panel
     @IBAction func didSelectCurrentChar(_ charButton: UIButton) {
-        if let title = charButton.currentTitle {
-            suggestions = filterSuggestions(withCurrentChar: title)
-        }
+        //if let title = charButton.currentTitle {
+        //    suggestions = filterSuggestions(withCurrentChar: title)
+        //}
+        let proxy = textDocumentProxy as UITextDocumentProxy
+
+        proxy.insertText(charButton.currentTitle!)
     }
     
 
@@ -906,6 +912,7 @@ extension KeyboardViewController {
             }
             shiftStateIndex += 1
         }
+        shiftedWord += suggestionsUpdate[0].substring(from: keyscontrol.storedBoolSequence.count)
         predict1.setTitle(shiftedWord, for: .normal)
         predict1.setTitleColor(Color.black, for: .normal)
         shiftedWord = ""
@@ -918,6 +925,7 @@ extension KeyboardViewController {
             }
             shiftStateIndex += 1
         }
+        shiftedWord += suggestionsUpdate[1].substring(from: keyscontrol.storedBoolSequence.count)
         predict2.setTitle(shiftedWord, for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
         shiftedWord = ""
@@ -930,6 +938,7 @@ extension KeyboardViewController {
             }
             shiftStateIndex += 1
         }
+        shiftedWord += suggestionsUpdate[2].substring(from: keyscontrol.storedBoolSequence.count)
         predict3.setTitle(shiftedWord, for: .normal)
         predict3.setTitleColor(Color.black, for: .normal)
         shiftedWord = ""
@@ -942,6 +951,7 @@ extension KeyboardViewController {
             }
             shiftStateIndex += 1
         }
+        shiftedWord += suggestionsUpdate[3].substring(from: keyscontrol.storedBoolSequence.count)
         predict4.setTitle(shiftedWord, for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
         
