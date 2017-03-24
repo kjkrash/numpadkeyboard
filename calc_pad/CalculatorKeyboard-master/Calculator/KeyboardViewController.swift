@@ -50,6 +50,23 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet var predict3: RoundButton!
     @IBOutlet var predict4: RoundButton!
     
+    @IBOutlet var predict5: UIButton!
+    @IBOutlet var predict6: UIButton!
+    @IBOutlet var predict7: UIButton!
+    @IBOutlet var predict8: UIButton!
+    @IBOutlet var predict9: UIButton!
+    @IBOutlet var predict10: UIButton!
+    @IBOutlet var predict11: UIButton!
+    @IBOutlet var predict12: UIButton!
+    @IBOutlet var predict13: UIButton!
+    @IBOutlet var predict14: UIButton!
+    @IBOutlet var predict15: UIButton!
+    @IBOutlet var predict16: UIButton!
+    @IBOutlet var predict17: UIButton!
+    @IBOutlet var predict18: UIButton!
+    @IBOutlet var predict19: UIButton!
+    @IBOutlet var predict20: UIButton!
+    
     @IBOutlet weak var char1: UIButton!
     @IBOutlet weak var char2: UIButton!
     @IBOutlet weak var char3: UIButton!
@@ -87,6 +104,7 @@ class KeyboardViewController: UIInputViewController {
             five.titleLabel!.font =  UIFont(name: "five", size: 18)
         }
     }
+    @IBOutlet var extensionView: UIView!
     @IBOutlet var six: RoundButton!{
         didSet{
             six.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
@@ -121,6 +139,30 @@ class KeyboardViewController: UIInputViewController {
     var shouldClearDisplayBeforeInserting: Bool = true
     var keyscontrol = KeysControl()
     var motherViewsHaveConstrainted: Bool = false
+    var suggestions: [String] = [] {
+        didSet{
+            predict1.setTitle(suggestions[0], for: .normal)
+            predict2.setTitle(suggestions[1], for: .normal)
+            predict3.setTitle(suggestions[2], for: .normal)
+            predict4.setTitle(suggestions[3], for: .normal)
+            predict5.setTitle(suggestions[4], for: .normal)
+            predict6.setTitle(suggestions[5], for: .normal)
+            predict7.setTitle(suggestions[6], for: .normal)
+            predict8.setTitle(suggestions[7], for: .normal)
+            predict9.setTitle(suggestions[8], for: .normal)
+            predict10.setTitle(suggestions[9], for: .normal)
+            predict11.setTitle(suggestions[10], for: .normal)
+            predict12.setTitle(suggestions[11], for: .normal)
+            predict13.setTitle(suggestions[12], for: .normal)
+            predict14.setTitle(suggestions[13], for: .normal)
+            predict15.setTitle(suggestions[14], for: .normal)
+            predict16.setTitle(suggestions[15], for: .normal)
+            predict17.setTitle(suggestions[16], for: .normal)
+            predict18.setTitle(suggestions[17], for: .normal)
+            predict19.setTitle(suggestions[18], for: .normal)
+            predict20.setTitle(suggestions[19], for: .normal)
+        }
+    }
     //    var predictionButtons: [RoundButton] = [RoundButton(predictionIndex: 0)]
     
     //MARK: Life Cycles
@@ -251,6 +293,86 @@ class KeyboardViewController: UIInputViewController {
                 .bottom()
                 .width(Padding.SidePanels.TopRegion.predictDimensions.width)
                 .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict5)
+                .left()
+                .top()
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict6)
+                .left(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top()
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict7)
+                .left(2*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top()
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict8)
+                .left(3*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top()
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict9)
+                .left()
+                .top(Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict10)
+                .left(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict11)
+                .left(2*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict12)
+                .left(3*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict13)
+                .left()
+                .top(2*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict14)
+                .left(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(2*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict15)
+                .left(2*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(2*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict16)
+                .left(3*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(2*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict17)
+                .left()
+                .top(3*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict18)
+                .left(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(3*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict19)
+                .left(2*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(3*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
+            extensionView.layout(predict20)
+                .left(3*Padding.SidePanels.TopRegion.predictDimensions.width)
+                .top(3*Padding.SidePanels.TopRegion.predictDimensions.height)
+                .width(Padding.SidePanels.TopRegion.predictDimensions.width)
+                .height(Padding.SidePanels.TopRegion.predictDimensions.height)
             super.updateViewConstraints()
         }else{
             keyboardView.layout(one)
@@ -328,6 +450,12 @@ class KeyboardViewController: UIInputViewController {
                 .right()
                 .top(Padding().sidePanels.forRegions(reg: .right).top)
                 .bottom()
+            keyboardView.layout(extensionView)
+                .left()
+                .width(UIScreen.main.bounds.width)
+                .top(Padding.SidePanels.topRegionHeight)
+                .bottom()
+            extensionView.isHidden = true
             motherViewsHaveConstrainted = true
             super.updateViewConstraints()
             updateViewConstraints()
@@ -378,17 +506,27 @@ extension KeyboardViewController {
             shiftState = true
         }
         var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
-        let max = 4
-        if suggestionsToRender.count > max {
-            for _ in 0..<suggestionsToRender.count - max {
-                suggestionsToRender.removeLast()
-            }
-        }
-        else if suggestionsToRender.count < max {
+        showCurrentKeyMapping(operation)
+        let max = 20
+        print("suggestions to render elements count -> \(suggestionsToRender.count)")
+        if suggestionsToRender.count < max {
             for _ in 0..<max - suggestionsToRender.count {
                 suggestionsToRender.append("")
             }
         }
+        self.suggestions = suggestionsToRender
+        //let max = 4
+        
+        //if suggestionsToRender.count > max {
+        //    for _ in 0..<suggestionsToRender.count - max {
+        //        suggestionsToRender.removeLast()
+        //    }
+        //}
+        //else if suggestionsToRender.count < max {
+        //    for _ in 0..<max - suggestionsToRender.count {
+        //        suggestionsToRender.append("")
+        //    }
+        //}
         if suggestionsToRender[0] != "" {
             var shiftedWord = ""
             var shiftStateIndex = 0
@@ -530,6 +668,69 @@ extension KeyboardViewController {
         }
     }
     
+    /// Show current pushed key's alphabet representations in top panel
+    func showCurrentKeyMapping(_ operation: RoundButton) {
+        var currentKeyMapping: [String] = []
+        if let modeMapping = KeysMap.NineKeys.mapping["alphabets"] {
+            if let mappingDict = modeMapping[String(operation.tag)] {
+                currentKeyMapping = mappingDict
+                if currentKeyMapping.count < 4 {
+                    for i in 0...3 {
+                        if !currentKeyMapping.indices.contains(i) {
+                            currentKeyMapping.append("")
+                        }
+                    }
+                }
+                char1.setTitle(currentKeyMapping[0], for: .normal)
+                char1.setTitleColor(Color.black, for: .normal)
+                char2.setTitle(currentKeyMapping[1], for: .normal)
+                char2.setTitleColor(Color.black, for: .normal)
+                char3.setTitle(currentKeyMapping[2], for: .normal)
+                char3.setTitleColor(Color.black, for: .normal)
+                char4.setTitle(currentKeyMapping[3], for: .normal)
+                char4.setTitleColor(Color.black, for: .normal)
+            }
+        }
+    }
+
+    /// When press backspace, show previous key mapping
+    func showPreviousKeyMapping() {
+        if let previousLastChar = keyscontrol.storedKeySequence.characters.last {
+            print("previousLastChar -> \(previousLastChar)")
+            var currentKeyMapping: [String] = []
+            if let modeMapping = KeysMap.NineKeys.mapping["alphabets"] {
+                if let mappingDict = modeMapping[String(describing: previousLastChar)] {
+                    currentKeyMapping = mappingDict
+                    if currentKeyMapping.count < 4 {
+                        for i in 0...3 {
+                            if !currentKeyMapping.indices.contains(i) {
+                                currentKeyMapping.append("")
+                            }
+                        }
+                    }
+                    char1.setTitle(currentKeyMapping[0], for: .normal)
+                    char2.setTitle(currentKeyMapping[1], for: .normal)
+                    char3.setTitle(currentKeyMapping[2], for: .normal)
+                    char4.setTitle(currentKeyMapping[3], for: .normal)
+                }
+            }
+        }else{
+            char1.setTitle("", for: .normal)
+            char2.setTitle("", for: .normal)
+            char3.setTitle("", for: .normal)
+            char4.setTitle("", for: .normal)
+        }
+    }
+    
+    /// When user specified accurate alphabet character in top panel
+    @IBAction func didSelectCurrentChar(_ charButton: UIButton) {
+        if let title = charButton.currentTitle {
+            suggestions = filterSuggestions(withCurrentChar: title)
+        }
+    }
+    
+
+    
     @IBAction func punctuationKeys(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
@@ -654,7 +855,11 @@ extension KeyboardViewController {
     }
     //Dismiss keyboard
     @IBAction func shouldDismissKeyboard() {
-        dismissKeyboard()
+        if extensionView.isHidden {
+            extensionView.isHidden = false
+        }else{
+            extensionView.isHidden = true
+        }
     }
     //Insert text in active textfield
     func shouldInsertText() {
@@ -749,6 +954,24 @@ extension KeyboardViewController {
         //        predict3.title = suggestionsUpdate[2]
         // render new suggestions in button
     }
+    
+    func filterSuggestions(withCurrentChar char: String) -> [String] {
+        var filteredSuggestions = suggestions.filter { suggestion in
+            print("String(describing: suggestion.lowercased().characters.last) -> \(String(describing: suggestion.lowercased().characters.last)) \r\n char -> \(char)")
+            if let suggestionLastChar = suggestion.lowercased().characters.last {
+                return String(describing: suggestionLastChar) == char
+            }else{
+                return false
+            }
+        }
+        for i in 0...19 {
+            if !filteredSuggestions.indices.contains(i) {
+                filteredSuggestions.append("")
+            }
+        }
+        return filteredSuggestions
+    }
+
     
     func shouldClearPreviousWordInTextField() {
         let proxy = textDocumentProxy as UITextDocumentProxy

@@ -7,11 +7,13 @@ class RaisedButton: UIButton {
     func switchColor(){
         switch shiftM {
         case "off":
-            titleLabel?.textColor  = UIColor.black
-            backgroundColor = UIColor.white
+            setBackgroundColor(color: UIColor.black, forState: .normal)
+            setTitle("⇪", for:.normal)
+            shiftM = "on"
         case "on":
-            titleLabel?.textColor  = UIColor.white
-            backgroundColor = UIColor.black
+            setBackgroundColor(color: UIColor.blue, forState: .normal)
+            setTitle("⇧", for:.normal)
+            shiftM = "off"
         default:
             break
         }
