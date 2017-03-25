@@ -86,9 +86,11 @@ class T9 {
             }	
         }
         
+        // merge trie suggestions with cached suggestions
         suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence,
                                         suggestionDepth: self.suggestionDepth))
         
+        // truncate excess results
         if suggestions.count > self.numResults {
             let count = suggestions.count
             for _ in 0 ..< count - self.numResults {
