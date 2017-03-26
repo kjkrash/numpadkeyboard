@@ -30,32 +30,22 @@ extension String {
 }
 
 class T9 {
-    // Filename of the dictionary that will be updated over time
-    var dictionaryFilename: String
-    
-    // Filename of the original dictionary. For resetting the altered dictionary
-    // to its original content. For testing purposes.
-    let resetFilename: String
-    
-    // The number of levels deeper to probe in the Trie. The larger the number,
-    // the longer the words that will be suggested.
-    let suggestionDepth: Int
     
     // The total number of suggestions to be returned from T9.
-    let numResults: Int
+    internal let numResults: Int
     
     // The number of suggestions to be returned from the cache.
-    let numCacheResults: Int
+    internal let numCacheResults: Int
     
     // numResults - numCacheResults = number of results from the main Trie
-    let numTrieResults: Int
+    internal let numTrieResults: Int
     
     // The prefix tree structure
-    var trie: Trie
+    internal var trie: Trie
     
     // Caches recent results
-    var cache: Cache
-
+    internal var cache: Cache
+    
     init(dictionaryFilename: String,
          resetFilename: String,
          suggestionDepth: Int,
@@ -63,38 +53,33 @@ class T9 {
          numCacheResults: Int,
          cacheSize: Int) {
         assert(numResults > numCacheResults)
-        self.dictionaryFilename = dictionaryFilename
         self.trie = Trie(dictionaryFilename: dictionaryFilename)
         self.cache = Cache(sizeLimit: cacheSize)
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
-        self.suggestionDepth = suggestionDepth
-        self.resetFilename = resetFilename
         self.trie.loadTrie()
     }
     
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
-        var suggestions = trie.getSuggestions(keySequence: keySequence,
-                                          suggestionDepth: Int(suggestionDepth))
+        var suggestions = trie.getSuggestions(keySequence: keySequence)
         
         if suggestions.count > self.numTrieResults {
             // Chop off excess Trie results
             let count = suggestions.count
             for _ in 0 ..< count - self.numTrieResults {
-                    suggestions.removeLast()
-            }	
+                suggestions.removeLast()
+            }
         }
         
         // merge trie suggestions with cached suggestions
-        suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence,
-                                        suggestionDepth: self.suggestionDepth))
+        suggestions.append(contentsOf: cache.getSuggestions(keySequence))
         
         // truncate excess results
         if suggestions.count > self.numResults {
             let count = suggestions.count
             for _ in 0 ..< count - self.numResults {
-                    suggestions.removeLast()
+                suggestions.removeLast()
             }
         }
         

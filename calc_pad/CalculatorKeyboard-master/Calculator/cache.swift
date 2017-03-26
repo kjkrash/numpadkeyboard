@@ -293,7 +293,7 @@ public class Cache {
     
     // Input: The key sequence to probe in the cache trie
     // Output: List of cached strings
-    func getSuggestions(keySequence: [Int]) -> [String] {
+    func getSuggestions(_ keySequence: [Int]) -> [String] {
         return self.cacheTrie.getSuggestions(keySequence)
     }
     
@@ -319,19 +319,6 @@ public class Cache {
         }
     }
     
-    internal func updateWeight(word: String) {
-        let keySequence = getKeySequence(word: word)
-        let prefixNode = cacheTrie.getPrefixLeaf(keySequence: keySequence).0
-        if cacheTrie.wordExists(word: word, keySequence: keySequence) {
-            for wordWeight in prefixNode!.wordWeights {
-                if wordWeight.word == word {
-                    wordWeight.weight += 1
-                    break
-                }
-            }
-        }
-    }
-    
     // Only call from update() so that we've already checked
     // to see if chosenWord is in the cache
     internal func insert(_ word: String) {
@@ -343,7 +330,7 @@ public class Cache {
         if self.cacheList.count > 0 {
             self.cacheList[0] = word
         }
-        self.cacheTrie.insert(word, weight: weight)
+        self.cacheTrie.insert(word)
     }
     
     internal func pruneOldest() {
@@ -352,16 +339,16 @@ public class Cache {
     
     internal func pruneWord(wordToPrune: String) {
         let keySequnce = getKeySequence(word: wordToPrune)
-        var nodeToPrune = self.cacheTrie.getPrefixNode(keySequence: keySequnce)
+        var nodeToPrune = self.cacheTrie.getPrefixNode(keySequnce)
         // If wordToPrune is a prefix with other children, just remove this one word from the word list of nodeToPrune
         if (nodeToPrune?.children.count)! > 0 {
             var wordIndex = 0
-            for (i, wordWeight) in (nodeToPrune?.wordWeights.enumerated())! {
-                if wordWeight.word == wordToPrune {
+            for (i, w) in (nodeToPrune?.words.enumerated())! {
+                if w == wordToPrune {
                     wordIndex = i
                 }
             }
-            nodeToPrune?.wordWeights.remove(at: wordIndex)
+            nodeToPrune?.words.remove(at: wordIndex)
             return
         }
         else {
