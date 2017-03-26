@@ -37,6 +37,7 @@ internal class TrieNode {
     // Digits map to TrieNodes
     internal var children: [Int : TrieNode]
     
+    // weight of each word in the node
     internal var wordWeights: [WordWeight]
     
     // True if this node is a leaf
@@ -93,8 +94,19 @@ internal class TrieNode {
 }
 
 public class Trie {
+    // root of the entire trie data structure
     internal var root: TrieNode
+    
+    // 1. lowest frequency of all words in the dictionary
+    // 2. used for resetting frequencies to prevent overflow
+    // 3. all frequencies will be reduced by minFreq - 1 to make sure words still
+    //    exist in dictionary, but scales values down so no overflow occurs
+    internal var minFreq: Int
+    
+    // TODO: still necessary given the next set of dict params??
     internal let dictionaryFilename : String
+    
+    // suggestion depth that will be used to search for words in the trie data structure
     internal let suggestionDepth: Int
     
     // Filepath to dictionary file
@@ -203,16 +215,23 @@ public class Trie {
     } // DeeperSuggestions
     
     init(dictionaryFilename : String, suggestionDepth: Int = SUGGESTION_DEPTH_DEFAULT) {
+        // initialize default values
         self.root = TrieNode()
+        self.minFreq = Int.max  // set to Int.max because we want to reduce as we see lesser values
+                                // NOTE: this should never drop below 1
         self.dictionaryFilename = dictionaryFilename
+        
         var dotIndex: Int?
+        
         for (i, c) in self.dictionaryFilename.characters.enumerated() {
             if c == "." {
                 dotIndex = i
                 break
             }
         }
+        
         assert((dotIndex != nil), "No file extension on \(dictionaryFilename)")
+        
         self.dictTitle = self.dictionaryFilename.substring(to: dotIndex!)
         self.dictFileType = self.dictionaryFilename.substring(from: dotIndex! + 1)
         self.dictPath = Bundle.main.path(forResource: self.dictTitle, ofType: self.dictFileType)!
@@ -228,7 +247,39 @@ public class Trie {
             self.suggestionDepth = suggestionDepth
         }
         
+        self.findMinFrequency()
         self.loadTrie()
+    }
+    
+    // Fetches minimum frequency value
+    internal func findMinFrequency() {
+        do {
+            let contents = try String(contentsOf: dictURL)
+            // split contents by newline and put each line into a list
+            let lines = contents.components(separatedBy: "\n")
+            let size = lines.count
+            
+            for i in 0..<size {
+                // fetch weight and word from string array
+                var lineArray = lines[i].components(separatedBy: "\t")
+                
+                // handle error where a line does not have both weight AND word
+                if lines[i].characters.count < 1 {
+                    break
+                }
+                
+                // fetch weight
+                let weight = Weight(lineArray[0])
+                
+                // saving lowest frequency
+                if weight! < self.minFreq {
+                    self.minFreq = weight!
+                }
+            }
+        } catch {
+            print("Dictionary failed to load")
+            return
+        }
     }
     
     // Builds the Trie from the dictionary file
@@ -238,14 +289,15 @@ public class Trie {
             // split contents by newline and put each line into a list
             let lines = contents.components(separatedBy: "\n")
             let size = lines.count
+            
             for i in 0..<size {
-                
-                
                 // fetch weight and word from string array
                 var lineArray = lines[i].components(separatedBy: "\t")
+                
                 if lines[i].characters.count < 1 {
                     break
                 }
+                
                 let weight = Weight(lineArray[0])
                 let word = lineArray[1]
                 
