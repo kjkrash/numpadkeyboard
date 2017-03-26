@@ -28,12 +28,11 @@ internal class WordWeight {
     }
     
     func update() {
-        
+        // TODO: Alex's comment - didn't write this; does this need to be implemented or deleted?
     }
 }
 
 internal class TrieNode {
-    
     // Digits map to TrieNodes
     internal var children: [Int : TrieNode]
     
@@ -266,6 +265,7 @@ public class Trie {
                 // fetch weight and word from string array
                 var lineArray = lines[i].components(separatedBy: "\t")
                 
+                // check for faulty entry (word and weight must both be present)
                 if lines[i].characters.count < 1 {
                     break
                 }
@@ -313,6 +313,7 @@ public class Trie {
             if !node.hasChild(key) {
                 _ = node.putNode(key, nodeToInsert: TrieNode())
             }
+            
             node = node.getBranch(key)!
         }
         
