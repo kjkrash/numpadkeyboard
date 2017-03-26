@@ -247,39 +247,11 @@ public class Trie {
             self.suggestionDepth = suggestionDepth
         }
         
-        self.findMinFrequency()
+        // 2 purposes:
+        // ----------
+        // 1. load the trie into memory
+        // 2. find the minimum weight for preventing overflow
         self.loadTrie()
-    }
-    
-    // Fetches minimum frequency value
-    internal func findMinFrequency() {
-        do {
-            let contents = try String(contentsOf: dictURL)
-            // split contents by newline and put each line into a list
-            let lines = contents.components(separatedBy: "\n")
-            let size = lines.count
-            
-            for i in 0..<size {
-                // fetch weight and word from string array
-                var lineArray = lines[i].components(separatedBy: "\t")
-                
-                // handle error where a line does not have both weight AND word
-                if lines[i].characters.count < 1 {
-                    break
-                }
-                
-                // fetch weight
-                let weight = Weight(lineArray[0])
-                
-                // saving lowest frequency
-                if weight! < self.minFreq {
-                    self.minFreq = weight!
-                }
-            }
-        } catch {
-            print("Dictionary failed to load")
-            return
-        }
     }
     
     // Builds the Trie from the dictionary file
@@ -303,6 +275,11 @@ public class Trie {
                 
                 // add into trie
                 self.insert(word, weight: weight!)
+                
+                // find the minimum weight of all words present in the file
+                if weight! < self.minFreq {
+                    self.minFreq = weight!
+                }
             }
         } catch {
             print("Dictionary failed to load")
@@ -322,6 +299,7 @@ public class Trie {
     internal func insert(_ word : String, weight : Weight? = nil) {
         var node = self.root
         var key = 0
+        
         for c in word.characters {
             key = lettersToDigits[String(c)]!
             if !node.hasChild(key) {
@@ -329,6 +307,7 @@ public class Trie {
             }
             node = node.getBranch(key)!
         }
+        
         node.setAsLeaf()
         node.wordWeights.append(WordWeight(word, weight: weight!))
         
@@ -346,15 +325,13 @@ public class Trie {
         for (i, key) in keySequence.enumerated() {
             if node!.hasChild(key) {
                 node = node!.getBranch(key)
-            }
-            else {
+            } else {
                 // At this point, we have reached a node that ends the path in
                 // the Trie. If this key is the last in the keySequence, then
                 // we know that the prefix <keySequence> exists.
                 if i == keySequence.count - 1 {
                     prefixExists = true
-                }
-                else {
+                } else {
                     prefixExists = false
                     node = nil
                     return (node, prefixExists)
@@ -369,10 +346,10 @@ public class Trie {
     //         Otherwise, nil
     internal func getPrefixNode(keySequence : [Int]) -> TrieNode? {
         let (node, prefixExists) = self.getPrefixLeaf(keySequence)
+        
         if prefixExists {
             return node
-        }
-        else {
+        } else {
             return nil
         }
     }
@@ -401,6 +378,7 @@ public class Trie {
     // Output: True is word exists. False otherwise
     internal func wordExists(_ word : String, keySequence: [Int]) -> Bool {
         let (node, _) = self.getPrefixLeaf(keySequence)
+        
         if node != nil {
             if node!.isLeaf() {
                 for wordWeight in node!.wordWeights {
@@ -409,12 +387,10 @@ public class Trie {
                     }
                 }
                 return false
-            }
-            else {
+            } else {
                 return false
             }
-        }
-        else {
+        } else {
             return false
         }
     }
@@ -425,6 +401,7 @@ public class Trie {
         var newWeight = -1
         let keySequence = getKeySequence(word: word)
         let prefixNode = getPrefixLeaf(keySequence).Node
+        
         if wordExists(word, keySequence: keySequence) {
             for wordWeight in prefixNode!.wordWeights {
                 if wordWeight.word == word {
@@ -434,12 +411,12 @@ public class Trie {
                     break
                 }
             }
-        }
-        else {
+        } else {
             newWeight = WEIGHT_DEFAULT
             insert(word)
             insertWordInFile(word: word)
         }
+        
         return newWeight
     }
     
@@ -451,6 +428,7 @@ public class Trie {
             //let data = try Data(contentsOf: self.dictURL)
             let fileHandle = try FileHandle(forUpdating: self.dictURL)
             let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
+            
             fileHandle.seekToEndOfFile()
             fileHandle.write(data!)
             fileHandle.closeFile()
@@ -465,6 +443,7 @@ public class Trie {
     // Input: the word to update in the file
     internal func updateWeightInFile(word: String) {
         let urlOfDict = URL(fileURLWithPath: self.dictionaryFilename)
+        
         do {
             let dictStr = try
                 String(contentsOf: urlOfDict, encoding: String.Encoding.utf8)
@@ -472,6 +451,7 @@ public class Trie {
             var dictStrArr = dictStr.components(separatedBy: separators)
             var updatedDictStr = ""
             var wordFound = false
+            
             for i in stride(from: 1, to:dictStrArr.count, by: 2) {
                 if !wordFound {
                     if dictStrArr[i] == word {
@@ -480,8 +460,10 @@ public class Trie {
                         wordFound = true
                     }
                 }
+                
                 updatedDictStr += dictStrArr[i-1] + "\t" + dictStrArr[i] + "\n"
             }
+            
             try updatedDictStr.write(to: urlOfDict, atomically: false,
                                      encoding: String.Encoding.utf8)
         }
