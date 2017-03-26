@@ -287,6 +287,14 @@ public class Trie {
         }
     }
     
+    internal func reduceWeight() {
+        // TODO: implement me by calling updateWeight (which calls updateWeightInFile)
+        //       on each word.
+        // Requirements: 1) updateWeight and updateWeightInFile must now take in a weight parameter
+        //               2) need to store a temporary copy of all words in loadTrie to be used in reduce;
+        //                  potentially just have a member variable list if cannot pass by reference
+    }
+    
     // Inserts words into the trie with a manually specified weight
     // Input: word - the string to add
     //        weight - the custom defined weight to associate with the word.
