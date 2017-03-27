@@ -169,6 +169,6 @@ class T9 {
     func rememberChoice(word: String) {
         // If the chosen word was one of the suggestions, update its weight in
         // the Trie
-        _ = trie.updateWeight(word: word)
+        _ = trie.updateWeight(word: word, weight: 1)
     }
 }
