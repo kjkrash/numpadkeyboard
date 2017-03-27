@@ -46,6 +46,8 @@ class T9 {
     // Caches recent results
     internal var cache: Cache
     
+    internal var suggestionDepth: Int
+    
     init(dictionaryFilename: String,
          resetFilename: String,
          suggestionDepth: Int,
@@ -58,11 +60,12 @@ class T9 {
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
+        self.suggestionDepth = suggestionDepth
         self.trie.loadTrie()
     }
     
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
-        var suggestions = trie.getSuggestions(keySequence: keySequence)
+        var suggestions = trie.getSuggestions(keySequence: keySequence, suggestionDepth: self.suggestionDepth)
         
         if suggestions.count > self.numTrieResults {
             // Chop off excess Trie results
@@ -73,7 +76,7 @@ class T9 {
         }
         
         // merge trie suggestions with cached suggestions
-        suggestions.append(contentsOf: cache.getSuggestions(keySequence))
+        suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence, suggestionDepth: suggestionDepth))
         
         // truncate excess results
         if suggestions.count > self.numResults {
