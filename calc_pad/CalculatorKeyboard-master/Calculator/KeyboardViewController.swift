@@ -141,6 +141,8 @@ class KeyboardViewController: UIInputViewController {
     var motherViewsHaveConstrainted: Bool = false
     var suggestions: [String] = [] {
         didSet{
+            //NOTE: CHANGE THE SHIFT STATES SO IT REFLECTS CORRECTLY
+            //maybe make a function
             predict1.setTitle(suggestions[0], for: .normal)
             predict2.setTitle(suggestions[1], for: .normal)
             predict3.setTitle(suggestions[2], for: .normal)
@@ -514,7 +516,9 @@ extension KeyboardViewController {
                 suggestionsToRender.append("")
             }
         }
+        
         self.suggestions = suggestionsToRender
+        
         //let max = 4
         
         //if suggestionsToRender.count > max {
@@ -528,17 +532,7 @@ extension KeyboardViewController {
         //    }
         //}
         if suggestionsToRender[0] != "" {
-            var shiftedWord = ""
-            var shiftStateIndex = 0
-            for b in keyscontrol.storedBoolSequence {
-                if(b){
-                    shiftedWord += String(suggestionsToRender[0][shiftStateIndex]).uppercased()
-                } else {
-                    shiftedWord += String(suggestionsToRender[0][shiftStateIndex])
-                }
-                shiftStateIndex += 1
-            }
-            predict1.setTitle(shiftedWord, for: .normal)
+            predict1.setTitle(suggestionsToRender[0], for: .normal)
             predict1.setTitleColor(Color.black, for: .normal)
             let proxy = textDocumentProxy as UITextDocumentProxy
             // NOTE: DOES NOT WORK RIGHT NOW
@@ -552,21 +546,7 @@ extension KeyboardViewController {
                         s = proxy.documentContextBeforeInput //re capture so we don't go over
                     }
                 }
-                var shiftedWord = ""
-                var shiftStateIndex = 0
-                for b in keyscontrol.storedBoolSequence {
-                    if(b){
-                        shiftedWord += String(suggestionsToRender[0][shiftStateIndex]).uppercased()
-                    } else {
-                        shiftedWord += String(suggestionsToRender[0][shiftStateIndex])
-                    }
-                    shiftStateIndex += 1
-                }
-                NSLog("shifted word")
-                NSLog(shiftedWord)
-                NSLog("prediction")
-                NSLog(suggestionsToRender[0])
-                proxy.insertText(shiftedWord)
+                proxy.insertText(suggestionsToRender[0])
             } else {
                 //This case causes bugs - could be eliminated by having a weighting algorithm
                 //guarantee there's always going to be a suggestion of that length...
@@ -584,89 +564,27 @@ extension KeyboardViewController {
                         s = proxy.documentContextBeforeInput //re capture so we don't go over
                     }
                 }
-                var shiftedWord = ""
-                var shiftStateIndex = 0
-                for b in keyscontrol.storedBoolSequence {
-                    if(b){
-                        shiftedWord += String(suggestionsToRender[0][shiftStateIndex]).uppercased()
-                    } else {
-                        shiftedWord += String(suggestionsToRender[0][shiftStateIndex])
-                    }
-                    shiftStateIndex += 1
-                }
+                var shiftedWord = suggestionsToRender[0]
                 var moreThan = suggestionsToRender[0].length - keyscontrol.storedKeySequence.length
-                while(moreThan > 0){
+                while(moreThan > 0 && shiftedWord.length > 0){
                     moreThan -= 1
                     shiftedWord.characters.removeLast()
                 }
-                NSLog("shifted word")
-                NSLog(shiftedWord)
-                NSLog("prediction")
-                NSLog(suggestionsToRender[0])
                 proxy.insertText(shiftedWord)
 
             }
         }
         if suggestionsToRender[1] != "" {
-            var shiftedWord = ""
-            NSLog("num chars in sugg vs num items in stored bool seq")
-            NSLog(String(suggestionsToRender[1].length))
-            NSLog(String(keyscontrol.storedBoolSequence.count))
-            var shiftStateIndex = 0
-            for b in keyscontrol.storedBoolSequence {
-                if(b){
-                    shiftedWord += String(suggestionsToRender[1][shiftStateIndex]).uppercased()
-                } else {
-                    shiftedWord += String(suggestionsToRender[1][shiftStateIndex])
-                }
-                shiftStateIndex += 1
-            }
-            shiftedWord += suggestionsToRender[1].substring(from: keyscontrol.storedBoolSequence.count)
-            predict2.setTitle(shiftedWord, for: .normal)
+            
+            predict2.setTitle(suggestionsToRender[1], for: .normal)
             predict2.setTitleColor(Color.black, for: .normal)
         }
         if suggestionsToRender[2] != "" {
-            var shiftedWord = ""
-            var shiftStateIndex = 0
-            NSLog("num chars in sugg vs num items in stored bool seq")
-            NSLog(String(suggestionsToRender[2].length))
-            NSLog(String(keyscontrol.storedBoolSequence.count))
-            for b in keyscontrol.storedBoolSequence {
-                if(b){
-                    shiftedWord += String(suggestionsToRender[2][shiftStateIndex]).uppercased()
-                } else {
-                    shiftedWord += String(suggestionsToRender[2][shiftStateIndex])
-                }
-                shiftStateIndex += 1
-            }
-            shiftedWord += suggestionsToRender[2].substring(from: keyscontrol.storedBoolSequence.count)
-            predict3.setTitle(shiftedWord, for: .normal)
+            predict3.setTitle(suggestionsToRender[2], for: .normal)
             predict3.setTitleColor(Color.black, for: .normal)
         }
         if suggestionsToRender[3] != "" {
-            var shiftedWord = ""
-            var shiftStateIndex = 0
-            NSLog("num chars in sugg vs num items in stored bool seq")
-            NSLog(String(suggestionsToRender[3].length))
-            NSLog(String(keyscontrol.storedBoolSequence.count))
-            //for ch in suggestionsToRender[3].characters {
-            //    if(keyscontrol.storedBoolSequence[shiftStateIndex]){
-            //        shiftedWord += String(ch).uppercased()
-            //    } else {
-            //        shiftedWord += String(ch)
-            //    }
-            //    shiftStateIndex += 1
-            //}
-            for b in keyscontrol.storedBoolSequence {
-                if(b){
-                    shiftedWord += String(suggestionsToRender[3][shiftStateIndex]).uppercased()
-                } else {
-                    shiftedWord += String(suggestionsToRender[3][shiftStateIndex])
-                }
-                shiftStateIndex += 1
-            }
-            shiftedWord += suggestionsToRender[3].substring(from: keyscontrol.storedBoolSequence.count)
-            predict4.setTitle(shiftedWord, for: .normal)
+            predict4.setTitle(suggestionsToRender[3], for: .normal)
             predict4.setTitleColor(Color.black, for: .normal)
         }
     }
@@ -892,6 +810,7 @@ extension KeyboardViewController {
         //            predict4.setTitle("", for: .normal)
         //            return
         //        }
+        
         let proxy = textDocumentProxy as UITextDocumentProxy
         if keyscontrol.storedKeySequence.length == 0 {
             if(proxy.hasText){
@@ -902,58 +821,23 @@ extension KeyboardViewController {
         shouldDeleteText()
         var suggestionsUpdate = [String]()
         suggestionsUpdate = keyscontrol.t9Backspace()
-        var shiftedWord = ""
-        var shiftStateIndex = 0
-        for b in keyscontrol.storedBoolSequence {
-            if(b){
-                shiftedWord += String(suggestionsUpdate[0][shiftStateIndex]).uppercased()
-            } else {
-                shiftedWord += String(suggestionsUpdate[0][shiftStateIndex])
-            }
-            shiftStateIndex += 1
-        }
-        shiftedWord += suggestionsUpdate[0].substring(from: keyscontrol.storedBoolSequence.count)
-        predict1.setTitle(shiftedWord, for: .normal)
+        
+        predict1.setTitle(suggestionsUpdate[0], for: .normal)
         predict1.setTitleColor(Color.black, for: .normal)
-        shiftedWord = ""
-        shiftStateIndex = 0
-        for b in keyscontrol.storedBoolSequence {
-            if(b){
-                shiftedWord += String(suggestionsUpdate[1][shiftStateIndex]).uppercased()
-            } else {
-                shiftedWord += String(suggestionsUpdate[1][shiftStateIndex])
-            }
-            shiftStateIndex += 1
-        }
-        shiftedWord += suggestionsUpdate[1].substring(from: keyscontrol.storedBoolSequence.count)
-        predict2.setTitle(shiftedWord, for: .normal)
+        
+        predict2.setTitle(suggestionsUpdate[1], for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
-        shiftedWord = ""
-        shiftStateIndex = 0
-        for b in keyscontrol.storedBoolSequence {
-            if(b){
-                shiftedWord += String(suggestionsUpdate[2][shiftStateIndex]).uppercased()
-            } else {
-                shiftedWord += String(suggestionsUpdate[2][shiftStateIndex])
-            }
-            shiftStateIndex += 1
-        }
-        shiftedWord += suggestionsUpdate[2].substring(from: keyscontrol.storedBoolSequence.count)
-        predict3.setTitle(shiftedWord, for: .normal)
+        predict3.setTitle(suggestionsUpdate[2], for: .normal)
         predict3.setTitleColor(Color.black, for: .normal)
-        shiftedWord = ""
-        shiftStateIndex = 0
-        for b in keyscontrol.storedBoolSequence {
-            if(b){
-                shiftedWord += String(suggestionsUpdate[3][shiftStateIndex]).uppercased()
-            } else {
-                shiftedWord += String(suggestionsUpdate[3][shiftStateIndex])
-            }
-            shiftStateIndex += 1
-        }
-        shiftedWord += suggestionsUpdate[3].substring(from: keyscontrol.storedBoolSequence.count)
-        predict4.setTitle(shiftedWord, for: .normal)
+        predict4.setTitle(suggestionsUpdate[3], for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
+        
+        for i in 0...19 {
+            if !suggestionsUpdate.indices.contains(i) {
+                suggestionsUpdate.append("")
+            }
+        }
+        suggestions = suggestionsUpdate
         
         
         //        predict1.renderSuggestions(sugg: suggestionsUpdate[0])

@@ -89,7 +89,10 @@ class KeysControl: NSObject {
         NSLog(storedKeySequence)
         lastKeyControlTime = Date()
         storedBoolSequence.append(shiftState)
+        
+        NSLog(String(describing: storedBoolSequence))
         var intKS = [Int]()
+        NSLog("num characters" + String(storedKeySequence.length))
         for ch in storedKeySequence.characters {
             intKS.append(Int(String(ch))!)
         }
@@ -110,6 +113,8 @@ class KeysControl: NSObject {
         var suggestions = [String]()
         if storedKeySequence.characters.count > 0 {
             NSLog(storedKeySequence)
+            NSLog(String(storedKeySequence.characters.count))
+            NSLog(String(storedBoolSequence.count))
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
             NSLog(storedKeySequence)
@@ -118,6 +123,7 @@ class KeysControl: NSObject {
             for ch in storedKeySequence.characters {
                 intKS.append(Int(String(ch))!)
             }
+            
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         } else {
             //idk this doesn't work with number mode as of now

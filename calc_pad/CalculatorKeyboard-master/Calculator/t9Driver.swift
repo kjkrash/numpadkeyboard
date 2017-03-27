@@ -61,7 +61,6 @@ class T9 {
     }
     
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
-        
         var trieSuggestions = trie.getSuggestions(keySequence: keySequence)
         var cacheSuggestions: [String] = []
         var suggestions: [String] = []
@@ -77,7 +76,8 @@ class T9 {
         } else if trieSuggestions.count >= self.numTrieResults {
             // only Trie fills suggestion quota
             let numTrieResultsToFetch = self.numTrieResults + (self.numCacheResults - cacheSuggestions.count)
-            suggestions += trieSuggestions[0..<numTrieResultsToFetch]
+            let numT = trieSuggestions.count - self.numTrieResults
+            suggestions += trieSuggestions[0..<self.numTrieResults + numT]
             suggestions += cacheSuggestions
         } else if cacheSuggestions.count >= self.numCacheResults {
             // only cache fills suggestion quota
@@ -116,7 +116,6 @@ class T9 {
         // remove duplicates from overlap between cache and getSuggestions() using a map
         // to keep track of seen values
         var dupeDetector = [String: Bool]()
-        
         // traverse list
         for var i in 0..<suggestions.count {
             // check if key exists
@@ -164,8 +163,6 @@ class T9 {
                 suggestions[i] = wordWithCaps
             }
         }
-        
-        
         return suggestions
     }
     
