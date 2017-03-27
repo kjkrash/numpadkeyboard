@@ -39,7 +39,7 @@ internal class CacheTrie {
             node = node.getBranch(key: key)
         }
         node.setAsLeaf()
-        node.wordWeights.append(WordWeight(word: word, weight: weight))
+        node.wordWeights.append(WordWeight(word, weight: weight))
         node.wordWeights = node.wordWeights.sorted(by: {$0.weight > $1.weight})
     }
     

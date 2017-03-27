@@ -1,24 +1,39 @@
 import Foundation
 
+typealias Weight = Int
+
+internal let WEIGHT_DEFAULT: Weight = 1
+
+let SUGGESTION_DEPTH_DEFAULT = 3
+let SUGGESTION_DEPTH_MAX = 10
+let SUGGESTION_DEPTH_MIN = 0
+
 // Every word is associated with a mutable weight.
 internal class WordWeight {
-    let word: String
-    var weight: Int
-    init(word: String, weight: Int) {
+    internal let word: String
+    internal var weight: Weight
+    
+    // If weight is not specified, it is given the default value.
+    // Convenient for inserting novel words from the user.
+    init(_ word: String, weight: Weight = WEIGHT_DEFAULT) {
         self.word = word
         self.weight = weight
+    }
+    
+    func weightUp() {
+        self.weight += 1
     }
 }
 
 internal class TrieNode {
     
     // Digits map to TrieNodes
-    var children: [Int : TrieNode]
+    internal var children: [Int : TrieNode]
     
-    var wordWeights: [WordWeight]
+    internal var wordWeights: [WordWeight]
     
     // True if this node is a leaf
-    var leaf: Bool
+    internal var leaf: Bool
     
     init() {
         self.children = [:]
@@ -26,11 +41,17 @@ internal class TrieNode {
         self.leaf = false
     }
     
+    func addWordWeight(_ word: String, weight: Weight = WEIGHT_DEFAULT) {
+        wordWeights.append(WordWeight(word, weight: weight))
+        wordWeights = wordWeights.sorted(by: {$0.weight > $1.weight})
+    }
+    
     // checks if node is a leaf (end of word)
     func isLeaf() -> Bool {
         return self.leaf
     }
     
+    // Does NOT check if child exists. ONLY call after hasChild()
     // gets the next node based on key
     func getBranch(key: Int) -> TrieNode {
         return self.children[key]!
@@ -55,24 +76,22 @@ internal class TrieNode {
 public class Trie {
     
     // The reverse mapping from letters to key numbers
-    let lettersToDigits = ["a" : 2, "b" : 2, "c" : 2,
-                           "d" : 3, "e" : 3, "f" : 3,
-                           "g" : 4, "h" : 4, "i" : 4,
-                           "j" : 5, "k" : 5, "l" : 5,
-                           "m" : 6, "n" : 6, "o" : 6,
-                           "p" : 7, "q" : 7, "r" : 7, "s" : 7,
-                           "t" : 8, "u" : 8, "v" : 8,
-                           "w" : 9, "x" : 9, "y" : 9, "z" : 9]
+    internal let lettersToDigits = ["a" : 2, "b" : 2, "c" : 2,
+                                    "d" : 3, "e" : 3, "f" : 3,
+                                    "g" : 4, "h" : 4, "i" : 4,
+                                    "j" : 5, "k" : 5, "l" : 5,
+                                    "m" : 6, "n" : 6, "o" : 6,
+                                    "p" : 7, "q" : 7, "r" : 7, "s" : 7,
+                                    "t" : 8, "u" : 8, "v" : 8,
+                                    "w" : 9, "x" : 9, "y" : 9, "z" : 9]
     
-    var root: TrieNode
-    var dictionaryFilename : String
-    var dictionarySize : Int
-    let dictURL: URL
-    let dictPath: String
-    // e.g. "dict"
+    internal var root: TrieNode
+    internal var dictionaryFilename : String
+    internal let dictURL: URL
+    internal let dictPath: String
     let dictTitle: String
-    // e.g. "txt
     let dictFileType: String
+    internal let suggestionDepth: Int
     
     // A work-around to allow deeperSuggestions to be passed by reference
     internal class DeeperSuggestion {
@@ -85,10 +104,11 @@ public class Trie {
         }
     }
     
-    init(dictionaryFilename : String) {
+    init(dictionaryFilename : String, suggestionDepth: Int = SUGGESTION_DEPTH_DEFAULT) {
         self.root = TrieNode()
+        
+        // Process filename
         self.dictionaryFilename = dictionaryFilename
-        self.dictionarySize = 0
         var dotIndex = -1
         for (i, c) in self.dictionaryFilename.characters.enumerated() {
             if c == "." {
@@ -103,6 +123,18 @@ public class Trie {
         self.dictFileType = self.dictionaryFilename.substring(from: dotIndex + 1)
         self.dictPath = Bundle.main.path(forResource: self.dictTitle, ofType: self.dictFileType)!
         self.dictURL = URL(fileURLWithPath: self.dictPath)
+        
+        if suggestionDepth < SUGGESTION_DEPTH_MIN {
+            self.suggestionDepth = SUGGESTION_DEPTH_MIN
+            print("The suggestion depth is too low. Setting to \(SUGGESTION_DEPTH_MIN)...")
+        } else if suggestionDepth > SUGGESTION_DEPTH_MAX {
+            self.suggestionDepth = SUGGESTION_DEPTH_MAX
+            print("The suggestion depth passed is too high. Setting to \(SUGGESTION_DEPTH_MAX)...")
+        } else {
+            self.suggestionDepth = suggestionDepth
+        }
+        
+        self.loadTrie()
     }
     
     func loadTrie() {
@@ -112,116 +144,26 @@ public class Trie {
             let lines = contents.components(separatedBy: "\n")
             let size = lines.count
             for i in 0..<size {
-                // increment dictionary size
-                self.dictionarySize += 1
+
                 
                 // fetch weight and word from string array
                 var lineArray = lines[i].components(separatedBy: "\t")
                 if lines[i].characters.count < 1 {
                     break
                 }
-                let weight = Int(lineArray[0])
+                let weight = Weight(lineArray[0])
                 let word = lineArray[1]
                 
                 // add into trie
-                self.insert(word: word, weight: weight!)
+                self.insert(word, weight: weight!)
             }
         } catch {
             print("Dictionary failed to load")
             return
         }
-        
-        
-        
-        /*
-         
-         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"MyFile" ofType:@"txt"];
-         NSData *myData = [NSData dataWithContentsOfFile:filePath];
-         if (myData) {
-         // do something useful
-         }
-         
-         // Do something with the test data...
-         
-         // Read in and store as raw data bytes
-         NSString *file2 = [[NSBundle mainBundle] pathForResource:@"data" ofType:@"txt"];
-         NSData *data = [NSData dataWithContentsOfFile:file2];
-         
-         let fileManager = FileManager.default
-         
-         // This string is the expected path of the dictionary file
-         let dictionaryPath: String
-         if fileManager.currentDirectoryPath == "/" {
-         dictionaryPath = self.dictionaryFilename
-         }
-         else {
-         dictionaryPath = fileManager.currentDirectoryPath + "/" +
-         self.dictionaryFilename
-         }
-         
-         // FIXME: Need better error management.
-         if !fileManager.fileExists(atPath: dictionaryPath) {
-         print("No dictionary named " + self.dictionaryFilename + " exists "
-         + "at " + dictionaryPath + ".")
-         print("Current directory is " + fileManager.currentDirectoryPath + ".")
-         do {
-         let contents = try fileManager.contentsOfDirectory(atPath: dictionaryPath)
-         for c in contents {
-         print(c)
-         }
-         } catch {
-         print("Cannot print contents")
-         }
-         
-         return
-         }
-         
-         // Check if the file is readable
-         if !fileManager.isReadableFile(atPath: dictionaryPath) {
-         print("File named " + self.dictionaryFilename + " is not readable.")
-         return
-         }
-         
-         // get the file to read from
-         let fileHandle: FileHandle? = FileHandle(forReadingAtPath:
-         dictionaryPath)
-         
-         // if file exists and is readable then read from it
-         if fileHandle == nil {
-         print("File open failed.")
-         return
-         }
-         
-         else {
-         // convert string pathname to url type
-         let url = URL(fileURLWithPath: dictionaryPath)
-         
-         // fetch contents from the file
-         let contents = try! String(contentsOf: url)
-         
-         // split contents by newline and put each line into a list
-         let lines = contents.components(separatedBy: .newlines)
-         
-         for line in lines {
-         // increment dictionary size
-         self.dictionarySize += 1
-         
-         // fetch weight and word from string array
-         var lineArray = line.components(separatedBy: "\t")
-         if line.characters.count < 1 {
-         break
-         }
-         let weight = Int(lineArray[0])
-         let word = lineArray[1]
-         
-         // add into trie
-         self.insert(word: word, weight: weight!)
-         }
-         }
-         */
     }
     
-    internal func insert(word : String, weight : Int) {
+    internal func insert(_ word: String, weight: Int = WEIGHT_DEFAULT) {
         var node = self.root
         var key = 0
         for c in word.characters {
@@ -232,15 +174,12 @@ public class Trie {
             node = node.getBranch(key: key)
         }
         node.setAsLeaf()
-        node.wordWeights.append(WordWeight(word: word, weight: weight))
-        
-        // Sorts wordWeights by weights, biggest to smallest weight
-        node.wordWeights = node.wordWeights.sorted(by: {$0.weight > $1.weight})
+        node.addWordWeight(word, weight: weight)
     }
     
     // Returns node where prefix ends.
     // If prefix not in Trie, node is nil and Bool is false.
-    internal func getPrefixLeaf(keySequence : [Int]) -> (TrieNode?, Bool) {
+    internal func getPrefixLeaf(_ keySequence : [Int]) -> (TrieNode?, Bool) {
         var node: TrieNode? = self.root
         var prefixExists = true
         
@@ -267,8 +206,8 @@ public class Trie {
     
     // If the path keySequence exists, returns the node.
     // Otherwise, nil
-    func getPrefixNode(keySequence : [Int]) -> TrieNode? {
-        let (node, prefixExists) = self.getPrefixLeaf(keySequence: keySequence)
+    internal func getPrefixNode(_ keySequence : [Int]) -> TrieNode? {
+        let (node, prefixExists) = self.getPrefixLeaf(keySequence)
         if prefixExists {
             return node
         }
@@ -277,9 +216,9 @@ public class Trie {
         }
     }
     
-    func getSuggestions(keySequence : [Int], suggestionDepth : Int) -> [String] {
+    func getSuggestions(keySequence : [Int]) -> [String] {
         var suggestions = [String]()
-        let prefixNode: TrieNode? = self.getPrefixNode(keySequence: keySequence)
+        let prefixNode: TrieNode? = self.getPrefixNode(keySequence)
         
         if prefixNode != nil {
             for wordWeight in prefixNode!.wordWeights {
@@ -287,7 +226,7 @@ public class Trie {
             }
             
             if suggestionDepth > 1 {
-                var deeperSuggestions = DeeperSuggestion(suggestionDepth: suggestionDepth)
+                let deeperSuggestions = DeeperSuggestion(suggestionDepth: suggestionDepth)
                 // deeperSuggestions is a classs, so it is passed by reference
                 // After the call to getDeeperSuggestions, deeperSuggestions
                 // will be a list of lists of words, each list being full of
@@ -338,7 +277,7 @@ public class Trie {
     }
     
     internal func wordExists(word : String, keySequence: [Int]) -> Bool {
-        let (node, _) = self.getPrefixLeaf(keySequence: keySequence)
+        let (node, _) = self.getPrefixLeaf(keySequence)
         if node != nil {
             if node!.isLeaf() {
                 for wordWeight in node!.wordWeights {
@@ -362,7 +301,7 @@ public class Trie {
     func updateWeight(word: String) -> Int {
         var newWeight = -1
         let keySequence = getKeySequence(word: word)
-        let prefixNode = getPrefixLeaf(keySequence: keySequence).0
+        let prefixNode = getPrefixLeaf(keySequence).0
         if wordExists(word: word, keySequence: keySequence) {
             for wordWeight in prefixNode!.wordWeights {
                 if wordWeight.word == word {
@@ -375,7 +314,7 @@ public class Trie {
         }
         else {
             newWeight = 1
-            insert(word: word, weight: newWeight)
+            insert(word, weight: newWeight)
             insertWordInFile(word: word)
         }
         return newWeight
@@ -395,7 +334,7 @@ public class Trie {
             print("ERROR from insertWordInFile")
             return
         }
-        self.dictionarySize += 1
+
         
         /*
          self.dictionarySize += 1

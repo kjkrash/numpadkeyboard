@@ -55,17 +55,16 @@ class T9 {
          numCacheResults: Int,
          cacheSize: Int) {
         assert(numResults > numCacheResults)
-        self.trie = Trie(dictionaryFilename: dictionaryFilename)
+        self.trie = Trie(dictionaryFilename: dictionaryFilename, suggestionDepth: suggestionDepth)
         self.cache = Cache(sizeLimit: cacheSize)
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
         self.suggestionDepth = suggestionDepth
-        self.trie.loadTrie()
     }
     
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
-        var suggestions = trie.getSuggestions(keySequence: keySequence, suggestionDepth: self.suggestionDepth)
+        var suggestions = trie.getSuggestions(keySequence: keySequence)
         
         if suggestions.count > self.numTrieResults {
             // Chop off excess Trie results
