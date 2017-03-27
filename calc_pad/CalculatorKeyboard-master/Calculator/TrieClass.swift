@@ -93,16 +93,90 @@ public class Trie {
     let dictFileType: String
     internal let suggestionDepth: Int
     
-    // A work-around to allow deeperSuggestions to be passed by reference
-    internal class DeeperSuggestion {
-        var deeperSuggestions = [[WordWeight]]()
+    // A class that constructs a list of deeper suggestions
+    internal class DeeperSuggestions {
+        // How deep the Trie will be searched for longer words.
+        // deeperSuggestions will have at most this many inner lists
+        internal let suggestionDepth : Int
         
-        init(suggestionDepth: Int) {
+        // References a TrieNode in this Trie (classes are by ref)
+        internal let prefixNode : TrieNode
+        
+        // Each inner list is a list of suggestions of the same length.
+        // Every inner list is of a word length greater than the previous list.
+        internal var deeperSuggestions = [[WordWeight]]()
+        
+        // The deeper suggestions will stored in their final form here.
+        internal var suggestions: [String] = []
+        
+        // Upon initialization, DeeperSuggestions creates a list of suggestions
+        // of words from 1 char longer than the key sequence to suggestionDepth
+        // in length.
+        // Input: suggestionDepth - the maximum length of chars longer (than the
+        //                          key sequence) to search.
+        //        prefixNode - the TrieNode from which to begin the deeper probe.
+        init(_ suggestionDepth: Int, prefixNode: TrieNode!) {
+            self.suggestionDepth = suggestionDepth
+            self.prefixNode = prefixNode
             for _ in 0..<suggestionDepth {
                 self.deeperSuggestions.append([])
             }
+            
+            self.setDeeperSuggestions()
         }
-    }
+        
+        // Returns the finalized deeper suggestions list.
+        func get() -> [String] {
+            return self.suggestions
+        }
+        
+        // Adds deeper suggestions to deeperSuggestions, sorts them, and adds them
+        // all to the final suggestions list.
+        internal func setDeeperSuggestions() {
+            self.traverse(self.prefixNode, currentDepth: 0)
+            self.sort()
+            self.flattenSuggestions()
+        }
+        
+        // To be used only by setDeeperSuggestions(). Finds all deeperSuggestions
+        // up to the depth limit.
+        internal func traverse(_ currentNode: TrieNode, currentDepth: Int) {
+            if (currentDepth > 0 && currentDepth < self.suggestionDepth) {
+                for wordWeight in currentNode.wordWeights {
+                    self.deeperSuggestions[currentDepth-1].append(wordWeight)
+                }
+            }
+            
+            if currentDepth == self.suggestionDepth || currentNode.children.count == 0 {
+                return
+            }
+            
+            for (key, _) in currentNode.children {
+                self.traverse(currentNode.children[key]!, currentDepth: currentDepth + 1)
+            }
+        }
+        
+        // Sorts each level of deeperSuggestions in descending order of weight
+        internal func sort() {
+            for (level, suggestions) in self.deeperSuggestions.enumerated() {
+                if suggestions.count > 0 {
+                    // Sort the suggestions at this level in descending order
+                    self.deeperSuggestions[level] =
+                        suggestions.sorted(by: {$0.weight > $1.weight})
+                }
+            }
+        }
+        
+        // Flattens deeperSuggestions lists into self.suggestions
+        // Make sure to call self.sort() first
+        internal func flattenSuggestions() {
+            for suggestions in self.deeperSuggestions {
+                for wordWeight in suggestions {
+                    self.suggestions.append(wordWeight.word)
+                }
+            }
+        }
+    } // DeeperSuggestions
     
     init(dictionaryFilename : String, suggestionDepth: Int = SUGGESTION_DEPTH_DEFAULT) {
         self.root = TrieNode()
@@ -226,54 +300,12 @@ public class Trie {
             }
             
             if suggestionDepth > 1 {
-                let deeperSuggestions = DeeperSuggestion(suggestionDepth: suggestionDepth)
-                // deeperSuggestions is a classs, so it is passed by reference
-                // After the call to getDeeperSuggestions, deeperSuggestions
-                // will be a list of lists of words, each list being full of
-                // words of one character longer in length
-                self.getDeeperSuggestions(root: prefixNode!,
-                                          maxDepth:
-                    suggestionDepth,
-                                          deeperSuggestions: deeperSuggestions)
-                
-                for level in deeperSuggestions.deeperSuggestions {
-                    for wordWeight in level {
-                        suggestions.append(wordWeight.word)
-                    }
-                }
+                let deeperSuggestions = DeeperSuggestions(suggestionDepth, prefixNode: prefixNode).get()
+                suggestions += deeperSuggestions
             }
         }
         
         return suggestions
-    }
-    
-    internal func getDeeperSuggestions(root : TrieNode, maxDepth : Int,
-                                       deeperSuggestions: DeeperSuggestion) {
-        self.traverse(root: root, depth: 0, maxDepth: maxDepth, deepSuggestions: deeperSuggestions)
-        for (level, suggestions) in deeperSuggestions.deeperSuggestions.enumerated() {
-            if suggestions.count > 0 {
-                deeperSuggestions.deeperSuggestions[level] =
-                    suggestions.sorted(by: {$0.weight > $1.weight})
-            }
-        }
-    }
-    
-    internal func traverse(root : TrieNode, depth : Int, maxDepth : Int,
-                           deepSuggestions : DeeperSuggestion) {
-        if (depth < maxDepth && depth > 0) {
-            for wordWeight in root.wordWeights {
-                deepSuggestions.deeperSuggestions[depth-1].append(wordWeight)
-            }
-        }
-        
-        if depth == maxDepth || root.children.count == 0 {
-            return
-        }
-        
-        for (key, _) in root.children {
-            self.traverse(root: root.children[key]!, depth: depth+1,
-                          maxDepth: maxDepth, deepSuggestions: deepSuggestions)
-        }
     }
     
     internal func wordExists(word : String, keySequence: [Int]) -> Bool {
