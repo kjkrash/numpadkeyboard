@@ -224,7 +224,7 @@ public class Trie {
             // this prevents overflows from occurring from long-term use
             // reduces word weights by the lowest amount (needs changing if not using freq. weight scheme)
             for i in 0..<wordList.count {
-                self.reduceWeight(word: wordList[i], weight: self.minFreq)
+                self.reduceWeight(word: wordList[i], weight: -1 * self.minFreq)
             }
             
             // clear up memory usage
