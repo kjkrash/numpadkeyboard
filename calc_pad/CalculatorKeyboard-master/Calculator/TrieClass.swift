@@ -67,6 +67,12 @@ public class Trie {
     var root: TrieNode
     var dictionaryFilename : String
     var dictionarySize : Int
+    let dictURL: URL
+    let dictPath: String
+    // e.g. "dict"
+    let dictTitle: String
+    // e.g. "txt
+    let dictFileType: String
     
     // A work-around to allow deeperSuggestions to be passed by reference
     internal class DeeperSuggestion {
@@ -83,55 +89,35 @@ public class Trie {
         self.root = TrieNode()
         self.dictionaryFilename = dictionaryFilename
         self.dictionarySize = 0
+        var dotIndex = -1
+        for (i, c) in self.dictionaryFilename.characters.enumerated() {
+            if c == "." {
+                dotIndex = i
+                break
+            }
+        }
+        if dotIndex == -1 {
+            print("Invalid dictionary name: " + self.dictionaryFilename)
+        }
+        self.dictTitle = self.dictionaryFilename.substring(to: dotIndex)
+        self.dictFileType = self.dictionaryFilename.substring(from: dotIndex + 1)
+        self.dictPath = Bundle.main.path(forResource: self.dictTitle, ofType: self.dictFileType)!
+        self.dictURL = URL(fileURLWithPath: self.dictPath)
     }
     
     func loadTrie() {
-        let fileManager = FileManager.default
-        
-        // This string is the expected path of the dictionary file
-        let dictionaryPath = fileManager.currentDirectoryPath + "/" +
-            self.dictionaryFilename
-        
-        // FIXME: Need better error management.
-        if !fileManager.fileExists(atPath: dictionaryPath) {
-            print("No dictionary named " + self.dictionaryFilename + " exists "
-                + "at " + dictionaryPath + ".")
-            return
-        }
-        
-        // Check if the file is readable
-        if !fileManager.isReadableFile(atPath: dictionaryPath) {
-            print("File named " + self.dictionaryFilename + " is not readable.")
-            return
-        }
-        
-        // get the file to read from
-        let fileHandle: FileHandle? = FileHandle(forReadingAtPath:
-            dictionaryPath)
-        
-        // if file exists and is readable then read from it
-        if fileHandle == nil {
-            print("File open failed.")
-            return
-        }
-            
-        else {
-            // convert string pathname to url type
-            let url = URL(fileURLWithPath: dictionaryPath)
-            
-            // fetch contents from the file
-            let contents = try! String(contentsOf: url)
-            
+        do {
+            let contents = try String(contentsOf: dictURL)
             // split contents by newline and put each line into a list
-            let lines = contents.components(separatedBy: .newlines)
-            
-            for line in lines {
+            let lines = contents.components(separatedBy: "\n")
+            let size = lines.count
+            for i in 0..<size {
                 // increment dictionary size
                 self.dictionarySize += 1
                 
                 // fetch weight and word from string array
-                var lineArray = line.components(separatedBy: "\t")
-                if line.characters.count < 1 {
+                var lineArray = lines[i].components(separatedBy: "\t")
+                if lines[i].characters.count < 1 {
                     break
                 }
                 let weight = Int(lineArray[0])
@@ -140,7 +126,99 @@ public class Trie {
                 // add into trie
                 self.insert(word: word, weight: weight!)
             }
+        } catch {
+            print("Dictionary failed to load")
+            return
         }
+        
+        
+        
+        /*
+         
+         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"MyFile" ofType:@"txt"];
+         NSData *myData = [NSData dataWithContentsOfFile:filePath];
+         if (myData) {
+         // do something useful
+         }
+         
+         // Do something with the test data...
+         
+         // Read in and store as raw data bytes
+         NSString *file2 = [[NSBundle mainBundle] pathForResource:@"data" ofType:@"txt"];
+         NSData *data = [NSData dataWithContentsOfFile:file2];
+         
+         let fileManager = FileManager.default
+         
+         // This string is the expected path of the dictionary file
+         let dictionaryPath: String
+         if fileManager.currentDirectoryPath == "/" {
+         dictionaryPath = self.dictionaryFilename
+         }
+         else {
+         dictionaryPath = fileManager.currentDirectoryPath + "/" +
+         self.dictionaryFilename
+         }
+         
+         // FIXME: Need better error management.
+         if !fileManager.fileExists(atPath: dictionaryPath) {
+         print("No dictionary named " + self.dictionaryFilename + " exists "
+         + "at " + dictionaryPath + ".")
+         print("Current directory is " + fileManager.currentDirectoryPath + ".")
+         do {
+         let contents = try fileManager.contentsOfDirectory(atPath: dictionaryPath)
+         for c in contents {
+         print(c)
+         }
+         } catch {
+         print("Cannot print contents")
+         }
+         
+         return
+         }
+         
+         // Check if the file is readable
+         if !fileManager.isReadableFile(atPath: dictionaryPath) {
+         print("File named " + self.dictionaryFilename + " is not readable.")
+         return
+         }
+         
+         // get the file to read from
+         let fileHandle: FileHandle? = FileHandle(forReadingAtPath:
+         dictionaryPath)
+         
+         // if file exists and is readable then read from it
+         if fileHandle == nil {
+         print("File open failed.")
+         return
+         }
+         
+         else {
+         // convert string pathname to url type
+         let url = URL(fileURLWithPath: dictionaryPath)
+         
+         // fetch contents from the file
+         let contents = try! String(contentsOf: url)
+         
+         // split contents by newline and put each line into a list
+         let lines = contents.components(separatedBy: .newlines)
+         
+         for line in lines {
+         // increment dictionary size
+         self.dictionarySize += 1
+         
+         // fetch weight and word from string array
+         var lineArray = line.components(separatedBy: "\t")
+         if line.characters.count < 1 {
+         break
+         }
+         let weight = Int(lineArray[0])
+         let word = lineArray[1]
+         
+         // add into trie
+         self.insert(word: word, weight: weight!)
+         }
+         }
+         */
     }
     
     internal func insert(word : String, weight : Int) {
@@ -303,35 +381,58 @@ public class Trie {
         return newWeight
     }
     
+    // Assumes presence of word in dictionary file. Thus, should only be called
+    // after the word has been found in the Trie.
     internal func insertWordInFile(word: String) {
+        do {
+            //let data = try Data(contentsOf: self.dictURL)
+            let fileHandle = try FileHandle(forUpdating: self.dictURL)
+            let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(data!)
+            fileHandle.closeFile()
+        } catch {
+            print("ERROR from insertWordInFile")
+            return
+        }
         self.dictionarySize += 1
         
-        let fileManager = FileManager.default
-        
-        // get path to dictionary for inserting new word
-        let dictionaryPath = fileManager.currentDirectoryPath + "/" +
-            self.dictionaryFilename
-        
-        // check if the file is writable
-        if fileManager.isWritableFile(atPath: dictionaryPath) {
-            let fileHandle: FileHandle? =
-                FileHandle(forUpdatingAtPath: dictionaryPath)
-            
-            if fileHandle == nil {
-                print("file could not be opened")
-            }
-            else {
-                // data will just be the word and frequency of 1 since it is a new word
-                let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
-                
-                // since this is a new word, we want to find the EOF and append the word/freq pair there
-                fileHandle?.seekToEndOfFile()
-                
-                // write the data to the file and close file after operation is complete
-                fileHandle?.write(data!)
-                fileHandle?.closeFile()
-            }
-        }
+        /*
+         self.dictionarySize += 1
+         
+         let fileManager = FileManager.default
+         
+         // get path to dictionary for inserting new word
+         let dictionaryPath: String
+         if fileManager.currentDirectoryPath == "/" {
+         dictionaryPath = self.dictionaryFilename
+         }
+         else {
+         dictionaryPath = fileManager.currentDirectoryPath + "/" +
+         self.dictionaryFilename
+         }
+         
+         
+         // check if the file is writable
+         if fileManager.isWritableFile(atPath: dictionaryPath) {
+         let fileHandle: FileHandle? =
+         FileHandle(forUpdatingAtPath: dictionaryPath)
+         
+         if fileHandle == nil {
+         print("file could not be opened")
+         }
+         else {
+         // data will just be the word and frequency of 1 since it is a new word
+         let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
+         
+         // since this is a new word, we want to find the EOF and append the word/freq pair there
+         fileHandle?.seekToEndOfFile()
+         
+         // write the data to the file and close file after operation is complete
+         fileHandle?.write(data!)
+         fileHandle?.closeFile()
+         }
+         }*/
     }
     
     // FIXME: VERY inefficient.
@@ -362,4 +463,3 @@ public class Trie {
         }
     }
 }
-
