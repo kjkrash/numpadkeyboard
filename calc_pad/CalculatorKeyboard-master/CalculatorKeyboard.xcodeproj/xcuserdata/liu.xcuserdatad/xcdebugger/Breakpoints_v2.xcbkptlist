@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
             endingLineNumber = "253"
-            landmarkName = "loadInterface()"
+            landmarkName = "updateViewConstraints()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "251"
             endingLineNumber = "251"
-            landmarkName = "loadInterface()"
+            landmarkName = "updateViewConstraints()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
