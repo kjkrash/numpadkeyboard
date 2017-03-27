@@ -46,8 +46,6 @@ class T9 {
     // Caches recent results
     internal var cache: Cache
     
-    internal var suggestionDepth: Int
-    
     init(dictionaryFilename: String,
          resetFilename: String,
          suggestionDepth: Int,
@@ -56,14 +54,42 @@ class T9 {
          cacheSize: Int) {
         assert(numResults > numCacheResults)
         self.trie = Trie(dictionaryFilename: dictionaryFilename, suggestionDepth: suggestionDepth)
-        self.cache = Cache(sizeLimit: cacheSize)
+        self.cache = Cache(sizeLimit: cacheSize, suggestionDepth: suggestionDepth)
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
-        self.suggestionDepth = suggestionDepth
     }
     
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
+        
+        var trieSuggestions = trie.getSuggestions(keySequence: keySequence)
+        var cacheSuggestions: [String] = []
+        var suggestions: [String] = []
+        if self.numCacheResults > 0 {
+            cacheSuggestions = cache.getSuggestions(keySequence: keySequence)
+        }
+        
+        // Both fill suggestion quota
+        if trieSuggestions.count >= self.numTrieResults &&
+            cacheSuggestions.count >= self.numCacheResults {
+            suggestions += trieSuggestions[0..<self.numTrieResults]
+            suggestions += cacheSuggestions[0..<self.numCacheResults]
+        } else if trieSuggestions.count >= self.numTrieResults {
+            // only Trie fills suggestion quota
+            let numTrieResultsToFetch = self.numTrieResults + (self.numCacheResults - cacheSuggestions.count)
+            suggestions += trieSuggestions[0..<numTrieResultsToFetch]
+            suggestions += cacheSuggestions
+        } else if cacheSuggestions.count >= self.numCacheResults {
+            // only cache fills suggestion quota
+            let numCacheResultsToFetch = self.numCacheResults + (self.numTrieResults - trieSuggestions.count)
+            suggestions += trieSuggestions
+            suggestions += cacheSuggestions[0..<numCacheResultsToFetch]
+        } else {
+            // Neither fill quota
+            suggestions += trieSuggestions
+            suggestions += cacheSuggestions
+        }
+        /*
         var suggestions = trie.getSuggestions(keySequence: keySequence)
         
         if suggestions.count > self.numTrieResults {
@@ -75,7 +101,9 @@ class T9 {
         }
         
         // merge trie suggestions with cached suggestions
-        suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence, suggestionDepth: suggestionDepth))
+        if self.numCacheResults > 0 {
+            suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence))
+        }
         
         // truncate excess results
         if suggestions.count > self.numResults {
@@ -84,7 +112,7 @@ class T9 {
                 suggestions.removeLast()
             }
         }
-        
+        */
         // remove duplicates from overlap between cache and getSuggestions() using a map
         // to keep track of seen values
         var dupeDetector = [String: Bool]()
@@ -104,6 +132,39 @@ class T9 {
                 dupeDetector[suggestions[i]] = true
             }
         }
+        
+        // Apply capitalization
+        // FIXME: very inefficient. cant figure out how to directly modify char in str
+        
+        var shiftExists = false
+        for shiftStatus in shiftSequence {
+            if shiftStatus {
+                shiftExists = true
+                break
+            }
+        }
+        
+        if shiftExists {
+            for (i, word) in suggestions.enumerated() {
+                var j = 0
+                var wordWithCaps: String = ""
+                while j < shiftSequence.count && j < word.length {
+                    if shiftSequence[j] {
+                        wordWithCaps.append(word[j].uppercased())
+                    } else {
+                        wordWithCaps.append(word[j])
+                    }
+                    j += 1
+                }
+                if shiftSequence.count < word.length {
+                    for k in j..<word.length {
+                        wordWithCaps.append(word[k])
+                    }
+                }
+                suggestions[i] = wordWithCaps
+            }
+        }
+        
         
         return suggestions
     }

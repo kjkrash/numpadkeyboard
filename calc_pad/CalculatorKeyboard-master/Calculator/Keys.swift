@@ -73,7 +73,7 @@ class KeysControl: NSObject {
         storedKeySequence = ""
         storedBoolSequence = [Bool]()
         numberJustPressed = ""
-        t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 10, numResults: 4, numCacheResults: 0, cacheSize: 0)
+        t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 8, numResults: 4, numCacheResults: 1, cacheSize: 50)
         super.init()
     }
     
@@ -94,8 +94,11 @@ class KeysControl: NSObject {
             intKS.append(Int(String(ch))!)
         }
         suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
-        NSLog("Suggestions size in Keys.swift is: ")
-        NSLog(String(suggestions.count))
+        NSLog("Suggestions size in Keys.swift is: \(suggestions.count)")
+        NSLog("Suggestions:")
+        for word in suggestions {
+            NSLog(word)
+        }
         return suggestions
     }
     
