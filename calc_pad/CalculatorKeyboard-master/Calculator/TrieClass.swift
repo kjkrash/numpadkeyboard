@@ -308,7 +308,7 @@ public class Trie {
         return suggestions
     }
     
-    internal func wordExists(word : String, keySequence: [Int]) -> Bool {
+    internal func wordExists(_ word : String, keySequence: [Int]) -> Bool {
         let (node, _) = self.getPrefixLeaf(keySequence)
         if node != nil {
             if node!.isLeaf() {
@@ -334,27 +334,27 @@ public class Trie {
         var newWeight = -1
         let keySequence = getKeySequence(word: word)
         let prefixNode = getPrefixLeaf(keySequence).0
-        if wordExists(word: word, keySequence: keySequence) {
+        if wordExists(word, keySequence: keySequence) {
             for wordWeight in prefixNode!.wordWeights {
                 if wordWeight.word == word {
                     newWeight = wordWeight.weight + 1
                     wordWeight.weight = newWeight
-                    updateWeightInFile(word: word)
+                    updateWeightInFile(word)
                     break
                 }
             }
         }
         else {
-            newWeight = 1
-            insert(word, weight: newWeight)
-            insertWordInFile(word: word)
+            newWeight = WEIGHT_DEFAULT
+            insert(word)
+            insertWordInFile(word)
         }
         return newWeight
     }
     
     // Assumes presence of word in dictionary file. Thus, should only be called
     // after the word has been found in the Trie.
-    internal func insertWordInFile(word: String) {
+    internal func insertWordInFile(_ word: String) {
         do {
             //let data = try Data(contentsOf: self.dictURL)
             let fileHandle = try FileHandle(forUpdating: self.dictURL)
@@ -366,48 +366,10 @@ public class Trie {
             print("ERROR from insertWordInFile")
             return
         }
-
-        
-        /*
-         self.dictionarySize += 1
-         
-         let fileManager = FileManager.default
-         
-         // get path to dictionary for inserting new word
-         let dictionaryPath: String
-         if fileManager.currentDirectoryPath == "/" {
-         dictionaryPath = self.dictionaryFilename
-         }
-         else {
-         dictionaryPath = fileManager.currentDirectoryPath + "/" +
-         self.dictionaryFilename
-         }
-         
-         
-         // check if the file is writable
-         if fileManager.isWritableFile(atPath: dictionaryPath) {
-         let fileHandle: FileHandle? =
-         FileHandle(forUpdatingAtPath: dictionaryPath)
-         
-         if fileHandle == nil {
-         print("file could not be opened")
-         }
-         else {
-         // data will just be the word and frequency of 1 since it is a new word
-         let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
-         
-         // since this is a new word, we want to find the EOF and append the word/freq pair there
-         fileHandle?.seekToEndOfFile()
-         
-         // write the data to the file and close file after operation is complete
-         fileHandle?.write(data!)
-         fileHandle?.closeFile()
-         }
-         }*/
     }
     
     // FIXME: VERY inefficient.
-    internal func updateWeightInFile(word: String) {
+    internal func updateWeightInFile(_ word: String) {
         let urlOfDict = URL(fileURLWithPath: self.dictionaryFilename)
         do {
             let dictStr = try
