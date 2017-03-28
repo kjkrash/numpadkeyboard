@@ -721,6 +721,12 @@ extension KeyboardViewController {
         let proxy = textDocumentProxy as UITextDocumentProxy
         
         let input: String? = operation.currentTitle
+        
+        if(one.mode == "numbers"){
+            proxy.insertText(input!)
+            return
+        }
+        
         var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
@@ -739,7 +745,7 @@ extension KeyboardViewController {
             
         } else {
             // Call inputSymbols
-            if predict1.currentTitle == "@"{
+            if predict1.currentTitle == "@" || predict1.currentTitle == "/" {
                 inputSymbols(operation)
             }
         }
@@ -775,8 +781,8 @@ extension KeyboardViewController {
             predict2.setTitle("", for: .normal)
             predict3.setTitle("", for: .normal)
             predict4.setTitle("", for: .normal)
-        } else if predict1.currentTitle == "@" {
-            proxy.insertText("@")
+        } else if (predict1.currentTitle == "@" || predict1.currentTitle == "/") {
+            proxy.insertText(predict1.currentTitle!)
         } else {
             proxy.insertText(" ")
         }
@@ -930,8 +936,13 @@ extension KeyboardViewController {
     //Insert symbols - TODO: probably can replace this by calling predictionSelect
     @IBAction func inputSymbols(_ sender: AnyObject) {
         let proxy = textDocumentProxy as UITextDocumentProxy
+        let input: String? = sender.currentTitle
         
-        let input: String? = predict1.currentTitle
+        if(one.mode == "numbers"){
+            proxy.insertText(input!)
+            return
+        }
+        
         var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
