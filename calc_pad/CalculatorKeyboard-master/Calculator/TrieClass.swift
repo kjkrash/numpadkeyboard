@@ -384,6 +384,7 @@ public class Trie {
     // If word does not exist in Trie, it is added with base weight
     func updateWeight(word: String, weight: Int) -> Int {
         var newWeight = -1
+        NSLog("word: " + word)
         let keySequence = getKeySequence(word: word)
         let prefixNode = getPrefixLeaf(keySequence).0
         

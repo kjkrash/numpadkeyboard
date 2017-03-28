@@ -12,7 +12,8 @@ let lettersToDigits = ["a" : 2, "b" : 2, "c" : 2,
 
 func getKeySequence(word: String) -> [Int] {
     var keySequence = [Int]()
-    for char in word.characters {
+    var lowerWord = word.lowercased()
+    for char in lowerWord.characters {
         assert(lettersToDigits[String(char)] != nil )
         keySequence.append(lettersToDigits[String(char)]!)
     }
@@ -133,7 +134,9 @@ class KeysControl: NSObject {
     }
     
     func wordSelected(word: String){
+        NSLog("word selected")
         t9Communicator.rememberChoice(word: word)
+        NSLog("after rc")
     }
     
     func toggle(mode: String, tag: Int) -> String {

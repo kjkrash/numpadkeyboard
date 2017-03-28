@@ -575,7 +575,6 @@ extension KeyboardViewController {
         
         // Render remaining suggestions
         if suggestionsToRender[1] != "" {
-            
             predict2.setTitle(suggestionsToRender[1], for: .normal)
             predict2.setTitleColor(Color.black, for: .normal)
         }
@@ -602,6 +601,7 @@ extension KeyboardViewController {
                         }
                     }
                 }
+                // Set the text for the top panel buttons
                 char1.setTitle(currentKeyMapping[0], for: .normal)
                 char1.setTitleColor(Color.black, for: .normal)
                 char2.setTitle(currentKeyMapping[1], for: .normal)
@@ -646,14 +646,14 @@ extension KeyboardViewController {
     /// When user specified accurate alphabet character in top panel
     @IBAction func didSelectCurrentChar(_ charButton: UIButton) {
         // OPTIONAL FILTERING OF SUGGESTION: MUST DECIDE WHAT METHOD WE WANT TO USE
-        //if let title = charButton.currentTitle {
-        //    suggestions = filterSuggestions(withCurrentChar: title)
-        //}
-        let proxy = textDocumentProxy as UITextDocumentProxy
-
-        proxy.insertText(charButton.currentTitle!)
-        // TODO: ^this causes bugs because of how text renders immediately, but
+        if let title = charButton.currentTitle {
+            suggestions = filterSuggestions(withCurrentChar: title)
+        }
+        
+        // TODO: this caused bugs because of how text renders immediately, but
         // will be fixed eventually
+        //let proxy = textDocumentProxy as UITextDocumentProxy
+        //proxy.insertText(charButton.currentTitle!)
     }
     
 
@@ -723,14 +723,18 @@ extension KeyboardViewController {
         let input: String? = operation.currentTitle
         
         if(one.mode == "numbers"){
+            // If the mode is numbers, just insert the character.
             proxy.insertText(input!)
             return
         }
         
         var s = proxy.documentContextBeforeInput
         
+        // Checks that the prediction is not empty (in which case, shouldn't insert
+        // anything) and that it is not in punctuation mode (in which case, should
+        // go to 'else' and inputSymbols call.
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
-            keyscontrol.wordSelected(word: input!) // update in trie
+            keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
             var num = keyscontrol.storedKeySequence.length
             
             // Replace what's currently in text field of word being typed
@@ -773,7 +777,6 @@ extension KeyboardViewController {
         
         let proxy = textDocumentProxy as UITextDocumentProxy
         if predict1.currentTitle != "" && predict1.currentTitle != "@" {
-            keyscontrol.wordSelected(word: predict1.currentTitle!)
             // Calls predictionSelect to do most of the work.
             predictionSelect(predict1)
             keyscontrol.clear()
@@ -838,7 +841,7 @@ extension KeyboardViewController {
     }
     
     //Backspace in active textfield
-    @IBAction func shouldDeleteText(/*_ backspaceKey: RaisedButton*/){
+    @IBAction func shouldDeleteText(){
         // Pass textfield controller back to keyboard so keyboard can control active textfield in any apps
         (textDocumentProxy as UIKeyInput).deleteBackward()
     }
@@ -868,15 +871,6 @@ extension KeyboardViewController {
     // the keyscontrol.t9Backspace function. That function will get new suggestions which
     // will be returned here and rendered on the suggestion buttons.
     @IBAction func shouldDeleteTextInDisplay() {
-        //        if (display?.text)! == "" && (predict1.currentTitle?.length)! <= 1 {
-        //            keyscontrol.clear()
-        //            predict1.setTitle("", for: .normal)
-        //            predict2.setTitle("", for: .normal)
-        //            predict3.setTitle("", for: .normal)
-        //            predict4.setTitle("", for: .normal)
-        //            return
-        //        }
-        
         let proxy = textDocumentProxy as UITextDocumentProxy
         if keyscontrol.storedKeySequence.length == 0 {
             if(proxy.hasText){
@@ -936,8 +930,9 @@ extension KeyboardViewController {
     //Insert symbols - TODO: probably can replace this by calling predictionSelect
     @IBAction func inputSymbols(_ sender: AnyObject) {
         let proxy = textDocumentProxy as UITextDocumentProxy
-        let input: String? = sender.currentTitle
+        let input: String? = predict1.currentTitle
         
+        // If in numbers mode, just insert into field
         if(one.mode == "numbers"){
             proxy.insertText(input!)
             return
@@ -946,7 +941,7 @@ extension KeyboardViewController {
         var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
-            keyscontrol.wordSelected(word: input!)
+            keyscontrol.wordSelected(word: input!.lowercased())
             var num = keyscontrol.storedKeySequence.length
             if(s?[(s?.length)!-1] != " "){
                 while(num > 0 && s?[(s?.length)!-1] != " "){
@@ -966,7 +961,7 @@ extension KeyboardViewController {
             }
             
             var word = keyscontrol.t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: keyscontrol.storedBoolSequence)[0]
-            keyscontrol.wordSelected(word: word)
+            keyscontrol.wordSelected(word: word.lowercased())
             var num = keyscontrol.storedKeySequence.length
             if(s?[(s?.length)!-1] != " "){
                 while(num > 0 && s?[(s?.length)!-1] != " "){
@@ -994,9 +989,9 @@ extension KeyboardViewController {
     @IBAction func returnKeyPressed() {
         let proxy = textDocumentProxy as UITextDocumentProxy
         
-        if let input = display?.text as String? {
+        if let input = predict1.currentTitle as String? {
             proxy.insertText(input + " ")
-            keyscontrol.wordSelected(word: input)
+            keyscontrol.wordSelected(word: input.lowercased())
             //NOTE: this will add a space by default, or else it gets complicated and confusing
             // update weights because a word has effectively been chosen
         }
