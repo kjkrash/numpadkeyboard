@@ -745,7 +745,7 @@ extension KeyboardViewController {
             
         } else {
             // Call inputSymbols
-            if predict1.currentTitle == "@" || predict1.currentTitle == "/" {
+            if predict1.currentTitle == "@" || predict1.currentTitle == "+" {
                 inputSymbols(operation)
             }
         }
@@ -781,7 +781,7 @@ extension KeyboardViewController {
             predict2.setTitle("", for: .normal)
             predict3.setTitle("", for: .normal)
             predict4.setTitle("", for: .normal)
-        } else if (predict1.currentTitle == "@" || predict1.currentTitle == "/") {
+        } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
             proxy.insertText(predict1.currentTitle!)
         } else {
             proxy.insertText(" ")
@@ -820,19 +820,19 @@ extension KeyboardViewController {
         eight.switchMode()
         nine.switchMode()
         spaceButton.switchMode()
-        syms_1.setTitle("+", for: .normal)
+        syms_1.setTitle("=", for: .normal)
         syms_1.setTitleColor(Color.black, for: .normal)
-        syms_2.setTitle("-", for: .normal)
+        syms_2.setTitle(".", for: .normal)
         syms_2.setTitleColor(Color.black, for: .normal)
-        syms_3.setTitle("*", for: .normal)
+        syms_3.setTitle("%", for: .normal)
         syms_3.setTitleColor(Color.black, for: .normal)
-        predict1.setTitle("/", for: .normal)
+        predict1.setTitle("+", for: .normal)
         predict1.setTitleColor(Color.black, for: .normal)
-        predict2.setTitle("%", for: .normal)
+        predict2.setTitle("-", for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
-        predict3.setTitle("=", for: .normal)
+        predict3.setTitle("*", for: .normal)
         predict3.setTitleColor(Color.black, for: .normal)
-        predict4.setTitle("^", for: .normal)
+        predict4.setTitle("/", for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
 
     }
