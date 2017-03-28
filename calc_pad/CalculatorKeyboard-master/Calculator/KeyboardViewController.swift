@@ -742,7 +742,6 @@ extension KeyboardViewController {
             if predict1.currentTitle == "@"{
                 inputSymbols(operation)
             }
-            return
         }
         
         // Clear stored information in keys controller
