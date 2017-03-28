@@ -3,13 +3,15 @@
 //  Numpad Keyboard
 //
 
-
 import UIKit
 import Material //Find other 3rd-party dependencies here -> cocoapods.org
 
-//{CONTROL UI}
 class KeyboardViewController: UIInputViewController {
-    //MARK: Outlets
+    ////////////////////////////////////////////
+    //////////// VARIABLE AND OUTLET ///////////
+    ////////////   INITIALIZATION   ////////////
+    ////////////////////////////////////////////
+    
     var shiftBool = false
     var turnOff = false
     @IBOutlet var topRegion: UIView!
@@ -134,15 +136,12 @@ class KeyboardViewController: UIInputViewController {
         }
     }
     
-    //MARK: Variables
     var keyboardView: UIView!
     var shouldClearDisplayBeforeInserting: Bool = true
     var keyscontrol = KeysControl()
     var motherViewsHaveConstrainted: Bool = false
     var suggestions: [String] = [] {
         didSet{
-            //NOTE: CHANGE THE SHIFT STATES SO IT REFLECTS CORRECTLY
-            //maybe make a function
             predict1.setTitle(suggestions[0], for: .normal)
             predict2.setTitle(suggestions[1], for: .normal)
             predict3.setTitle(suggestions[2], for: .normal)
@@ -165,9 +164,11 @@ class KeyboardViewController: UIInputViewController {
             predict20.setTitle(suggestions[19], for: .normal)
         }
     }
-    //    var predictionButtons: [RoundButton] = [RoundButton(predictionIndex: 0)]
     
-    //MARK: Life Cycles
+    ////////////////////////////////////////////
+    ///////////// KEYBOARD AND VIEW ////////////
+    /////////////     LIFE CYCLES   ////////////
+    ////////////////////////////////////////////
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,10 +182,11 @@ class KeyboardViewController: UIInputViewController {
     }
     
     func handleLongPress(_ gestureRecognizer: UIGestureRecognizer) {
-        //this goes super fast so we can change it by maybe adding a delay or something
         textDocumentProxy.deleteBackward()
+        //src: http://stackoverflow.com/questions/25633189/ios-8-custom-keyboard-hold-button-to-delete
+
     }
-    //code above from: http://stackoverflow.com/questions/25633189/ios-8-custom-keyboard-hold-button-to-delete
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let expandedHeight:CGFloat = 270
@@ -477,65 +479,62 @@ class KeyboardViewController: UIInputViewController {
 }
 
 extension KeyboardViewController {
-    //MARK: Actions
-    // Control nine main keys
+    ////////////////////////////////////////////
+    //////////// CONTROL OF THE KEYS ///////////
+    ////////////////////////////////////////////
     
-    // When a key is pressed, this function is called.
-    // If the mode is "numbers" (if it is in number mode where the buttons all show up as numbers),
-    // it will call the regular keyscontrol.toggle function. This function will add the number
-    // to the working display.text and render it.
+    // When one of the 9 central keys is pressed, proceedNineKeyOperations is called.
+    // If the mode is "numbers", it will call the regular keyscontrol.toggle 
+    // function. This function will add the number to the text field.
     //
-    // If the mode is "alphabets", it will call keyscontrol.t9Toggle. This function uses the t9Driver
-    // class to getSuggestions of words. Once that function returns, this function will iterate through
-    // that array and change the titles of the suggestion buttons on the keyboard to the suggestions.
+    // If the mode is "alphabets", it will call keyscontrol.t9Toggle. This 
+    // function uses the t9Driver class to getSuggestions of words. Once that 
+    // function returns, this function will iterate through that array and 
+    //change the titles of the predict buttons on the keyboard to the suggestions.
+    // TO DO: 0 doesn't work for some reason?
     @IBAction func proceedNineKeyOperations(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
-            
             let input: String? = operation.currentTitle
+            NSLog(String(describing: operation.currentTitle))
+            NSLog(input!)
             
             if input != nil {
-                //proxy.insertText(input + " ") //this line inserts the text into the field (with a space)
-                
                 proxy.insertText(input!)
-                return
             }
             return
         }
+        
+        // If shiftState is on, toggle off (should only stay on for one click).
         var shiftState = false
         if(operation.shiftMode == "on"){
             toggleShift(shift)
             shiftState = true
         }
+        
         var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
+        
+        // Displays letters on key that was pressed
         showCurrentKeyMapping(operation)
+        
+        // For suggestions not returned, fill expanded suggestions array with empty strings.
         let max = 20
-        print("suggestions to render elements count -> \(suggestionsToRender.count)")
         if suggestionsToRender.count < max {
             for _ in 0..<max - suggestionsToRender.count {
                 suggestionsToRender.append("")
             }
         }
         
+        // Set suggestions (see "didSet" above)
         self.suggestions = suggestionsToRender
         
-        //let max = 4
-        
-        //if suggestionsToRender.count > max {
-        //    for _ in 0..<suggestionsToRender.count - max {
-        //        suggestionsToRender.removeLast()
-        //    }
-        //}
-        //else if suggestionsToRender.count < max {
-        //    for _ in 0..<max - suggestionsToRender.count {
-        //        suggestionsToRender.append("")
-        //    }
-        //}
+        // Fill in the 4 prediction buttons
         if suggestionsToRender[0] != "" {
             predict1.setTitle(suggestionsToRender[0], for: .normal)
             predict1.setTitleColor(Color.black, for: .normal)
             let proxy = textDocumentProxy as UITextDocumentProxy
-            // NOTE: DOES NOT WORK RIGHT NOW
+            
+            // Continually replace rendered text thus far with first suggestion.
             if(suggestionsToRender[0].length == keyscontrol.storedKeySequence.length){
                 var num = keyscontrol.storedKeySequence.length
                 var s = proxy.documentContextBeforeInput
@@ -551,10 +550,10 @@ extension KeyboardViewController {
                 //This case causes bugs - could be eliminated by having a weighting algorithm
                 //guarantee there's always going to be a suggestion of that length...
                 //Unless we should always just show what's first idk?
-//                proxy.deleteBackward()
-//
-//                proxy.insertText(suggestionsToRender[0][0])
-                //Temp solution: just show truncated version of first sugg
+
+                //Temp solution: If the length of the first suggestion 
+                // (which is what is going to render as user types)
+                // is longer than what they've typed so far, truncate it.
                 var num = keyscontrol.storedKeySequence.length
                 var s = proxy.documentContextBeforeInput
                 if(s?[(s?.length)!-1] != " "){
@@ -571,9 +570,10 @@ extension KeyboardViewController {
                     shiftedWord.characters.removeLast()
                 }
                 proxy.insertText(shiftedWord)
-
             }
         }
+        
+        // Render remaining suggestions
         if suggestionsToRender[1] != "" {
             
             predict2.setTitle(suggestionsToRender[1], for: .normal)
@@ -614,7 +614,7 @@ extension KeyboardViewController {
         }
     }
 
-    /// When press backspace, show previous key mapping
+    /// When press backspace, show previous key mapping of whatever key was pressed
     func showPreviousKeyMapping() {
         if let previousLastChar = keyscontrol.storedKeySequence.characters.last {
             print("previousLastChar -> \(previousLastChar)")
@@ -645,16 +645,20 @@ extension KeyboardViewController {
     
     /// When user specified accurate alphabet character in top panel
     @IBAction func didSelectCurrentChar(_ charButton: UIButton) {
+        // OPTIONAL FILTERING OF SUGGESTION: MUST DECIDE WHAT METHOD WE WANT TO USE
         //if let title = charButton.currentTitle {
         //    suggestions = filterSuggestions(withCurrentChar: title)
         //}
         let proxy = textDocumentProxy as UITextDocumentProxy
 
         proxy.insertText(charButton.currentTitle!)
+        // TODO: ^this causes bugs because of how text renders immediately, but
+        // will be fixed eventually
     }
     
 
-    
+    // TODO: don't remember exactly what this is for right now...
+    // Most of this is covered in inputSymbols - so maybe delete this function.
     @IBAction func punctuationKeys(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
@@ -662,8 +666,6 @@ extension KeyboardViewController {
             let input: String? = operation.currentTitle
             
             if input != nil {
-                //proxy.insertText(input + " ") //this line inserts the text into the field (with a space)
-                
                 proxy.insertText(input!)
                 return
             }
@@ -680,39 +682,41 @@ extension KeyboardViewController {
         predict3.setTitleColor(Color.black, for: .normal)
         predict4.setTitle(".", for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
-        //NOTE: CURRENTLY DOESN'T WORK
-//        proxy.insertText("@")
-        
     }
     
+    // Weight word selected in algorithm, replace what's in field with selected word.
     @IBAction func predictionSelect(_ operation: RoundButton){
-        //effectively the same as spaceselect, right?
-        //pasted below is the same code
         let proxy = textDocumentProxy as UITextDocumentProxy
         
         let input: String? = operation.currentTitle
+        var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
-            //proxy.insertText(input + " ") //this line inserts the text into the field (with a space)
-            keyscontrol.wordSelected(word: input!)
-            //should we have a function that's like returnKeySequence?
-            keyscontrol.storedInputs.append(input! + " ")
-            if(input != predict1.currentTitle){
-                proxy.insertText(input! + " ")
-            } else {
-                proxy.insertText(" ")
-            }
+            keyscontrol.wordSelected(word: input!) // update in trie
+            var num = keyscontrol.storedKeySequence.length
             
-        }
-        else {
+            // Replace what's currently in text field of word being typed
+            if(s?[(s?.length)!-1] != " "){
+                while(num > 0 && s?[(s?.length)!-1] != " "){
+                    proxy.deleteBackward()
+                    num -= 1
+                    s = proxy.documentContextBeforeInput //re capture so we don't go over
+                }
+            }
+            proxy.insertText(input! + " ") // insert word
+            
+        } else {
+            // Call inputSymbols
             if predict1.currentTitle == "@"{
                 inputSymbols(operation)
             }
-            
             return
         }
+        
+        // Clear stored information in keys controller
         keyscontrol.clear()
         
+        // Reset prediction button
         predict1.setTitle("", for: .normal)
         predict2.setTitle("", for: .normal)
         predict3.setTitle("", for: .normal)
@@ -722,30 +726,38 @@ extension KeyboardViewController {
     // When space is pressed, the user effectively selects the first suggestion button's suggestion.
     // The input text field will then display that word (and a space), and the working keySequence
     // will be cleared. The function will also call t9Driver's updateWeights function with the correct
-    // word and keySequence (TODO: Still need a way to store this and communicate it to that level).
+    // word and keySequence.
     @IBAction func spaceSelect(_ operation: RoundButton){
+        // If it's in numbers mode, it should just render a "0".
+        if (operation.mode == "numbers"){
+            proceedNineKeyOperations(operation)
+            return
+        }
+        
         let proxy = textDocumentProxy as UITextDocumentProxy
         if predict1.currentTitle != "" && predict1.currentTitle != "@" {
             keyscontrol.wordSelected(word: predict1.currentTitle!)
-            keyscontrol.storedInputs.append(predict1.currentTitle! + " ")
+            // Calls predictionSelect to do most of the work.
+            predictionSelect(predict1)
             keyscontrol.clear()
             predict1.setTitle("", for: .normal)
             predict2.setTitle("", for: .normal)
             predict3.setTitle("", for: .normal)
             predict4.setTitle("", for: .normal)
+        } else if predict1.currentTitle == "@" {
+            proxy.insertText("@")
+        } else {
+            proxy.insertText(" ")
         }
-        proxy.insertText(" ")
     }
     
-    // below is the manual entry mode
+    // below is fn declaration for manual entry mode
     //    @IBAction func proceedNineKeyOperations(_ operation: RoundButton) {
     //        display.text = keyscontrol.toggle(mode: operation.mode, tag: operation.tag)
     //    }
     
-    //ERROR SUMMARY: because of the way that rendering it in the text field works, it's hard to either 1) stop deleting
-    // until there's a space (haven't figured that out yet) 2) not replace a space character/tell the program to ignore
-    // it
     
+    // Called when user presses shift - TODO: VERY SLOW FOR SOME REASON
     @IBAction func toggleShift(_ toggleKey: RaisedButton) {
         toggleKey.switchColor()
         one.shift()
@@ -772,11 +784,13 @@ extension KeyboardViewController {
         nine.switchMode()
         spaceButton.switchMode()
     }
+    
     //Backspace in active textfield
     @IBAction func shouldDeleteText(/*_ backspaceKey: RaisedButton*/){
         // Pass textfield controller back to keyboard so keyboard can control active textfield in any apps
         (textDocumentProxy as UIKeyInput).deleteBackward()
     }
+    
     //Dismiss keyboard
     @IBAction func shouldDismissKeyboard() {
         if extensionView.isHidden {
@@ -797,7 +811,7 @@ extension KeyboardViewController {
         keyscontrol.clear()
     }
     
-    //Backspace in display
+    // Backspace in display
     // This means that we now need to render suggestions one depth less. Thus, it calls
     // the keyscontrol.t9Backspace function. That function will get new suggestions which
     // will be returned here and rendered on the suggestion buttons.
@@ -818,13 +832,15 @@ extension KeyboardViewController {
             }
             return
         }
+        
         shouldDeleteText()
+        
         var suggestionsUpdate = [String]()
         suggestionsUpdate = keyscontrol.t9Backspace()
         
+        // Reset predictions
         predict1.setTitle(suggestionsUpdate[0], for: .normal)
         predict1.setTitleColor(Color.black, for: .normal)
-        
         predict2.setTitle(suggestionsUpdate[1], for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
         predict3.setTitle(suggestionsUpdate[2], for: .normal)
@@ -838,17 +854,10 @@ extension KeyboardViewController {
             }
         }
         suggestions = suggestionsUpdate
-        
-        
-        //        predict1.renderSuggestions(sugg: suggestionsUpdate[0])
-        //        predict2.renderSuggestions(sugg: suggestionsUpdate[1])
-        //        predict3.renderSuggestions(sugg: suggestionsUpdate[2])
-        //        predict4.renderSuggestions(sugg: suggestionsUpdate[3])
-        //        predict2.title = suggestionsUpdate[1]
-        //        predict3.title = suggestionsUpdate[2]
-        // render new suggestions in button
     }
     
+    // TODO: NOT USED AS OF NOW, FIGURE OUT MANUAL MODE THINGS FIRST 
+    // Filters suggestions by letter pressed.
     func filterSuggestions(withCurrentChar char: String) -> [String] {
         var filteredSuggestions = suggestions.filter { suggestion in
             print("String(describing: suggestion.lowercased().characters.last) -> \(String(describing: suggestion.lowercased().characters.last)) \r\n char -> \(char)")
@@ -866,51 +875,56 @@ extension KeyboardViewController {
         return filteredSuggestions
     }
 
-    
+    // TODO: I DONT THINK THIS IS USED RIGHT NOW
     func shouldClearPreviousWordInTextField() {
         let proxy = textDocumentProxy as UITextDocumentProxy
-        //        if let lastWordRange = proxy. proxy.text?.range(of: " ") {
-        //            proxy.text?.removeSubrange(lastWordRange.lowerBound..<(proxy.text?.endIndex)!)
-        //        }else{
-        //            proxy.text = ""
-        //            keyscontrol.clear()
-        //        }
         proxy.deleteBackward()
     }
     
-    //Insert symbols
-    @IBAction func inputSymbols(_ sender: AnyObject
-        ) {
-        //        display.text = display.text! + (sender.titleLabel?.text)!
+    //Insert symbols - TODO: probably can replace this by calling predictionSelect
+    @IBAction func inputSymbols(_ sender: AnyObject) {
         let proxy = textDocumentProxy as UITextDocumentProxy
         
         let input: String? = predict1.currentTitle
+        var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
-            //proxy.insertText(input + " ") //this line inserts the text into the field (with a space)
-            
             keyscontrol.wordSelected(word: input!)
-            //should we have a function that's like returnKeySequence?
-            keyscontrol.storedInputs.append(input! + sender.currentTitle!!)
+            var num = keyscontrol.storedKeySequence.length
+            if(s?[(s?.length)!-1] != " "){
+                while(num > 0 && s?[(s?.length)!-1] != " "){
+                    proxy.deleteBackward()
+                    num -= 1
+                    s = proxy.documentContextBeforeInput //re capture so we don't go over
+                }
+            }
             proxy.insertText(input! + sender.currentTitle!!)
         }
         else if keyscontrol.storedKeySequence.length > 1 {
             NSLog(String(keyscontrol.storedKeySequence))
-            keyscontrol.storedKeySequence.characters.removeLast()
-            var bs = [Bool]()
+            //keyscontrol.storedKeySequence.characters.removeLast()
             var intKS = [Int]()
             for ch in keyscontrol.storedKeySequence.characters {
                 intKS.append(Int(String(ch))!)
             }
             
-            var word = keyscontrol.t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: bs)[0]
+            var word = keyscontrol.t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: keyscontrol.storedBoolSequence)[0]
             keyscontrol.wordSelected(word: word)
-            keyscontrol.storedInputs.append(word + sender.currentTitle!!)
+            var num = keyscontrol.storedKeySequence.length
+            if(s?[(s?.length)!-1] != " "){
+                while(num > 0 && s?[(s?.length)!-1] != " "){
+                    proxy.deleteBackward()
+                    num -= 1
+                    s = proxy.documentContextBeforeInput //re capture so we don't go over
+                }
+            }
             proxy.insertText(word + sender.currentTitle!!)
         } else {
+            proxy.deleteBackward()
             proxy.insertText(sender.currentTitle!!) //prob don't want added space
             return
         }
+        
         keyscontrol.clear()
         
         predict1.setTitle("", for: .normal)
