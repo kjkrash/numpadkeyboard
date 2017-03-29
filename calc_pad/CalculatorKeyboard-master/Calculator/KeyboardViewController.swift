@@ -1058,9 +1058,27 @@ extension KeyboardViewController {
         
     
         var proxy = textDocumentProxy as UITextDocumentProxy
-// new line method 1       proxy.insertTexts("\n")
-// new line method 2       proxy.insertText("" + "")
-        proxy.insertText("  \n  ")
+        if (one.mode == "numbers"){
+            proxy.insertText("\n")
+            return
+        }
+        
+        if predict1.currentTitle != "" && predict1.currentTitle != "@" {
+            // Calls predictionSelect to do most of the work.
+            predictionSelect(predict1)
+            proxy.deleteBackward()
+            proxy.insertText("\n")
+            keyscontrol.clear()
+            predict1.setTitle("", for: .normal)
+            predict2.setTitle("", for: .normal)
+            predict3.setTitle("", for: .normal)
+            predict4.setTitle("", for: .normal)
+        } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
+            proxy.insertText(predict1.currentTitle! + "\n")
+        } else {
+            proxy.insertText("\n")
+        }
+
         
     }
 }
