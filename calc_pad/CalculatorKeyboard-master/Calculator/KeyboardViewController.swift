@@ -917,20 +917,36 @@ extension KeyboardViewController {
                 
                 // fetch all text before the cursor
                 var text = proxy.documentContextBeforeInput
-                NSLog("Text is: \(text)")
+                //NSLog("Text is: \(text)")
+                
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
                 NSLog("Words is: \(words)")
                 
-                // while (words?[(words?.count)!-1])! == "" {
-                //     shouldDeleteText()
-                //     text = proxy.documentContextBeforeInput
-                //     words = text?.components(separatedBy: " ")
-                // }
-                
                 // reload previous keysequence
-                keyscontrol.storedKeySequence = (words?[(words?.count)!-1])!
+                let prevWord = (words?[(words?.count)!-1])!
+                NSLog("prevWord is: \(prevWord)")
+                
+                for i in 0...prevWord.length - 1 {
+                    let char = prevWord[i]
+                    NSLog("char is: \(char)")
+                    keyscontrol.storedKeySequence.append(String(lettersToDigits[char]!))
+                }
+                
                 NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
+                
+                for i in 0...prevWord.length - 1 {
+                    let ch = prevWord[i]
+                    NSLog("ch is: \(ch)")
+                    
+                    if ch >= "A" && ch <= "Z" {
+                        NSLog("capital \(ch)")
+                        keyscontrol.storedBoolSequence.append(true)
+                    } else if ch >= "a" && ch <= "z" {
+                        NSLog("lowercase \(ch)")
+                        keyscontrol.storedBoolSequence.append(false)
+                    }
+                }
             }
             
             return

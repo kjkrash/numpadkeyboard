@@ -118,18 +118,22 @@ class KeysControl: NSObject {
         if storedKeySequence.characters.count > 0 {
             NSLog("Stored keyseq is: \(storedKeySequence)")
             NSLog("Num char in stored keyseq: \(String(storedKeySequence.characters.count))")
-            NSLog("Stored boolseq is: \(String(storedBoolSequence.count))")
+            NSLog("Stored boolseq is: \(storedBoolSequence)")
+            NSLog("Num stored boolseq is: \(String(storedBoolSequence.count))")
             
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
             NSLog("keyseq after remove: \(storedKeySequence)")
             
             storedBoolSequence.removeLast()
+            NSLog("Reached 1")
             
             var intKS = [Int]()
             
             for ch in storedKeySequence.characters {
+                NSLog("Reached 2")
                 intKS.append(Int(String(ch))!)
+                NSLog("Reached 3")
             }
             
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
