@@ -111,16 +111,23 @@ class KeysControl: NSObject {
     // getSuggestions to get a new list.
     // NOTE: This gets messed up with number mode so it's something we need to fix.
     func t9Backspace() -> Array<String> {
+        NSLog("Entering t9Backspace...")
+        
         var suggestions = [String]()
+        
         if storedKeySequence.characters.count > 0 {
-            NSLog(storedKeySequence)
-            NSLog(String(storedKeySequence.characters.count))
-            NSLog(String(storedBoolSequence.count))
+            NSLog("Stored keyseq is: \(storedKeySequence)")
+            NSLog("Num char in stored keyseq: \(String(storedKeySequence.characters.count))")
+            NSLog("Stored boolseq is: \(String(storedBoolSequence.count))")
+            
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
-            NSLog(storedKeySequence)
+            NSLog("keyseq after remove: \(storedKeySequence)")
+            
             storedBoolSequence.removeLast()
+            
             var intKS = [Int]()
+            
             for ch in storedKeySequence.characters {
                 intKS.append(Int(String(ch))!)
             }

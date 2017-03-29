@@ -909,10 +909,30 @@ extension KeyboardViewController {
     // will be returned here and rendered on the suggestion buttons.
     @IBAction func shouldDeleteTextInDisplay() {
         let proxy = textDocumentProxy as UITextDocumentProxy
+        
         if keyscontrol.storedKeySequence.length == 0 {
-            if(proxy.hasText){
+            if proxy.hasText {
+                // delete the space in between words
                 shouldDeleteText()
+                
+                // fetch all text before the cursor
+                var text = proxy.documentContextBeforeInput
+                NSLog("Text is: \(text)")
+                // split by whitespace into an array
+                var words = text?.components(separatedBy: CharacterSet.whitespaces)
+                NSLog("Words is: \(words)")
+                
+                // while (words?[(words?.count)!-1])! == "" {
+                //     shouldDeleteText()
+                //     text = proxy.documentContextBeforeInput
+                //     words = text?.components(separatedBy: " ")
+                // }
+                
+                // reload previous keysequence
+                keyscontrol.storedKeySequence = (words?[(words?.count)!-1])!
+                NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
             }
+            
             return
         }
         
