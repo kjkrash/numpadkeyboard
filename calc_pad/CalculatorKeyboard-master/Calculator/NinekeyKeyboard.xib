@@ -343,7 +343,7 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="toggleShift:" destination="-1" eventType="touchDragInside" id="IAV-fe-1jh"/>
+                                <action selector="toggleShift:" destination="-1" eventType="touchUpInside" id="7wY-73-GGr"/>
                             </connections>
                         </button>
                     </subviews>
