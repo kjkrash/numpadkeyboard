@@ -74,6 +74,7 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet weak var char3: UIButton!
     @IBOutlet weak var char4: UIButton!
     
+    var predictionButtons: [UIButton] = []
     
     @IBOutlet var one: RoundButton!{
         didSet{
@@ -142,26 +143,11 @@ class KeyboardViewController: UIInputViewController {
     var motherViewsHaveConstrainted: Bool = false
     var suggestions: [String] = [] {
         didSet{
-            predict1.setTitle(suggestions[0], for: .normal)
-            predict2.setTitle(suggestions[1], for: .normal)
-            predict3.setTitle(suggestions[2], for: .normal)
-            predict4.setTitle(suggestions[3], for: .normal)
-            predict5.setTitle(suggestions[4], for: .normal)
-            predict6.setTitle(suggestions[5], for: .normal)
-            predict7.setTitle(suggestions[6], for: .normal)
-            predict8.setTitle(suggestions[7], for: .normal)
-            predict9.setTitle(suggestions[8], for: .normal)
-            predict10.setTitle(suggestions[9], for: .normal)
-            predict11.setTitle(suggestions[10], for: .normal)
-            predict12.setTitle(suggestions[11], for: .normal)
-            predict13.setTitle(suggestions[12], for: .normal)
-            predict14.setTitle(suggestions[13], for: .normal)
-            predict15.setTitle(suggestions[14], for: .normal)
-            predict16.setTitle(suggestions[15], for: .normal)
-            predict17.setTitle(suggestions[16], for: .normal)
-            predict18.setTitle(suggestions[17], for: .normal)
-            predict19.setTitle(suggestions[18], for: .normal)
-            predict20.setTitle(suggestions[19], for: .normal)
+            var i = 0
+            while i < suggestions.count && i < 20 {
+                predictionButtons[i].setTitle(suggestions[i], for: .normal)
+                i += 1
+            }
         }
     }
     
@@ -179,6 +165,27 @@ class KeyboardViewController: UIInputViewController {
         longPress.numberOfTouchesRequired = 1
         longPress.allowableMovement = 0.1
         mainBackspace.addGestureRecognizer(longPress)
+        
+        predictionButtons.append(predict1)
+        predictionButtons.append(predict2)
+        predictionButtons.append(predict3)
+        predictionButtons.append(predict4)
+        predictionButtons.append(predict5)
+        predictionButtons.append(predict6)
+        predictionButtons.append(predict7)
+        predictionButtons.append(predict8)
+        predictionButtons.append(predict9)
+        predictionButtons.append(predict10)
+        predictionButtons.append(predict11)
+        predictionButtons.append(predict12)
+        predictionButtons.append(predict13)
+        predictionButtons.append(predict14)
+        predictionButtons.append(predict15)
+        predictionButtons.append(predict16)
+        predictionButtons.append(predict17)
+        predictionButtons.append(predict18)
+        predictionButtons.append(predict19)
+        predictionButtons.append(predict20)
     }
     
     func handleLongPress(_ gestureRecognizer: UIGestureRecognizer) {
@@ -476,6 +483,7 @@ class KeyboardViewController: UIInputViewController {
         nextKeyboardButton.addTarget(self, action: #selector(UIInputViewController.advanceToNextInputMode), for: .touchUpInside)
         nextKeyboardButton.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
     }
+
 }
 
 extension KeyboardViewController {

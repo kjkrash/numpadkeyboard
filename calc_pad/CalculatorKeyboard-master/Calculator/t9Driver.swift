@@ -75,7 +75,6 @@ class T9 {
             suggestions += cacheSuggestions[0..<self.numCacheResults]
         } else if trieSuggestions.count >= self.numTrieResults {
             // only Trie fills suggestion quota
-            let numTrieResultsToFetch = self.numTrieResults + (self.numCacheResults - cacheSuggestions.count)
             let numT = trieSuggestions.count - self.numTrieResults
             suggestions += trieSuggestions[0..<self.numTrieResults + numT]
             suggestions += cacheSuggestions

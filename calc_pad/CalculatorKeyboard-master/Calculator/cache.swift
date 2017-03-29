@@ -274,8 +274,6 @@ public class Cache {
     
     // If the chosen word was in the cache,
     func update(chosenWord: String) {
-        let keySequence = getKeySequence(word: chosenWord)
-        
         var oldIndex = -1
         for (i, word) in cacheList.enumerated() {
             if word == chosenWord {

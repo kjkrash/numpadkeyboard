@@ -220,21 +220,21 @@ public class Trie {
         self.loadTrie()
         
         // reduce weights of words if we pass a specified threshold
-        if self.maxFreq > Int.max * (3/4) {
-            // this prevents overflows from occurring from long-term use
-            // reduces word weights by the lowest amount (needs changing if not using freq. weight scheme)
-            for i in 0..<wordList.count {
-                self.reduceWeight(word: wordList[i], weight: -1 * self.minFreq)
-            }
-            
-            // clear up memory usage
-            self.wordList = [String]()
-        } else {
-            // shouldn't be necessary, but resetting for safety
-            self.wordList = [String]()
-            self.minFreq = Int.max
-            self.maxFreq = Int.min
-        }
+//        if self.maxFreq > Int.max * (3/4) {
+//            // this prevents overflows from occurring from long-term use
+//            // reduces word weights by the lowest amount (needs changing if not using freq. weight scheme)
+//            for i in 0..<wordList.count {
+//                self.reduceWeight(word: wordList[i], weight: -1 * self.minFreq)
+//            }
+//            
+//            // clear up memory usage
+//            self.wordList = [String]()
+//        } else {
+//            // shouldn't be necessary, but resetting for safety
+//            self.wordList = [String]()
+//            self.minFreq = Int.max
+//            self.maxFreq = Int.min
+//        }
     }
     
     func loadTrie() {
