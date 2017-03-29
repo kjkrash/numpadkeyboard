@@ -910,40 +910,48 @@ extension KeyboardViewController {
     @IBAction func shouldDeleteTextInDisplay() {
         let proxy = textDocumentProxy as UITextDocumentProxy
         
+        // if there is no longer a current word
         if keyscontrol.storedKeySequence.length == 0 {
+            // check if there are previous words
             if proxy.hasText {
                 // delete the space in between words
                 shouldDeleteText()
                 
                 // fetch all text before the cursor
                 var text = proxy.documentContextBeforeInput
-                //NSLog("Text is: \(text)")
+                // NSLog("Text is: \(text)")
                 
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
-                NSLog("Words is: \(words)")
+                // NSLog("Words is: \(words)")
                 
                 // reload previous keysequence
-                let prevWord = (words?[(words?.count)!-1])!
-                NSLog("prevWord is: \(prevWord)")
+                let prevWord = (words?[(words?.count)! - 1])!
+                // NSLog("prevWord is: \(prevWord)")
                 
+                // reverse map previous word into a keysequence
+                // and append it to the current empty keysequence
                 for i in 0...prevWord.length - 1 {
                     let char = prevWord[i]
-                    NSLog("char is: \(char)")
+                    // NSLog("char is: \(char)")
                     keyscontrol.storedKeySequence.append(String(lettersToDigits[char]!))
                 }
                 
-                NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
+                // NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
                 
+                // determine upper or lower case for the previous word
+                // and repopulate the now-empty boolseq shift markers
                 for i in 0...prevWord.length - 1 {
                     let ch = prevWord[i]
-                    NSLog("ch is: \(ch)")
+                    // NSLog("ch is: \(ch)")
                     
+                    // if capital: append true (i.e. shift on)
+                    // if lowercase: append false (i.e. shift off)
                     if ch >= "A" && ch <= "Z" {
-                        NSLog("capital \(ch)")
+                        // NSLog("capital \(ch)")
                         keyscontrol.storedBoolSequence.append(true)
                     } else if ch >= "a" && ch <= "z" {
-                        NSLog("lowercase \(ch)")
+                        // NSLog("lowercase \(ch)")
                         keyscontrol.storedBoolSequence.append(false)
                     }
                 }
@@ -952,8 +960,10 @@ extension KeyboardViewController {
             return
         }
         
+        // if not empty keysequence, just delete the last character
         shouldDeleteText()
         
+        // fetch updated suggestions
         var suggestionsUpdate = [String]()
         suggestionsUpdate = keyscontrol.t9Backspace()
         
