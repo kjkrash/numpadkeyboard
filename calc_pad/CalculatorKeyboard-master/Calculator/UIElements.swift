@@ -2,23 +2,23 @@ import Foundation
 import UIKit
 
 // Customized button
-class RaisedButton: UIButton {
-    var shiftM:String = "off"
-    func switchColor(){
-        switch shiftM {
-        case "off":
-            setBackgroundColor(color: UIColor.black, forState: .normal)
-            setTitle("⇪", for:.normal)
-            shiftM = "on"
-        case "on":
-            setBackgroundColor(color: UIColor.blue, forState: .normal)
-            setTitle("⇧", for:.normal)
-            shiftM = "off"
-        default:
-            break
-        }
-    }
-}
+//class RaisedButton: UIButton {
+//    var shiftM:String = "off"
+//    func switchColor(){
+//        switch shiftM {
+//        case "off":
+//            setBackgroundColor(color: UIColor.black, forState: .normal)
+//            setTitle("⇪", for:.normal)
+//            shiftM = "on"
+//        case "on":
+//            setBackgroundColor(color: UIColor.blue, forState: .normal)
+//            setTitle("⇧", for:.normal)
+//            shiftM = "off"
+//        default:
+//            break
+//        }
+//    }
+//}
 
 class RoundButton: UIButton {
     @IBInspectable var _cornerRadius: CGFloat = 0 {
@@ -34,6 +34,22 @@ class RoundButton: UIButton {
             layer.borderColor = _borderColor.cgColor
         }
     }
+    
+//    var shiftM: String = "off"
+//    func switchColor(){
+//        switch shiftM {
+//        case "off":
+//            setBackgroundColor(color: UIColor.black, forState: .normal)
+//            setTitle("⇪", for:.normal)
+//            shiftM = "on"
+//        case "on":
+//            setBackgroundColor(color: UIColor.blue, forState: .normal)
+//            setTitle("⇧", for:.normal)
+//            shiftM = "off"
+//        default:
+//            break
+//        }
+//    }
     var mode:String = "alphabets"
     func switchMode() {
         switch mode {

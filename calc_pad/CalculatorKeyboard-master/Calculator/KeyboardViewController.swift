@@ -12,7 +12,7 @@ class KeyboardViewController: UIInputViewController {
     ////////////   INITIALIZATION   ////////////
     ////////////////////////////////////////////
     
-    var shiftBool = false
+    var shift_m = "off"
     var turnOff = false
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
@@ -45,7 +45,12 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet var syms_1: RaisedButton!
     @IBOutlet var syms_2: RaisedButton!
     @IBOutlet var syms_3: RaisedButton!
-    @IBOutlet var shift: RaisedButton!
+    @IBOutlet var shift: RoundButton! {
+        didSet{
+            shift.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
+            shift.titleLabel!.font =  UIFont(name: "shift", size: 18)
+        }
+    }
     
     @IBOutlet var predict1: RoundButton!
     @IBOutlet var predict2: RoundButton!
@@ -496,6 +501,7 @@ class KeyboardViewController: UIInputViewController {
 
 }
 
+
 extension KeyboardViewController {
     ////////////////////////////////////////////
     //////////// CONTROL OF THE KEYS ///////////
@@ -510,6 +516,7 @@ extension KeyboardViewController {
     // function returns, this function will iterate through that array and 
     //change the titles of the predict buttons on the keyboard to the suggestions.
     // TO DO: 0 doesn't work for some reason?
+
     @IBAction func proceedNineKeyOperations(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
@@ -813,10 +820,23 @@ extension KeyboardViewController {
     //        display.text = keyscontrol.toggle(mode: operation.mode, tag: operation.tag)
     //    }
     
-    
     // Called when user presses shift - TODO: VERY SLOW FOR SOME REASON
-    @IBAction func toggleShift(_ toggleKey: RaisedButton) {
-        toggleKey.switchColor()
+
+//    var shift_m = "off"
+
+    @IBAction func toggleShift(_ toggleKey: RoundButton) {
+//        shift.switchColor()
+        if (shift_m == "off") {
+            shift.setTitle("⇪", for:.normal)
+            shift.setBackgroundColor(color: UIColor.black, forState: .normal)
+            shift_m == "on"
+        } else if (shift_m == "on") {
+            shift.setTitle("⇧", for:.normal)
+            shift.setBackgroundColor(color: UIColor.blue, forState: .normal)
+            shift_m == "off"
+        }
+      
+
         one.shift()
         two.shift()
         three.shift()
