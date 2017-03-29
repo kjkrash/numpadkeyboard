@@ -1003,17 +1003,25 @@ extension KeyboardViewController {
     
     //Send key
     @IBAction func returnKeyPressed() {
-        let proxy = textDocumentProxy as UITextDocumentProxy
+//        let proxy = textDocumentProxy as UITextDocumentProxy
+//        
+//        if let input = predict1.currentTitle as String? {
+//            proxy.insertText(input + " ")
+//            keyscontrol.wordSelected(word: input.lowercased())
+//            //NOTE: this will add a space by default, or else it gets complicated and confusing
+//            // update weights because a word has effectively been chosen
+//        }
+//        
+//        display.text = ""
+//        keyscontrol.clear()
+//        
         
-        if let input = predict1.currentTitle as String? {
-            proxy.insertText(input + " ")
-            keyscontrol.wordSelected(word: input.lowercased())
-            //NOTE: this will add a space by default, or else it gets complicated and confusing
-            // update weights because a word has effectively been chosen
-        }
+    
+        var proxy = textDocumentProxy as UITextDocumentProxy
+// new line method 1       proxy.insertTexts("\n")
+// new line method 2       proxy.insertText("" + "")
+        proxy.insertText("  \n  ")
         
-        display.text = ""
-        keyscontrol.clear()
     }
 }
 
