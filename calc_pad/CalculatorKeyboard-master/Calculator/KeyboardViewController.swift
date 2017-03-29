@@ -75,6 +75,7 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet weak var char4: UIButton!
     
     var predictionButtons: [UIButton] = []
+    var charButtons: [UIButton] = []
     
     @IBOutlet var one: RoundButton!{
         didSet{
@@ -166,6 +167,8 @@ class KeyboardViewController: UIInputViewController {
         longPress.allowableMovement = 0.1
         mainBackspace.addGestureRecognizer(longPress)
         
+        // Adding prediction buttons to the list of prediction buttons.
+        // This is done by reference.
         predictionButtons.append(predict1)
         predictionButtons.append(predict2)
         predictionButtons.append(predict3)
@@ -186,6 +189,13 @@ class KeyboardViewController: UIInputViewController {
         predictionButtons.append(predict18)
         predictionButtons.append(predict19)
         predictionButtons.append(predict20)
+        
+        // Adding char buttons to the list of char buttons.
+        // Also done by reference
+        charButtons.append(char1)
+        charButtons.append(char2)
+        charButtons.append(char3)
+        charButtons.append(char4)
     }
     
     func handleLongPress(_ gestureRecognizer: UIGestureRecognizer) {
@@ -610,14 +620,10 @@ extension KeyboardViewController {
                     }
                 }
                 // Set the text for the top panel buttons
-                char1.setTitle(currentKeyMapping[0], for: .normal)
-                char1.setTitleColor(Color.black, for: .normal)
-                char2.setTitle(currentKeyMapping[1], for: .normal)
-                char2.setTitleColor(Color.black, for: .normal)
-                char3.setTitle(currentKeyMapping[2], for: .normal)
-                char3.setTitleColor(Color.black, for: .normal)
-                char4.setTitle(currentKeyMapping[3], for: .normal)
-                char4.setTitleColor(Color.black, for: .normal)
+                for (i, charButton) in charButtons.enumerated() {
+                    charButton.setTitle(currentKeyMapping[i], for: .normal)
+                    charButton.setTitleColor(Color.black, for: .normal)
+                }
             }
         }
     }
@@ -637,17 +643,15 @@ extension KeyboardViewController {
                             }
                         }
                     }
-                    char1.setTitle(currentKeyMapping[0], for: .normal)
-                    char2.setTitle(currentKeyMapping[1], for: .normal)
-                    char3.setTitle(currentKeyMapping[2], for: .normal)
-                    char4.setTitle(currentKeyMapping[3], for: .normal)
+                    for (i, charButton) in charButtons.enumerated() {
+                        charButton.setTitle(currentKeyMapping[i], for: .normal)
+                    }
                 }
             }
-        }else{
-            char1.setTitle("", for: .normal)
-            char2.setTitle("", for: .normal)
-            char3.setTitle("", for: .normal)
-            char4.setTitle("", for: .normal)
+        } else {
+            for charButton in charButtons {
+                charButton.setTitle("", for: .normal)
+            }
         }
     }
     
@@ -770,6 +774,10 @@ extension KeyboardViewController {
         
         for predictionButton in predictionButtons {
             predictionButton.setTitle("", for: .normal)
+        }
+        
+        for charButton in charButtons {
+            charButton.setTitle("", for: .normal)
         }
     }
     
