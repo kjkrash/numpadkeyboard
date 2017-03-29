@@ -75,12 +75,23 @@ class T9 {
             suggestions += cacheSuggestions[0..<self.numCacheResults]
         } else if trieSuggestions.count >= self.numTrieResults {
             // only Trie fills suggestion quota
-            let numT = trieSuggestions.count - self.numTrieResults
-            suggestions += trieSuggestions[0..<self.numTrieResults + numT]
+            
+            // The number of words to use from trieSuggestions =
+            // the number of Trie words asked for in the initializer plus
+            // however many words it takes to make up for the deficit in cache
+            // results.
+            var numTrieResultsToFetch = self.numTrieResults + (self.numCacheResults - cacheSuggestions.count)
+            if numTrieResultsToFetch > trieSuggestions.count {
+                numTrieResultsToFetch = trieSuggestions.count
+            }
+            suggestions += trieSuggestions[0..<numTrieResultsToFetch]
             suggestions += cacheSuggestions
         } else if cacheSuggestions.count >= self.numCacheResults {
             // only cache fills suggestion quota
-            let numCacheResultsToFetch = self.numCacheResults + (self.numTrieResults - trieSuggestions.count)
+            var numCacheResultsToFetch = self.numCacheResults + (self.numTrieResults - trieSuggestions.count)
+            if numCacheResultsToFetch > cacheSuggestions.count {
+                numCacheResultsToFetch = cacheSuggestions.count
+            }
             suggestions += trieSuggestions
             suggestions += cacheSuggestions[0..<numCacheResultsToFetch]
         } else {
@@ -88,30 +99,7 @@ class T9 {
             suggestions += trieSuggestions
             suggestions += cacheSuggestions
         }
-        /*
-        var suggestions = trie.getSuggestions(keySequence: keySequence)
-        
-        if suggestions.count > self.numTrieResults {
-            // Chop off excess Trie results
-            let count = suggestions.count
-            for _ in 0 ..< count - self.numTrieResults {
-                suggestions.removeLast()
-            }
-        }
-        
-        // merge trie suggestions with cached suggestions
-        if self.numCacheResults > 0 {
-            suggestions.append(contentsOf: cache.getSuggestions(keySequence: keySequence))
-        }
-        
-        // truncate excess results
-        if suggestions.count > self.numResults {
-            let count = suggestions.count
-            for _ in 0 ..< count - self.numResults {
-                suggestions.removeLast()
-            }
-        }
-        */
+
         // remove duplicates from overlap between cache and getSuggestions() using a map
         // to keep track of seen values
         var dupeDetector = [String: Bool]()

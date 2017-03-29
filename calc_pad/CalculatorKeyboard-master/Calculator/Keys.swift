@@ -74,7 +74,7 @@ class KeysControl: NSObject {
         storedKeySequence = ""
         storedBoolSequence = [Bool]()
         numberJustPressed = ""
-        t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 8, numResults: 4, numCacheResults: 1, cacheSize: 50)
+        t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 8, numResults: 20, numCacheResults: 10, cacheSize: 50)
         super.init()
     }
     

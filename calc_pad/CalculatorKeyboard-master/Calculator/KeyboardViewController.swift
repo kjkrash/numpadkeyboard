@@ -766,10 +766,11 @@ extension KeyboardViewController {
         keyscontrol.clear()
         
         // Reset prediction button
-        predict1.setTitle("", for: .normal)
-        predict2.setTitle("", for: .normal)
-        predict3.setTitle("", for: .normal)
-        predict4.setTitle("", for: .normal)
+
+        
+        for predictionButton in predictionButtons {
+            predictionButton.setTitle("", for: .normal)
+        }
     }
     
     // When space is pressed, the user effectively selects the first suggestion button's suggestion.
@@ -986,11 +987,10 @@ extension KeyboardViewController {
         }
         
         keyscontrol.clear()
-        
-        predict1.setTitle("", for: .normal)
-        predict2.setTitle("", for: .normal)
-        predict3.setTitle("", for: .normal)
-        predict4.setTitle("", for: .normal)
+
+        for predictionButton in predictionButtons {
+            predictionButton.setTitle("", for: .normal)
+        }
     }
     
     //Send key
