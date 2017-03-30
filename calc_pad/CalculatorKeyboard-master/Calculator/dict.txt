@@ -2313,6 +2313,7 @@
 17197	herself
 2171	hesitate
 1740	hey
+2703	hi
 1356	hidden
 5954	hide
 1952	hierarchy
@@ -2628,6 +2629,7 @@
 1003	irony
 1364	irrelevant
 846	irrespective
+1090186	is
 7649	island
 2813	isolated
 1855	isolation

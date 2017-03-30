@@ -20,8 +20,9 @@ internal class WordWeight {
         self.weight = weight
     }
     
-    func weightUp() {
+    func weightUp() -> Weight {
         self.weight += 1
+        return self.weight
     }
 }
 
@@ -85,12 +86,12 @@ public class Trie {
     internal var maxFreq: Int                   // stores max frequency of all words (for reduction, if necessary)
     internal var wordList: [String]             // stores all words (looped through to perform reduction, if necessary)
     internal var dictionaryFilename : String
-    
     internal let dictURL: URL
     internal let dictPath: String
     let dictTitle: String
     let dictFileType: String
     internal let suggestionDepth: Int
+    internal var numWords: Int
     
     // A class that constructs a list of deeper suggestions
     internal class DeeperSuggestions {
@@ -182,6 +183,7 @@ public class Trie {
         self.minFreq = Int.max
         self.maxFreq = Int.min
         self.wordList = [String]()
+        self.numWords = 0
         
         // Process filename
         self.dictionaryFilename = dictionaryFilename
@@ -269,6 +271,7 @@ public class Trie {
                 
                 // store words for updates (if necessary)
                 self.wordList.append(word)
+                self.numWords += 1
             }
         } catch {
             print("Dictionary failed to load")
@@ -279,10 +282,10 @@ public class Trie {
     // reduces the frequencies in dictionary to prevent overflow
     // does not trigger unless the max count passes a certain threshold
     // if threshold is passed, then decrease all by the min count
-    internal func reduceWeight(word: String, weight: Int) {
-        _ = self.updateWeight(word: word, weight: weight)
-    }
-    
+//    internal func reduceWeight(word: String, weight: Int) {
+//        _ = self.updateWeight(word: word)
+//    }
+//    
     internal func insert(_ word: String, weight: Int = WEIGHT_DEFAULT) {
         var node = self.root
         var key = 0
@@ -382,7 +385,7 @@ public class Trie {
     
     // returns the updated weight
     // If word does not exist in Trie, it is added with base weight
-    func updateWeight(word: String, weight: Int) -> Int {
+    func updateWeight(word: String) -> Int {
         var newWeight = -1
         NSLog("word: " + word)
         let keySequence = getKeySequence(word: word)
@@ -391,9 +394,9 @@ public class Trie {
         if wordExists(word, keySequence: keySequence) {
             for wordWeight in prefixNode!.wordWeights {
                 if wordWeight.word == word {
-                    newWeight = wordWeight.weight + weight
+                    newWeight = wordWeight.weightUp()
                     wordWeight.weight = newWeight
-                    updateWeightInFile(word, weight: weight)
+                    updateWeightInFile(word, weight: newWeight)
                     break
                 }
             }
@@ -413,11 +416,13 @@ public class Trie {
         do {
             //let data = try Data(contentsOf: self.dictURL)
             let fileHandle = try FileHandle(forUpdating: self.dictURL)
-            let data = ("1" + "\t" + word as String).data(using: String.Encoding.utf8)
+            let data = (String(WEIGHT_DEFAULT) + "\t" + word as String).data(using: String.Encoding.utf8)
             
             fileHandle.seekToEndOfFile()
             fileHandle.write(data!)
             fileHandle.closeFile()
+            
+            self.numWords += 1
         } catch {
             print("ERROR from insertWordInFile")
             return
@@ -426,32 +431,40 @@ public class Trie {
     
     // FIXME: VERY inefficient.
     internal func updateWeightInFile(_ word: String, weight: Int) {
-        let urlOfDict = URL(fileURLWithPath: self.dictionaryFilename)
-        do {
-            let dictStr = try
-                String(contentsOf: urlOfDict, encoding: String.Encoding.utf8)
-            let separators = CharacterSet(charactersIn: "\t\n")
-            var dictStrArr = dictStr.components(separatedBy: separators)
-            var updatedDictStr = ""
-            var wordFound = false
-            
-            for i in stride(from: 1, to:dictStrArr.count, by: 2) {
-                if !wordFound {
-                    if dictStrArr[i] == word {
-                        // Add one to weight
-                        dictStrArr[i-1] = String(Int(dictStrArr[i-1])! + weight)
-                        wordFound = true
-                    }
-                }
-                
-                updatedDictStr += dictStrArr[i-1] + "\t" + dictStrArr[i] + "\n"
+        let streamReader = StreamReader(path: self.dictPath)
+        var line = streamReader?.nextLine()
+        let separators = CharacterSet(charactersIn: "\t\n")
+        var lineList = line?.components(separatedBy: separators)
+        var i = 0
+        while i < self.numWords && lineList?[1] != word {
+            line = streamReader?.nextLine()
+            lineList = line?.components(separatedBy: separators)
+            if lineList?.count != 2 {
+                NSLog("Failure in updateWeightInFile()")
+                return
             }
-            
-            try updatedDictStr.write(to: urlOfDict, atomically: false,
-                                     encoding: String.Encoding.utf8)
+            i += 1
         }
-        catch {
-            print("fail")
+        
+        do {
+            let fileHandle = try FileHandle(forUpdating: self.dictURL)
+            streamReader?.rewind()
+            var offset: UInt64!
+            var j = 0
+            var totalOffset: UInt64! = 0
+            while j < i {
+                // Plus 1 for new line
+                offset = UInt64((streamReader?.nextLine()?.length)! + 1)
+                totalOffset = totalOffset + offset
+                fileHandle.seek(toFileOffset: totalOffset)
+                j += 1
+            }
+            let data = (String(weight) + "\t" + word + "\n" as String).data(using: String.Encoding.utf8)
+            fileHandle.write(data!)
+            fileHandle.closeFile()
+            streamReader?.close()
+        } catch {
+            NSLog("Failure in updateWeightInFile()")
         }
     }
 }

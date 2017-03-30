@@ -157,6 +157,6 @@ class T9 {
         // If the chosen word was one of the suggestions, update its weight in
         // the Trie
         NSLog("remember choice")
-        _ = trie.updateWeight(word: word, weight: 1)
+        _ = trie.updateWeight(word: word)
     }
 }
