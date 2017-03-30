@@ -99,12 +99,28 @@ class T9 {
             suggestions += trieSuggestions
             suggestions += cacheSuggestions
         }
-
+        
         // remove duplicates from overlap between cache and getSuggestions() using a map
         // to keep track of seen values
         var dupeDetector = [String: Bool]()
         // traverse list
-        for var i in 0..<suggestions.count {
+//        for var i in 0..<suggestions.count {
+//            // check if key exists
+//            let keyExists = dupeDetector[suggestions[i]] != nil
+//            
+//            // if so, remove the duplicate and decrement counter to account for off by one
+//            // else, mark as seen
+//            if keyExists {
+//                suggestions.remove(at: i)
+//                i -= 1
+//            }
+//            else {
+//                dupeDetector[suggestions[i]] = true
+//            }
+//        }
+        
+        var i = 0
+        while i < suggestions.count {
             // check if key exists
             let keyExists = dupeDetector[suggestions[i]] != nil
             
@@ -112,10 +128,10 @@ class T9 {
             // else, mark as seen
             if keyExists {
                 suggestions.remove(at: i)
-                i -= 1
             }
             else {
                 dupeDetector[suggestions[i]] = true
+                i += 1
             }
         }
         
