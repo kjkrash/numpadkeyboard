@@ -13,6 +13,7 @@ class KeyboardViewController: UIInputViewController {
     ////////////////////////////////////////////
     
     var shift_m = "off"
+    var num_mode = "off"
     var turnOff = false
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
@@ -860,21 +861,40 @@ extension KeyboardViewController {
         eight.switchMode()
         nine.switchMode()
         spaceButton.switchMode()
-        syms_1.setTitle("=", for: .normal)
-        syms_1.setTitleColor(Color.black, for: .normal)
-        syms_2.setTitle(".", for: .normal)
-        syms_2.setTitleColor(Color.black, for: .normal)
-        syms_3.setTitle("%", for: .normal)
-        syms_3.setTitleColor(Color.black, for: .normal)
-        predict1.setTitle("+", for: .normal)
-        predict1.setTitleColor(Color.black, for: .normal)
-        predict2.setTitle("-", for: .normal)
-        predict2.setTitleColor(Color.black, for: .normal)
-        predict3.setTitle("*", for: .normal)
-        predict3.setTitleColor(Color.black, for: .normal)
-        predict4.setTitle("/", for: .normal)
-        predict4.setTitleColor(Color.black, for: .normal)
-
+        if (num_mode == "off"){
+            syms_1.setTitle("=", for: .normal)
+            syms_1.setTitleColor(Color.black, for: .normal)
+            syms_2.setTitle(".", for: .normal)
+            syms_2.setTitleColor(Color.black, for: .normal)
+            syms_3.setTitle("%", for: .normal)
+            syms_3.setTitleColor(Color.black, for: .normal)
+            predict1.setTitle("+", for: .normal)
+            predict1.setTitleColor(Color.black, for: .normal)
+            predict2.setTitle("-", for: .normal)
+            predict2.setTitleColor(Color.black, for: .normal)
+            predict3.setTitle("*", for: .normal)
+            predict3.setTitleColor(Color.black, for: .normal)
+            predict4.setTitle("/", for: .normal)
+            predict4.setTitleColor(Color.black, for: .normal)
+            num_mode = "on"
+        } else if (num_mode == "on") {
+            syms_1.setTitle(",", for: .normal)
+            syms_1.setTitleColor(Color.black, for: .normal)
+            syms_2.setTitle(".", for: .normal)
+            syms_2.setTitleColor(Color.black, for: .normal)
+            syms_3.setTitle("?", for: .normal)
+            syms_3.setTitleColor(Color.black, for: .normal)
+            predict1.setTitle("", for: .normal)
+            predict1.setTitleColor(Color.black, for: .normal)
+            predict2.setTitle("", for: .normal)
+            predict2.setTitleColor(Color.black, for: .normal)
+            predict3.setTitle("", for: .normal)
+            predict3.setTitleColor(Color.black, for: .normal)
+            predict4.setTitle("", for: .normal)
+            predict4.setTitleColor(Color.black, for: .normal)
+            num_mode = "off"
+        }
+        
     }
     
     //Backspace in active textfield
