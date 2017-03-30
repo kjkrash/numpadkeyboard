@@ -939,39 +939,39 @@ extension KeyboardViewController {
                 
                 // fetch all text before the cursor
                 var text = proxy.documentContextBeforeInput
-                // NSLog("Text is: \(text)")
+                NSLog("Text is: \(text)")
                 
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
-                // NSLog("Words is: \(words)")
+                NSLog("Words is: \(words)")
                 
                 // reload previous keysequence
                 let prevWord = (words?[(words?.count)! - 1])!
-                // NSLog("prevWord is: \(prevWord)")
+                NSLog("prevWord is: \(prevWord)")
                 
                 // reverse map previous word into a keysequence
                 // and append it to the current empty keysequence
                 for i in 0...prevWord.length - 1 {
                     let char = prevWord[i]
-                    // NSLog("char is: \(char)")
+                    NSLog("char is: \(char)")
                     keyscontrol.storedKeySequence.append(String(lettersToDigits[char]!))
                 }
                 
-                // NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
+                NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
                 
                 // determine upper or lower case for the previous word
                 // and repopulate the now-empty boolseq shift markers
                 for i in 0...prevWord.length - 1 {
                     let ch = prevWord[i]
-                    // NSLog("ch is: \(ch)")
+                    NSLog("ch is: \(ch)")
                     
                     // if capital: append true (i.e. shift on)
                     // if lowercase: append false (i.e. shift off)
                     if ch >= "A" && ch <= "Z" {
-                        // NSLog("capital \(ch)")
+                        NSLog("capital \(ch)")
                         keyscontrol.storedBoolSequence.append(true)
                     } else if ch >= "a" && ch <= "z" {
-                        // NSLog("lowercase \(ch)")
+                        NSLog("lowercase \(ch)")
                         keyscontrol.storedBoolSequence.append(false)
                     }
                 }
@@ -986,22 +986,45 @@ extension KeyboardViewController {
         // fetch updated suggestions
         var suggestionsUpdate = [String]()
         suggestionsUpdate = keyscontrol.t9Backspace()
+        NSLog("reached 4")
         
-        // Reset predictions
-        predict1.setTitle(suggestionsUpdate[0], for: .normal)
+        // Reset predictions to empty
+        predict1.setTitle("", for: .normal)
+        predict2.setTitle("", for: .normal)
+        predict3.setTitle("", for: .normal)
+        predict4.setTitle("", for: .normal)
+        
+        // Reset predictions if an update is available
+        if suggestionsUpdate.indices.contains(0) {
+            predict1.setTitle(suggestionsUpdate[0], for: .normal)
+        }
+        
+        if suggestionsUpdate.indices.contains(1) {
+            predict2.setTitle(suggestionsUpdate[1], for: .normal)
+        }
+        
+        if suggestionsUpdate.indices.contains(2) {
+            predict3.setTitle(suggestionsUpdate[2], for: .normal)
+        }
+        
+        if suggestionsUpdate.indices.contains(3) {
+            predict4.setTitle(suggestionsUpdate[3], for: .normal)
+        }
+        
         predict1.setTitleColor(Color.black, for: .normal)
-        predict2.setTitle(suggestionsUpdate[1], for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
-        predict3.setTitle(suggestionsUpdate[2], for: .normal)
         predict3.setTitleColor(Color.black, for: .normal)
-        predict4.setTitle(suggestionsUpdate[3], for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
+        
+        NSLog("reached 5")
         
         for i in 0...19 {
             if !suggestionsUpdate.indices.contains(i) {
                 suggestionsUpdate.append("")
             }
         }
+        
+        NSLog("reached 6")
         suggestions = suggestionsUpdate
     }
     
