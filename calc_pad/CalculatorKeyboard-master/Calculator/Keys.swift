@@ -114,29 +114,29 @@ class KeysControl: NSObject {
         var suggestions = [String]()
         
         if storedKeySequence.characters.count > 0 {
-            // NSLog("Stored keyseq is: \(storedKeySequence)")
-            // NSLog("Num char in stored keyseq: \(String(storedKeySequence.characters.count))")
-            // NSLog("Stored boolseq is: \(storedBoolSequence)")
-            // NSLog("Num stored boolseq is: \(String(storedBoolSequence.count))")
+            NSLog("Stored keyseq is: \(storedKeySequence)")
+            NSLog("Num char in stored keyseq: \(String(storedKeySequence.characters.count))")
+            NSLog("Stored boolseq is: \(storedBoolSequence)")
+            NSLog("Num stored boolseq is: \(String(storedBoolSequence.count))")
             
             // remove last key in sequence
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
-            // NSLog("keyseq after remove: \(storedKeySequence)")
+            NSLog("keyseq after remove: \(storedKeySequence)")
             
             // remove shift marker for last key
             storedBoolSequence.removeLast()
-            // NSLog("boolseq after remove: \(storedBoolSequence)")
+            NSLog("boolseq after remove: \(storedBoolSequence)")
             
             var intKS = [Int]()
             
             for ch in storedKeySequence.characters {
-                // NSLog("reached 1")
+                NSLog("reached 1")
                 intKS.append(Int(String(ch))!)
-                // NSLog("reached 2")
+                NSLog("reached 2")
             }
             
-            // NSLog("reached 3")
+            NSLog("reached 3")
             
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         } else {
