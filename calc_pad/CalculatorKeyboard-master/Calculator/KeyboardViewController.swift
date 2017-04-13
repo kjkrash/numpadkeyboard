@@ -27,7 +27,7 @@ class KeyboardViewController: UIInputViewController {
             displayBackspace.addGestureRecognizer(gesture)
         }
     }
-    @IBOutlet var mainBackspace: RaisedButton!
+    @IBOutlet var addWords: RaisedButton!
     @IBOutlet var newlineButton: RaisedButton!
     @IBOutlet var sendButton: RaisedButton!
     @IBOutlet var spaceButton: RoundButton!{
@@ -171,7 +171,7 @@ class KeyboardViewController: UIInputViewController {
         longPress.minimumPressDuration = 0.5
         longPress.numberOfTouchesRequired = 1
         longPress.allowableMovement = 0.1
-        mainBackspace.addGestureRecognizer(longPress)
+        displayBackspace.addGestureRecognizer(longPress)
         
         // Adding prediction buttons to the list of prediction buttons.
         // This is done by reference.
@@ -245,7 +245,7 @@ class KeyboardViewController: UIInputViewController {
                 .top(Padding().sidePanels.leftRegion.forButton(withIndex: 4).top)
                 .height(Padding.SidePanels.LeftRegion.buttonDimensions.height)
                 .width(Padding.SidePanels.LeftRegion.buttonDimensions.width)
-            rightRegion.layout(mainBackspace)
+            rightRegion.layout(addWords)
                 .left(Padding().sidePanels.rightRegion.forButton(withIndex: 1).left)
                 .top(Padding().sidePanels.rightRegion.forButton(withIndex: 1).top)
                 .height(Padding.SidePanels.RightRegion.buttonDimensions.height)
@@ -1110,6 +1110,46 @@ extension KeyboardViewController {
         }
     }
     
+    @IBAction func addWordsToDict(){
+        let proxy = textDocumentProxy as UITextDocumentProxy
+        if proxy.hasText == false {
+            return
+        }
+        var largeString = proxy.documentContextBeforeInput
+        var arrOfWords = largeString?.components(separatedBy: " ")
+        
+        for word in arrOfWords! {
+            NSLog("word: " + word)
+            if word == "" {
+                while proxy.hasText {
+                    NSLog("hi")
+                    proxy.deleteBackward()
+                }
+                return
+            }
+            keyscontrol.t9Communicator.rememberChoice(word: word) // should this only happen if it already exists
+        }
+        while proxy.hasText {
+            NSLog("hi")
+            proxy.deleteBackward()
+        }
+        //need to deal with caps, punctuation, contractions, numbers, etc. - checking that 
+        // punct is stripped and its all alpha and lower?
+        // clear ?
+//        let alert = UIAlertController(title: "Numpad Keyboard",
+//                                      message: "Do you want to clear the text?",
+//                                      preferredStyle: .alert)
+//        let submitAction = UIAlertAction(title: "Clear", style: .default, handler: { (action) -> Void in
+//            // Get 1st TextField's text
+//            print("clear the field")
+//        })
+//        let cancel = UIAlertAction(title: "Keep Text", style: .destructive, handler: { (action) -> Void in })
+//        
+//        alert.addAction(submitAction)
+//        alert.addAction(cancel)
+//        present(alert, animated: true, completion: nil)
+        return
+    }
     //Send key
     @IBAction func returnKeyPressed() {
 //        let proxy = textDocumentProxy as UITextDocumentProxy
