@@ -1116,21 +1116,18 @@ extension KeyboardViewController {
             return
         }
         var largeString = proxy.documentContextBeforeInput
-        var arrOfWords = largeString?.components(separatedBy: " ")
+        var arrOfWords = largeString?.words()
         
         for word in arrOfWords! {
-            NSLog("word: " + word)
             if word == "" {
                 while proxy.hasText {
-                    NSLog("hi")
                     proxy.deleteBackward()
                 }
                 return
             }
-            keyscontrol.t9Communicator.rememberChoice(word: word) // should this only happen if it already exists
+            keyscontrol.t9Communicator.rememberChoice(word: word.lowercased()) // should this only happen if it already exists
         }
         while proxy.hasText {
-            NSLog("hi")
             proxy.deleteBackward()
         }
         //need to deal with caps, punctuation, contractions, numbers, etc. - checking that 
@@ -1207,5 +1204,19 @@ extension KeyboardViewController {
             textColor = UIColor.black
         }
         self.nextKeyboardButton.setTitleColor(textColor, for: UIControlState())
+    }
+}
+
+//https://medium.com/@sorenlind/three-ways-to-enumerate-the-words-in-a-string-using-swift-7da5504f0062
+extension String {
+    func words() -> [String] {
+        let range = self.startIndex..<self.endIndex
+        var words = [String]()
+        
+        self.enumerateSubstrings(in: range, options: NSString.EnumerationOptions.byWords) { (substring, _, _, _) -> () in
+            words.append(substring!)
+        }
+        
+        return words
     }
 }
