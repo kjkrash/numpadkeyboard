@@ -979,19 +979,50 @@ extension KeyboardViewController {
         if keyscontrol.storedKeySequence.length == 0 {
             // check if there are previous words
             if proxy.hasText {
+				
                 // delete the space in between words
                 shouldDeleteText()
                 
                 // fetch all text before the cursor
                 var text = proxy.documentContextBeforeInput
+				
+				if text == nil {
+					return
+				}
+				
                 NSLog("Text is: \(text)")
+				
+				if (text?.length)! > 1 {
+					
+					let letters = CharacterSet.letters
+					// second to last char in text field
+					let c = UnicodeScalar((text?[(text?.length)! - 2])!)
+					
+					if !letters.contains(c!) {
+						proxy.deleteBackward()
+						keyscontrol.t9Backspace()
+						keyscontrol.t9Communicator.backspace()
+						return
+					}
+				}
 				
 				keyscontrol.t9Communicator.backspace()
 				
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
                 NSLog("Words is: \(words)")
-                
+				
+				var wordsExist = false
+				for word in words! {
+					if word != "" {
+						wordsExist = true
+					}
+				}
+				if !wordsExist {
+					proxy.deleteBackward()
+					return
+				}
+				
                 // reload previous keysequence
 				let prevWord: String
 				
@@ -1030,11 +1061,17 @@ extension KeyboardViewController {
                         keyscontrol.storedBoolSequence.append(false)
                     }
                 }
-            }
-            
+			}
+			
+			if !proxy.hasText {
+				clearPredictionButtons()
+				clearCharButtons()
+			}
+			
             return
         }
-        
+		
+		
         // if not empty keysequence, just delete the last character
         shouldDeleteText()
         
@@ -1065,7 +1102,7 @@ extension KeyboardViewController {
         if suggestionsUpdate.indices.contains(3) {
             predict4.setTitle(suggestionsUpdate[3], for: .normal)
         }
-        
+		
         predict1.setTitleColor(Color.black, for: .normal)
         predict2.setTitleColor(Color.black, for: .normal)
         predict3.setTitleColor(Color.black, for: .normal)
@@ -1078,7 +1115,20 @@ extension KeyboardViewController {
                 suggestionsUpdate.append("")
             }
         }
-        
+		
+		if !proxy.hasText {
+			keyscontrol.t9Communicator.backspace()
+			clearPredictionButtons()
+			clearCharButtons()
+			return
+		}
+		
+		if keyscontrol.storedKeySequence.length == 0 {
+			clearPredictionButtons()
+			clearCharButtons()
+			return
+		}
+		
         NSLog("reached 6")
         suggestions = suggestionsUpdate
     }
@@ -1242,6 +1292,18 @@ extension KeyboardViewController {
 
         
     }
+	
+	internal func clearPredictionButtons() {
+		for button in predictionButtons {
+			button.setTitle("", for: .normal)
+		}
+	}
+	
+	internal func clearCharButtons() {
+		for button in charButtons {
+			button.setTitle("", for: .normal)
+		}
+	}
 }
 
 extension KeyboardViewController {
