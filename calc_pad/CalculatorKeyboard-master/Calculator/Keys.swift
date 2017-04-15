@@ -81,13 +81,16 @@ class KeysControl: NSObject {
     // This function calls the t9Driver to getSuggestions. It keeps a working string of the keySequence
     // thus far and adds the number most recently pressed.
     // IGNORE the NSLog statements (they're just for printing)
-    func t9Toggle(mode: String, tag: Int, shiftState: Bool) -> Array<String> {
+    func t9Toggle(mode: String, tag: Int, shiftState: Bool) -> [String] {
         var suggestions = [String]()
         numberJustPressed = String(tag)
-        print(numberJustPressed)
-        NSLog(numberJustPressed)
+		NSLog("Pressed\t\(numberJustPressed)")
+		if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
+			NSLog("Key Sequence\t\(storedKeySequence)")
+			return []
+		}
         storedKeySequence += numberJustPressed
-        NSLog(storedKeySequence)
+        NSLog("Key Sequence\t\(storedKeySequence)")
         lastKeyControlTime = Date()
         storedBoolSequence.append(shiftState)
         
@@ -98,11 +101,8 @@ class KeysControl: NSObject {
             intKS.append(Int(String(ch))!)
         }
         suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
-        NSLog("Suggestions size in Keys.swift is: \(suggestions.count)")
-        NSLog("Suggestions:")
-        for word in suggestions {
-            NSLog(word)
-        }
+
+        NSLog("Number suggestions:\t\(suggestions.count)")
         return suggestions
     }
     

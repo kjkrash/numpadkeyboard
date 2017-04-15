@@ -6,6 +6,34 @@
 import UIKit
 import Material //Find other 3rd-party dependencies here -> cocoapods.org
 
+extension String {
+	
+	var length: Int {
+		return self.characters.count
+	}
+	
+	subscript (i: Int) -> String {
+		return self[Range(i ..< i + 1)]
+	}
+	
+	func substring(from: Int) -> String {
+		return self[Range(min(from, length) ..< length)]
+	}
+	
+	func substring(to: Int) -> String {
+		return self[Range(0 ..< max(0, to))]
+	}
+	
+	subscript (r: Range<Int>) -> String {
+		let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
+		                                    upper: min(length, max(0, r.upperBound))))
+		let start = index(startIndex, offsetBy: range.lowerBound)
+		let end = index(start, offsetBy: range.upperBound - range.lowerBound)
+		return self[Range(start ..< end)]
+	}
+	
+}
+
 class KeyboardViewController: UIInputViewController {
     ////////////////////////////////////////////
     //////////// VARIABLE AND OUTLET ///////////
@@ -507,7 +535,7 @@ extension KeyboardViewController {
     ////////////////////////////////////////////
     //////////// CONTROL OF THE KEYS ///////////
     ////////////////////////////////////////////
-    
+	
     // When one of the 9 central keys is pressed, proceedNineKeyOperations is called.
     // If the mode is "numbers", it will call the regular keyscontrol.toggle 
     // function. This function will add the number to the text field.
@@ -528,6 +556,7 @@ extension KeyboardViewController {
             if input != nil {
                 proxy.insertText(input!)
             }
+			
             return
         }
         
@@ -537,9 +566,18 @@ extension KeyboardViewController {
             toggleShift(shift)
             shiftState = true
         }
-        
-        var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
-        
+		
+		var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
+		if suggestionsToRender.count == 0 {
+			for button in predictionButtons {
+				button.setTitle("", for: .normal)
+			}
+			for button in charButtons {
+				button.setTitle("", for: .normal)
+			}
+			return
+		}
+
         // Displays letters on key that was pressed
         showCurrentKeyMapping(operation)
         
@@ -753,7 +791,7 @@ extension KeyboardViewController {
         // Checks that the prediction is not empty (in which case, shouldn't insert
         // anything) and that it is not in punctuation mode (in which case, should
         // go to 'else' and inputSymbols call.
-        if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
+        if input != nil && /*predict1.currentTitle != "" && */predict1.currentTitle != "@" {
             keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
             var num = keyscontrol.storedKeySequence.length
             
@@ -801,8 +839,15 @@ extension KeyboardViewController {
         }
         
         let proxy = textDocumentProxy as UITextDocumentProxy
-        if predict1.currentTitle != "" && predict1.currentTitle != "@" {
+        if keyscontrol.t9Communicator.getSuggestionStatus() != SuggestionStatus.PENDING && /*predict1.currentTitle != "" &&*/ predict1.currentTitle != "@" {
             // Calls predictionSelect to do most of the work.
+			if predict1.currentTitle == "" {
+				proxy.insertText(" ")
+				// FIXME: get current word from proxy and pass to
+				// predictionSelect -> this should insert the word
+				// as a new word in the Trie
+				//predictionSelect(word)
+			}
             predictionSelect(predict1)
             keyscontrol.clear()
             predict1.setTitle("", for: .normal)
@@ -940,13 +985,23 @@ extension KeyboardViewController {
                 // fetch all text before the cursor
                 var text = proxy.documentContextBeforeInput
                 NSLog("Text is: \(text)")
-                
+				
+				keyscontrol.t9Communicator.backspace()
+				
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
                 NSLog("Words is: \(words)")
                 
                 // reload previous keysequence
-                let prevWord = (words?[(words?.count)! - 1])!
+				let prevWord: String
+				
+				var i = (words?.count)! - 1
+				while words?[i] == "" && i >= 0 {
+					i -= 1
+				}
+				
+				prevWord = (words?[i])!
+				
                 NSLog("prevWord is: \(prevWord)")
                 
                 // reverse map previous word into a keysequence

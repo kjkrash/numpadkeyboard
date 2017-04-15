@@ -1,36 +1,17 @@
 import Foundation
 
-// http://stackoverflow.com/questions/24092884/get-nth-character-of-a-string-in-swift-programming-language
-extension String {
-    
-    var length: Int {
-        return self.characters.count
-    }
-    
-    subscript (i: Int) -> String {
-        return self[Range(i ..< i + 1)]
-    }
-    
-    func substring(from: Int) -> String {
-        return self[Range(min(from, length) ..< length)]
-    }
-    
-    func substring(to: Int) -> String {
-        return self[Range(0 ..< max(0, to))]
-    }
-    
-    subscript (r: Range<Int>) -> String {
-        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
-                                            upper: min(length, max(0, r.upperBound))))
-        let start = index(startIndex, offsetBy: range.lowerBound)
-        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return self[Range(start ..< end)]
-    }
-    
+
+
+enum SuggestionStatus {
+	case EXIST
+	case NONE
+	case PENDING
 }
 
 class T9 {
-    
+	
+	internal var suggestionStatus: SuggestionStatus
+	
     // The total number of suggestions to be returned from T9.
     internal let numResults: Int
     
@@ -55,12 +36,31 @@ class T9 {
         assert(numResults > numCacheResults)
         self.trie = Trie(dictionaryFilename: dictionaryFilename, suggestionDepth: suggestionDepth)
         self.cache = Cache(sizeLimit: cacheSize, suggestionDepth: suggestionDepth)
+		self.suggestionStatus = SuggestionStatus.PENDING
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
     }
-    
+	
+	func getSuggestionStatus() -> SuggestionStatus! {
+		return self.suggestionStatus
+	}
+	
+	func backspace() {
+		if self.suggestionStatus == SuggestionStatus.NONE {
+			self.suggestionStatus = SuggestionStatus.EXIST
+		}
+	}
+	
     func getSuggestions(keySequence: [Int], shiftSequence: [Bool]) -> [String] {
+		
+		// Proceed to get suggestions only if there were already suggestions
+		// for the last key seq or we are waiting for a new word to begin
+		// (status: PENDING)
+		if self.suggestionStatus == SuggestionStatus.NONE {
+			return []
+		}
+		
         var trieSuggestions = trie.getSuggestions(keySequence: keySequence)
         var cacheSuggestions: [String] = []
         var suggestions: [String] = []
@@ -99,80 +99,88 @@ class T9 {
             suggestions += trieSuggestions
             suggestions += cacheSuggestions
         }
-        
-        // remove duplicates from overlap between cache and getSuggestions() using a map
-        // to keep track of seen values
-        var dupeDetector = [String: Bool]()
-        // traverse list
-//        for var i in 0..<suggestions.count {
-//            // check if key exists
-//            let keyExists = dupeDetector[suggestions[i]] != nil
-//            
-//            // if so, remove the duplicate and decrement counter to account for off by one
-//            // else, mark as seen
-//            if keyExists {
-//                suggestions.remove(at: i)
-//                i -= 1
-//            }
-//            else {
-//                dupeDetector[suggestions[i]] = true
-//            }
-//        }
-        
-        var i = 0
-        while i < suggestions.count {
-            // check if key exists
-            let keyExists = dupeDetector[suggestions[i]] != nil
-            
-            // if so, remove the duplicate and decrement counter to account for off by one
-            // else, mark as seen
-            if keyExists {
-                suggestions.remove(at: i)
-            }
-            else {
-                dupeDetector[suggestions[i]] = true
-                i += 1
-            }
-        }
-        
-        // Apply capitalization
-        // FIXME: very inefficient. cant figure out how to directly modify char in str
-        
-        var shiftExists = false
-        for shiftStatus in shiftSequence {
-            if shiftStatus {
-                shiftExists = true
-                break
-            }
-        }
-        
-        if shiftExists {
-            for (i, word) in suggestions.enumerated() {
-                var j = 0
-                var wordWithCaps: String = ""
-                while j < shiftSequence.count && j < word.length {
-                    if shiftSequence[j] {
-                        wordWithCaps.append(word[j].uppercased())
-                    } else {
-                        wordWithCaps.append(word[j])
-                    }
-                    j += 1
-                }
-                if shiftSequence.count < word.length {
-                    for k in j..<word.length {
-                        wordWithCaps.append(word[k])
-                    }
-                }
-                suggestions[i] = wordWithCaps
-            }
-        }
+		
+		if suggestions.count == 0 {
+			self.suggestionStatus = SuggestionStatus.NONE
+			return suggestions
+		} else {
+			self.suggestionStatus = SuggestionStatus.EXIST
+		}
+		
+		func removeDuplicates() {
+			// remove duplicates from overlap between cache and getSuggestions() using a map
+			// to keep track of seen values
+			var dupeDetector = [String: Bool]()
+			
+			var i = 0
+			while i < suggestions.count {
+				// check if key exists
+				let keyExists = dupeDetector[suggestions[i]] != nil
+				
+				// if so, remove the duplicate and decrement counter to account for off by one
+				// else, mark as seen
+				if keyExists {
+					suggestions.remove(at: i)
+				}
+				else {
+					dupeDetector[suggestions[i]] = true
+					i += 1
+				}
+			}
+		}
+		
+		removeDuplicates()
+		
+		func applyCaps() {
+			// Apply capitalization
+			// FIXME: very inefficient. cant figure out how to directly modify char in str
+			
+			var shiftExists = false
+			for shiftStatus in shiftSequence {
+				if shiftStatus {
+					shiftExists = true
+					break
+				}
+			}
+			
+			if shiftExists {
+				for (i, word) in suggestions.enumerated() {
+					var j = 0
+					var wordWithCaps: String = ""
+					while j < shiftSequence.count && j < word.length {
+						if shiftSequence[j] {
+							wordWithCaps.append(word[j].uppercased())
+						} else {
+							wordWithCaps.append(word[j])
+						}
+						j += 1
+					}
+					if shiftSequence.count < word.length {
+						for k in j..<word.length {
+							wordWithCaps.append(word[k])
+						}
+					}
+					suggestions[i] = wordWithCaps
+				}
+			}
+		}
+		
+		applyCaps()
+		
         return suggestions
     }
-    
+	
     func rememberChoice(word: String) {
         // If the chosen word was one of the suggestions, update its weight in
-        // the Trie
-        NSLog("remember choice")
+        // the Trie. If it is not in the trie, updateWeight will insert it.
+		// Thus, this function should be called after every word, new or old.
+		
+		if self.suggestionStatus == SuggestionStatus.NONE {
+			self.suggestionStatus = SuggestionStatus.PENDING
+			return
+		}
+		
+        NSLog("rememberChoice(\(word))")
         _ = trie.updateWeight(word: word)
     }
 }
