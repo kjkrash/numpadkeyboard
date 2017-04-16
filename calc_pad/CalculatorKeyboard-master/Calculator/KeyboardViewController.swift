@@ -653,7 +653,7 @@ extension KeyboardViewController {
             predict4.setTitle(suggestionsToRender[3], for: .normal)
             predict4.setTitleColor(Color.black, for: .normal)
         }
-        } else if (night_mode == false) {
+        } else if (night_mode == true) {
             let proxy = textDocumentProxy as UITextDocumentProxy
             proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
             
@@ -1309,7 +1309,15 @@ extension KeyboardViewController {
 
         
     }
-	
+    
+    @IBAction func settingsAction() {
+        if (night_mode == false) {
+            night_mode = true
+        } else if (night_mode == true) {
+            night_mode = false
+        }
+    }
+    
 	internal func clearPredictionButtons() {
 		for button in predictionButtons {
 			button.setTitle("", for: .normal)

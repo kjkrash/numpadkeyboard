@@ -383,7 +383,7 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="这就是你要的function哥只能帮你到这了" destination="-1" eventType="touchUpInside" id="m8j-Jb-HnV"/>
+                                <action selector="settingsAction" destination="-1" eventType="touchUpInside" id="k3T-Np-t92"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B50-g6-ooe" customClass="RaisedButton" customModule="Material">

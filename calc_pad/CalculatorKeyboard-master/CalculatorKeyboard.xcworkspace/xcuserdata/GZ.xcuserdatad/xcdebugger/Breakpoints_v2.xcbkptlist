@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1219"
             endingLineNumber = "1219"
-            landmarkName = "&#x8fd9;&#x5c31;&#x662f;&#x4f60;&#x8981;&#x7684;function&#x54e5;&#x53ea;&#x80fd;&#x5e2e;&#x4f60;&#x5230;&#x8fd9;&#x4e86;()"
+            landmarkName = "inputSymbols(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
