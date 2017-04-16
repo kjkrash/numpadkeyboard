@@ -1174,7 +1174,7 @@ extension KeyboardViewController {
         
         // If in numbers mode, just insert into field
         if(one.mode == "numbers"){
-            proxy.insertText(input!)
+            proxy.insertText(sender.currentTitle!!)
             return
         }
         
