@@ -18,6 +18,7 @@
 		2511431C1E4C7D72003334E2 /* UIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2511431B1E4C7D72003334E2 /* UIElements.swift */; };
 		2537DAF31E4A80580097C6C1 /* NinekeyKeyboard.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2537DAF21E4A80580097C6C1 /* NinekeyKeyboard.xib */; };
 		2537DAFB1E4AE03E0097C6C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 194C96081BF3497E000B3BA6 /* Assets.xcassets */; };
+		255A03501EA3B93800322ADA /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255A034E1EA3B92F00322ADA /* StreamReader.swift */; };
 		2730776E1E5376E6003A37C3 /* T9.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2730776D1E5376E6003A37C3 /* T9.swift */; };
 		2730777B1E5382DE003A37C3 /* TrieClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273077781E5382DE003A37C3 /* TrieClass.swift */; };
 		275133CE1E57629900616DCA /* cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273077761E5382DE003A37C3 /* cache.swift */; };
@@ -80,6 +81,7 @@
 		2511431B1E4C7D72003334E2 /* UIElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIElements.swift; sourceTree = "<group>"; };
 		2511431D1E4C805F003334E2 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		2537DAF21E4A80580097C6C1 /* NinekeyKeyboard.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NinekeyKeyboard.xib; sourceTree = "<group>"; };
+		255A034E1EA3B92F00322ADA /* StreamReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StreamReader.swift; path = Calculator/StreamReader.swift; sourceTree = "<group>"; };
 		2730776D1E5376E6003A37C3 /* T9.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = T9.swift; sourceTree = "<group>"; };
 		273077761E5382DE003A37C3 /* cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = cache.swift; sourceTree = "<group>"; };
 		273077781E5382DE003A37C3 /* TrieClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrieClass.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 		194C95F51BF3497E000B3BA6 = {
 			isa = PBXGroup;
 			children = (
+				255A034E1EA3B92F00322ADA /* StreamReader.swift */,
 				194C96001BF3497E000B3BA6 /* CalculatorKeyboard */,
 				194C96181BF3585D000B3BA6 /* Calculator */,
 				CE57B9981E59594800386028 /* CalculatorKeyboardTests */,
@@ -455,6 +458,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				255A03501EA3B93800322ADA /* StreamReader.swift in Sources */,
 				2511431A1E4C7D2B003334E2 /* Extensions.swift in Sources */,
 				27A315D71E54E68200917329 /* t9Driver.swift in Sources */,
 				2730776E1E5376E6003A37C3 /* T9.swift in Sources */,
@@ -731,6 +735,7 @@
 				CE57B9A01E59594800386028 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

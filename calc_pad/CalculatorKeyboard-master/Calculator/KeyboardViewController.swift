@@ -43,6 +43,8 @@ class KeyboardViewController: UIInputViewController {
     var shift_m = "off"
     var num_mode = "off"
     var turnOff = false
+    var night_mode = false
+
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
     @IBOutlet var rightRegion: UIView!
@@ -567,6 +569,7 @@ extension KeyboardViewController {
             shiftState = true
         }
 		
+        if (night_mode == false) {
 		var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
 		if suggestionsToRender.count == 0 {
 			for button in predictionButtons {
@@ -650,6 +653,12 @@ extension KeyboardViewController {
             predict4.setTitle(suggestionsToRender[3], for: .normal)
             predict4.setTitleColor(Color.black, for: .normal)
         }
+        } else if (night_mode == false) {
+            let proxy = textDocumentProxy as UITextDocumentProxy
+            proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+            
+        }
+
     }
     
     /// Show current pushed key's alphabet representations in top panel
@@ -1212,6 +1221,14 @@ extension KeyboardViewController {
 
         for predictionButton in predictionButtons {
             predictionButton.setTitle("", for: .normal)
+        }
+    }
+    
+    @IBAction func moon_pressed() {
+        if (night_mode == false) {
+            night_mode = true
+        } else if (night_mode == true) {
+            night_mode = false
         }
     }
     

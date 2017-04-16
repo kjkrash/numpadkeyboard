@@ -153,31 +153,31 @@ class KeysControl: NSObject {
     }
     
     func toggle(mode: String, tag: Int) -> String {
-        //        if tag == previousTag {
-        //            if inputsDelay >= 0.8 {
-        //                pointerAddress = 0
-        //                previousTag = tag
-        //                storedInputs = storedInputs + currentInput
-        //                currentInput = Keys.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
-        //                lastKeyControlTime = Date()
-        //                return storedInputs + Keys.NineKeys.mapping[mode]![String(tag)]![0]
-        //            }else{
-        //                pointerAddress += 1
-        //                if !(Keys.NineKeys.mapping[mode]?[String(tag)]?.indices.contains(pointerAddress))! {
-        //                    pointerAddress = 0
-        //                }
-        //                currentInput = Keys.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
-        //                lastKeyControlTime = Date()
-        //                return storedInputs + currentInput
-        //            }
-        //        }else{
-        pointerAddress = 0
-        previousTag = tag
-        storedInputs = storedInputs + currentInput
-        currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
-        lastKeyControlTime = Date()
-        return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
-        //}
+        if tag == previousTag {
+            if inputsDelay >= 0.8 {
+                pointerAddress = 0
+                previousTag = tag
+                storedInputs = storedInputs + currentInput
+                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                lastKeyControlTime = Date()
+                return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+            }else{
+                pointerAddress += 1
+                if !(KeysMap.NineKeys.mapping[mode]?[String(tag)]?.indices.contains(pointerAddress))! {
+                    pointerAddress = 0
+                }
+                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                lastKeyControlTime = Date()
+                return storedInputs + currentInput
+            }
+        }else{
+            pointerAddress = 0
+            previousTag = tag
+            storedInputs = storedInputs + currentInput
+            currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+            lastKeyControlTime = Date()
+            return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+        }
     }
     
     
