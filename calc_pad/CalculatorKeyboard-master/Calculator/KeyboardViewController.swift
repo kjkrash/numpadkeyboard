@@ -787,59 +787,60 @@ extension KeyboardViewController {
         predict20.setTitleColor(Color.black, for: .normal)
     }
     
-    // Weight word selected in algorithm, replace what's in field with selected word.
-    @IBAction func predictionSelect(_ operation: RoundButton){
-        let proxy = textDocumentProxy as UITextDocumentProxy
-        
-        let input: String? = operation.currentTitle
-        
-        if(one.mode == "numbers"){
-            // If the mode is numbers, just insert the character.
-            proxy.insertText(input!)
-            return
-        }
-        
-        var s = proxy.documentContextBeforeInput
-        
-        // Checks that the prediction is not empty (in which case, shouldn't insert
-        // anything) and that it is not in punctuation mode (in which case, should
-        // go to 'else' and inputSymbols call.
-        if input != nil && /*predict1.currentTitle != "" && */predict1.currentTitle != "@" {
-            keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
-            var num = keyscontrol.storedKeySequence.length
-            
-            // Replace what's currently in text field of word being typed
-            if(s?[(s?.length)!-1] != " "){
-                while(num > 0 && s?[(s?.length)!-1] != " "){
-                    proxy.deleteBackward()
-                    num -= 1
-                    s = proxy.documentContextBeforeInput //re capture so we don't go over
-                }
-            }
-            proxy.insertText(input! + " ") // insert word
-            
-        } else {
-            // Call inputSymbols
-            if predict1.currentTitle == "@" || predict1.currentTitle == "+" {
-                inputSymbols(operation)
-            }
-        }
-        
-        // Clear stored information in keys controller
-        keyscontrol.clear()
-        
-        // Reset prediction button
-
-        
-        for predictionButton in predictionButtons {
-            predictionButton.setTitle("", for: .normal)
-        }
-        
-        for charButton in charButtons {
-            charButton.setTitle("", for: .normal)
-        }
-    }
-    
+	// Weight word selected in algorithm, replace what's in field with selected word.
+	@IBAction func predictionSelect(_ operation: RoundButton){
+		
+		if keyscontrol.t9Communicator.getSuggestionStatus() != SuggestionStatus.EXIST {
+			return
+		}
+		
+		let proxy = textDocumentProxy as UITextDocumentProxy
+		
+		let input: String? = operation.currentTitle
+		
+		if(one.mode == "numbers"){
+			// If the mode is numbers, just insert the character.
+			proxy.insertText(input!)
+			return
+		}
+		
+		var s = proxy.documentContextBeforeInput
+		
+		// Checks that the prediction is not empty (in which case, shouldn't insert
+		// anything) and that it is not in punctuation mode (in which case, should
+		// go to 'else' and inputSymbols call.
+		if input != nil && /*predict1.currentTitle != "" && */predict1.currentTitle != "@" {
+			keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
+			var num = keyscontrol.storedKeySequence.length
+			
+			// Replace what's currently in text field of word being typed
+			if(s?[(s?.length)!-1] != " "){
+				while(num > 0 && s?[(s?.length)!-1] != " "){
+					proxy.deleteBackward()
+					num -= 1
+					s = proxy.documentContextBeforeInput //re capture so we don't go over
+				}
+			}
+			proxy.insertText(input! + " ") // insert word
+			keyscontrol.wordSelected(word: input!)
+			keyscontrol.t9Communicator.suggestionStatus = SuggestionStatus.PENDING
+			
+		} else {
+			// Call inputSymbols
+			if predict1.currentTitle == "@" || predict1.currentTitle == "+" {
+				inputSymbols(operation)
+			}
+		}
+		
+		// Clear stored information in keys controller
+		keyscontrol.clear()
+		
+		// Reset prediction button
+		
+		clearPredictionButtons()
+		clearCharButtons()
+	}
+	
     // When space is pressed, the user effectively selects the first suggestion button's suggestion.
     // The input text field will then display that word (and a space), and the working keySequence
     // will be cleared. The function will also call t9Driver's updateWeights function with the correct
