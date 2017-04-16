@@ -26,6 +26,9 @@ class T9 {
     
     // Caches recent results
     internal var cache: Cache
+	
+	// The set of acceptable chars for a word
+	internal let charSet: CharacterSet
     
     init(dictionaryFilename: String,
          resetFilename: String,
@@ -40,6 +43,7 @@ class T9 {
         self.numResults = numResults
         self.numCacheResults = numCacheResults
         self.numTrieResults = numResults - numCacheResults
+		self.charSet = CharacterSet.letters
     }
 	
 	func getSuggestionStatus() -> SuggestionStatus! {
@@ -170,17 +174,32 @@ class T9 {
         return suggestions
     }
 	
-    func rememberChoice(word: String) {
+	// Returns true if the word is successfully remembered
+    func rememberChoice(word: String) -> Bool {
+		
+		if word.length == 0 {
+			return false
+		}
+		
+		// Verify that the word contains only letters
+		for i in 0..<word.length {
+			if !self.charSet.contains(UnicodeScalar(word[i])!) {
+				return false
+			}
+		}
+		
         // If the chosen word was one of the suggestions, update its weight in
         // the Trie. If it is not in the trie, updateWeight will insert it.
 		// Thus, this function should be called after every word, new or old.
 		
 		if self.suggestionStatus == SuggestionStatus.NONE {
 			self.suggestionStatus = SuggestionStatus.PENDING
-			return
+			return false
 		}
 		
         NSLog("rememberChoice(\(word))")
         _ = trie.updateWeight(word: word)
+		
+		return true
     }
 }
