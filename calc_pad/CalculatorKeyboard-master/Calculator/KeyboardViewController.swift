@@ -43,7 +43,7 @@ class KeyboardViewController: UIInputViewController {
     var shift_m = "off"
     var num_mode = "off"
     var turnOff = false
-    var night_mode = false
+    var manualMode = false
 
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
@@ -569,94 +569,95 @@ extension KeyboardViewController {
             shiftState = true
         }
 		
-        if (night_mode == false) {
-		var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
-		if suggestionsToRender.count == 0 {
-			for button in predictionButtons {
-				button.setTitle("", for: .normal)
-			}
-			for button in charButtons {
-				button.setTitle("", for: .normal)
-			}
-			return
-		}
-
-        // Displays letters on key that was pressed
-        showCurrentKeyMapping(operation)
-        
-        // For suggestions not returned, fill expanded suggestions array with empty strings.
-        let max = 20
-        if suggestionsToRender.count < max {
-            for _ in 0..<max - suggestionsToRender.count {
-                suggestionsToRender.append("")
+        if (manualMode == false) {
+            var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
+            if suggestionsToRender.count == 0 {
+                for button in predictionButtons {
+                    button.setTitle("", for: .normal)
+                }
+                for button in charButtons {
+                    button.setTitle("", for: .normal)
+                }
+                return
             }
-        }
-        
-        // Set suggestions (see "didSet" above)
-        self.suggestions = suggestionsToRender
-        
-        // Fill in the 4 prediction buttons
-        if suggestionsToRender[0] != "" {
-            predict1.setTitle(suggestionsToRender[0], for: .normal)
-            predict1.setTitleColor(Color.black, for: .normal)
-            let proxy = textDocumentProxy as UITextDocumentProxy
-            
-            // Continually replace rendered text thus far with first suggestion.
-            if(suggestionsToRender[0].length == keyscontrol.storedKeySequence.length){
-                var num = keyscontrol.storedKeySequence.length
-                var s = proxy.documentContextBeforeInput
-                if(s?[(s?.length)!-1] != " "){
-                    while(num > 1 && s?[(s?.length)!-1] != " "){
-                        proxy.deleteBackward()
-                        num -= 1
-                        s = proxy.documentContextBeforeInput //re capture so we don't go over
-                    }
-                }
-                proxy.insertText(suggestionsToRender[0])
-            } else {
-                //This case causes bugs - could be eliminated by having a weighting algorithm
-                //guarantee there's always going to be a suggestion of that length...
-                //Unless we should always just show what's first idk?
 
-                //Temp solution: If the length of the first suggestion 
-                // (which is what is going to render as user types)
-                // is longer than what they've typed so far, truncate it.
-                var num = keyscontrol.storedKeySequence.length
-                var s = proxy.documentContextBeforeInput
-                if(s?[(s?.length)!-1] != " "){
-                    while(num > 1 && s?[(s?.length)!-1] != " " ){
-                        proxy.deleteBackward()
-                        num -= 1
-                        s = proxy.documentContextBeforeInput //re capture so we don't go over
-                    }
-                }
-                var shiftedWord = suggestionsToRender[0]
-                var moreThan = suggestionsToRender[0].length - keyscontrol.storedKeySequence.length
-                while(moreThan > 0 && shiftedWord.length > 0){
-                    moreThan -= 1
-                    shiftedWord.characters.removeLast()
-                }
-                proxy.insertText(shiftedWord)
-            }
-        }
-        
-        // Render remaining suggestions
-        if suggestionsToRender[1] != "" {
-            predict2.setTitle(suggestionsToRender[1], for: .normal)
-            predict2.setTitleColor(Color.black, for: .normal)
-        }
-        if suggestionsToRender[2] != "" {
-            predict3.setTitle(suggestionsToRender[2], for: .normal)
-            predict3.setTitleColor(Color.black, for: .normal)
-        }
-        if suggestionsToRender[3] != "" {
-            predict4.setTitle(suggestionsToRender[3], for: .normal)
-            predict4.setTitleColor(Color.black, for: .normal)
-        }
-        } else if (night_mode == true) {
-            let proxy = textDocumentProxy as UITextDocumentProxy
-            proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+            // Displays letters on key that was pressed
+            showCurrentKeyMapping(operation)
             
+            // For suggestions not returned, fill expanded suggestions array with empty strings.
+            let max = 20
+            if suggestionsToRender.count < max {
+                for _ in 0..<max - suggestionsToRender.count {
+                    suggestionsToRender.append("")
+                }
+            }
+        
+            // Set suggestions (see "didSet" above)
+            self.suggestions = suggestionsToRender
+            
+            // Fill in the 4 prediction buttons
+            if suggestionsToRender[0] != "" {
+                predict1.setTitle(suggestionsToRender[0], for: .normal)
+                predict1.setTitleColor(Color.black, for: .normal)
+                let proxy = textDocumentProxy as UITextDocumentProxy
+                
+                // Continually replace rendered text thus far with first suggestion.
+                if(suggestionsToRender[0].length == keyscontrol.storedKeySequence.length){
+                    var num = keyscontrol.storedKeySequence.length
+                    var s = proxy.documentContextBeforeInput
+                    if(s?[(s?.length)!-1] != " "){
+                        while(num > 1 && s?[(s?.length)!-1] != " "){
+                            proxy.deleteBackward()
+                            num -= 1
+                            s = proxy.documentContextBeforeInput //re capture so we don't go over
+                        }
+                    }
+                    proxy.insertText(suggestionsToRender[0])
+                } else {
+                    //This case causes bugs - could be eliminated by having a weighting algorithm
+                    //guarantee there's always going to be a suggestion of that length...
+                    //Unless we should always just show what's first idk?
+
+                    //Temp solution: If the length of the first suggestion 
+                    // (which is what is going to render as user types)
+                    // is longer than what they've typed so far, truncate it.
+                    var num = keyscontrol.storedKeySequence.length
+                    var s = proxy.documentContextBeforeInput
+                    if(s?[(s?.length)!-1] != " "){
+                        while(num > 1 && s?[(s?.length)!-1] != " " ){
+                            proxy.deleteBackward()
+                            num -= 1
+                            s = proxy.documentContextBeforeInput //re capture so we don't go over
+                        }
+                    }
+                    var shiftedWord = suggestionsToRender[0]
+                    var moreThan = suggestionsToRender[0].length - keyscontrol.storedKeySequence.length
+                    while(moreThan > 0 && shiftedWord.length > 0){
+                        moreThan -= 1
+                        shiftedWord.characters.removeLast()
+                    }
+                    proxy.insertText(shiftedWord)
+                }
+            }
+            
+            // Render remaining suggestions
+            if suggestionsToRender[1] != "" {
+                predict2.setTitle(suggestionsToRender[1], for: .normal)
+                predict2.setTitleColor(Color.black, for: .normal)
+            }
+            if suggestionsToRender[2] != "" {
+                predict3.setTitle(suggestionsToRender[2], for: .normal)
+                predict3.setTitleColor(Color.black, for: .normal)
+            }
+            if suggestionsToRender[3] != "" {
+                predict4.setTitle(suggestionsToRender[3], for: .normal)
+                predict4.setTitleColor(Color.black, for: .normal)
+            }
+        } else if (manualMode == true) {
+//            let proxy = textDocumentProxy as UITextDocumentProxy
+//            proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+
+            predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag), for:.normal)
         }
 
     }
@@ -712,6 +713,9 @@ extension KeyboardViewController {
     
     /// When user specified accurate alphabet character in top panel
     @IBAction func didSelectCurrentChar(_ charButton: UIButton) {
+        if manualMode == true {
+            return
+        }
         // OPTIONAL FILTERING OF SUGGESTION: MUST DECIDE WHAT METHOD WE WANT TO USE
         if let title = charButton.currentTitle {
             suggestions = filterSuggestions(withCurrentChar: title)
@@ -865,6 +869,12 @@ extension KeyboardViewController {
             predict4.setTitle("", for: .normal)
         } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
             proxy.insertText(predict1.currentTitle!)
+        } else if predict1.currentTitle != "" { //manualMode
+            predictionSelect(predict1)
+            predict1.setTitle("", for: .normal)
+            predict2.setTitle("", for: .normal)
+            predict3.setTitle("", for: .normal)
+            predict4.setTitle("", for: .normal)
         } else {
             proxy.insertText(" ")
         }
@@ -984,6 +994,17 @@ extension KeyboardViewController {
     @IBAction func shouldDeleteTextInDisplay() {
         let proxy = textDocumentProxy as UITextDocumentProxy
         
+        if manualMode == true {
+            if predict1.currentTitle != "" {
+                var title = predict1.currentTitle
+                var newTitle = predict1.currentTitle?.substring(to: (predict1.currentTitle?.length)! - 1)
+                NSLog("newTitle: " + newTitle!)
+                predict1.setTitle(newTitle, for: .normal)
+            } else {
+                shouldDeleteText()
+            }
+            return
+        }
         // if there is no longer a current word
         if keyscontrol.storedKeySequence.length == 0 {
             // check if there are previous words
@@ -1224,14 +1245,6 @@ extension KeyboardViewController {
         }
     }
     
-    @IBAction func moon_pressed() {
-        if (night_mode == false) {
-            night_mode = true
-        } else if (night_mode == true) {
-            night_mode = false
-        }
-    }
-    
     @IBAction func addWordsToDict(){
         let proxy = textDocumentProxy as UITextDocumentProxy
         if proxy.hasText == false {
@@ -1311,10 +1324,10 @@ extension KeyboardViewController {
     }
     
     @IBAction func settingsAction() {
-        if (night_mode == false) {
-            night_mode = true
-        } else if (night_mode == true) {
-            night_mode = false
+        if (manualMode == false) {
+            manualMode = true
+        } else if (manualMode == true) {
+            manualMode = false
         }
     }
     
