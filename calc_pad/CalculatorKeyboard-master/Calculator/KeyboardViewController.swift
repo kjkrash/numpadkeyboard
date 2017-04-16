@@ -850,13 +850,7 @@ extension KeyboardViewController {
         let proxy = textDocumentProxy as UITextDocumentProxy
         if keyscontrol.t9Communicator.getSuggestionStatus() != SuggestionStatus.PENDING && /*predict1.currentTitle != "" &&*/ predict1.currentTitle != "@" {
             // Calls predictionSelect to do most of the work.
-			if predict1.currentTitle == "" {
-				proxy.insertText(" ")
-				// FIXME: get current word from proxy and pass to
-				// predictionSelect -> this should insert the word
-				// as a new word in the Trie
-				//predictionSelect(word)
-			}
+
             predictionSelect(predict1)
             keyscontrol.clear()
             predict1.setTitle("", for: .normal)
@@ -1041,6 +1035,16 @@ extension KeyboardViewController {
 				}
 				
 				prevWord = (words?[i])!
+				
+				// If anyone of the chars in the word is not a letter (e.g., a
+				// comma), then we don't have to worry about loading the prev
+				// key sequence.
+				let letters = CharacterSet.letters
+				for i in stride(from: prevWord.length - 1, to: 0, by: -1) {
+					if !letters.contains(UnicodeScalar(prevWord[i])!) {
+						return
+					}
+				}
 				
                 NSLog("prevWord is: \(prevWord)")
                 
