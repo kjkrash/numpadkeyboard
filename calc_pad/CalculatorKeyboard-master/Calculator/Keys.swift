@@ -147,9 +147,7 @@ class KeysControl: NSObject {
     }
     
     func wordSelected(word: String){
-        NSLog("word selected")
-        t9Communicator.rememberChoice(word: word)
-        NSLog("after rc")
+		t9Communicator.rememberChoice(word: word)
     }
     
     func toggle(mode: String, tag: Int) -> String {
