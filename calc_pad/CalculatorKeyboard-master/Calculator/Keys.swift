@@ -149,7 +149,8 @@ class KeysControl: NSObject {
     }
     
     func wordSelected(word: String){
-		t9Communicator.rememberChoice(word: word)
+		
+		t9Communicator.rememberChoice(word: word.lowercased())
     }
     
     func toggle(mode: String, tag: Int, shiftMode: Bool) -> String {
