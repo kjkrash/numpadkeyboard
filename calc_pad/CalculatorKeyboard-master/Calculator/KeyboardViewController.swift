@@ -1062,9 +1062,6 @@ extension KeyboardViewController {
                 var text = proxy.documentContextBeforeInput
 				
 				if text == nil {
-                    if shift_m == "off" {
-                        toggleShift(shift)
-                    }
 					return
 				}
 				
@@ -1152,6 +1149,9 @@ extension KeyboardViewController {
 			}
 			
 			if !proxy.hasText {
+                if shift_m == "off" {
+                    toggleShift(shift)
+                }
 				clearPredictionButtons()
 				clearCharButtons()
 			}
