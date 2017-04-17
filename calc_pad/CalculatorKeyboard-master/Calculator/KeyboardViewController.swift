@@ -1061,7 +1061,7 @@ extension KeyboardViewController {
 				// comma), then we don't have to worry about loading the prev
 				// key sequence.
 				let letters = CharacterSet.letters
-				for i in stride(from: prevWord.length - 1, to: 0, by: -1) {
+				for i in 0..<prevWord.length {
 					if !letters.contains(UnicodeScalar(prevWord[i])!) {
 						return
 					}
@@ -1237,7 +1237,10 @@ extension KeyboardViewController {
             }
             proxy.insertText(word + sender.currentTitle!!)
         } else {
-            proxy.deleteBackward()
+			let text = proxy.documentContextBeforeInput
+			if text?[(text?.length)!-1] != "\n" {
+				proxy.deleteBackward()
+			}
             proxy.insertText(sender.currentTitle!!) //prob don't want added space
             return
         }
