@@ -835,7 +835,8 @@ extension KeyboardViewController {
 		// Checks that the prediction is not empty (in which case, shouldn't insert
 		// anything) and that it is not in punctuation mode (in which case, should
 		// go to 'else' and inputSymbols call.
-		if input != nil && /*predict1.currentTitle != "" && */predict1.currentTitle != "@" {
+		if input != nil && keyscontrol.t9Communicator.getSuggestionStatus() !=
+			SuggestionStatus.EXIST {
 			keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
 			var num = keyscontrol.storedKeySequence.length
 			
@@ -884,10 +885,9 @@ extension KeyboardViewController {
 
             predictionSelect(predict1)
             keyscontrol.clear()
-            predict1.setTitle("", for: .normal)
-            predict2.setTitle("", for: .normal)
-            predict3.setTitle("", for: .normal)
-            predict4.setTitle("", for: .normal)
+			clearPredictionButtons()
+			clearCharButtons()
+			proxy.insertText(" ")
         } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
             proxy.insertText(predict1.currentTitle!)
         } else if predict1.currentTitle != "" { //manualMode
@@ -1425,10 +1425,18 @@ extension KeyboardViewController {
     //Control textfield behavior
     override func textDidChange(_ textInput: UITextInput?) {
         // The app has just changed the document's contents, the document context has been updated.
-        
+		
         var textColor: UIColor
         let proxy = self.textDocumentProxy
-        
+		
+		// e.g. in messages, pressing send
+		if !proxy.hasText {
+			self.keyscontrol.clear()
+			clearPredictionButtons()
+			clearCharButtons()
+			keyscontrol.t9Communicator.suggestionStatus = SuggestionStatus.PENDING
+		}
+		
         if proxy.keyboardAppearance == UIKeyboardAppearance.dark {
             textColor = UIColor.white
         } else {
