@@ -988,7 +988,19 @@ extension KeyboardViewController {
     // will be returned here and rendered on the suggestion buttons.
     @IBAction func shouldDeleteTextInDisplay() {
         let proxy = textDocumentProxy as UITextDocumentProxy
-        
+        if keyscontrol.storedBoolSequence.count > 0 {
+            if(keyscontrol.storedBoolSequence.last)!{
+                if(shift_m == "off"){
+                    toggleShift(shift)
+                    shift_m = "on"
+                }
+            } else {
+                if(shift_m == "on"){
+                    toggleShift(shift)
+                    shift_m = "off"
+                }
+            }
+        }
         if manualMode == true {
             if predict1.currentTitle != "" {
                 var title = predict1.currentTitle
