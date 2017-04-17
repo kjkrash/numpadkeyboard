@@ -176,11 +176,13 @@ class KeysControl: NSObject {
                 if !(KeysMap.NineKeys.mapping[mode]?[String(tag)]?.indices.contains(pointerAddress))! {
                     pointerAddress = 0
                 }
+    
                 if keep == true {
                     currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
                 } else {
                     currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
                 }
+
                 lastKeyControlTime = Date()
                 return storedInputs + currentInput
             }
@@ -200,7 +202,6 @@ class KeysControl: NSObject {
             } else {
                 return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
             }
-            
         }
     }
     
