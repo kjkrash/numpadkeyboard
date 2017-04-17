@@ -564,54 +564,39 @@ extension KeyboardViewController {
         
         // If shiftState is on, toggle off (should only stay on for one click).
         var shiftState = false
-        if(operation.shiftMode == "on"){
+        
+        // fetch text from textfield for parsing
+        let proxy = textDocumentProxy as UITextDocumentProxy
+        
+        // if textfield is empty, then we want caps on
+        if !proxy.hasText {
             toggleShift(shift)
             shiftState = true
         }
-		
+        
+        // if there is text, parse it and check for
+        // [end-punctuation][space] format; if seen, then caps on
+        if proxy.hasText {
+            let text = proxy.documentContextBeforeInput
+            
+            if text != nil && (text?.length)! > 1 {
+                if (text?[(text?.length)!-1])! == " " &&
+                    ((text?[(text?.length)!-2])! == "." ||
+                        (text?[(text?.length)!-2])! == "?" ||
+                        (text?[(text?.length)!-2])! == "!") {
+                    toggleShift(shift)
+                    shiftState = true
+                }
+            }
+        }
+        
+        if(operation.shiftMode == "on") {
+            toggleShift(shift)
+            shiftState = true
+        }
+        
         if (manualMode == false) {
             var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
-            
-            let proxy = textDocumentProxy as UITextDocumentProxy
-            
-            if !proxy.hasText {
-                for i in 0..<suggestionsToRender.count {
-                    var word = suggestionsToRender[i]
-                    //NSLog("word is: " + word)
-                    var newWord = word[0].uppercased()
-                    word.remove(at: word.startIndex)
-                    newWord = newWord + word
-                    //NSLog("newword is: " + newWord)
-                    suggestionsToRender[i] = newWord
-                    //NSLog("new word at i: " + newWord)
-                }
-            }
-            
-            if proxy.hasText {
-                let text = proxy.documentContextBeforeInput
-                NSLog("text is: " + text!)
-                
-                if text != nil && (text?.length)! > 1 {
-                    NSLog("passed first if")
-                    if (text?[(text?.length)!-1])! == " " &&
-                        ((text?[(text?.length)!-2])! == "." ||
-                            (text?[(text?.length)!-2])! == "?" ||
-                            (text?[(text?.length)!-2])! == "!") {
-                        NSLog("passed second if")
-                        for i in 0..<suggestionsToRender.count {
-                            var word = suggestionsToRender[i]
-                            NSLog("word is: " + word)
-                            var newWord = word[0].uppercased()
-                            word.remove(at: word.startIndex)
-                            newWord = newWord + word
-                            NSLog("newword is: " + newWord)
-                            suggestionsToRender[i] = newWord
-                            NSLog("new word at i: " + newWord)
-                        }
-                    }
-                }
-            }
-
             
             if suggestionsToRender.count == 0 {
                 for button in predictionButtons {
