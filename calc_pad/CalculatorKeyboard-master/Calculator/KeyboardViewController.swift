@@ -656,8 +656,9 @@ extension KeyboardViewController {
         } else if (manualMode == true) {
 //            let proxy = textDocumentProxy as UITextDocumentProxy
 //            proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+            predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag, shiftMode: shiftState), for:.normal)
 
-            predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag), for:.normal)
+
         }
 
     }
@@ -992,10 +993,10 @@ extension KeyboardViewController {
             if predict1.currentTitle != "" {
                 var title = predict1.currentTitle
                 var newTitle = predict1.currentTitle?.substring(to: (predict1.currentTitle?.length)! - 1)
-                NSLog("newTitle: " + newTitle!)
-                predict1.setTitle(newTitle, for: .normal)
+                predict1.setTitle(keyscontrol.backspace(), for: .normal)
             } else {
                 shouldDeleteText()
+                keyscontrol.backspace()
             }
             return
         }

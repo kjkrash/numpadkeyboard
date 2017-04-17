@@ -63,6 +63,7 @@ class KeysControl: NSObject {
     var storedKeySequence: String
     var storedBoolSequence: [Bool]
     var numberJustPressed: String
+    var keep: Bool
     var inputsDelay: TimeInterval {
         get{
             return Date().timeIntervalSince(lastKeyControlTime)
@@ -74,6 +75,7 @@ class KeysControl: NSObject {
         storedKeySequence = ""
         storedBoolSequence = [Bool]()
         numberJustPressed = ""
+        keep = false
         t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 8, numResults: 20, numCacheResults: 10, cacheSize: 50)
         super.init()
     }
@@ -150,37 +152,68 @@ class KeysControl: NSObject {
 		t9Communicator.rememberChoice(word: word)
     }
     
-    func toggle(mode: String, tag: Int) -> String {
+    func toggle(mode: String, tag: Int, shiftMode: Bool) -> String {
         if tag == previousTag {
             if inputsDelay >= 0.8 {
+                keep = shiftMode
                 pointerAddress = 0
                 previousTag = tag
                 storedInputs = storedInputs + currentInput
-                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                if shiftMode == true {
+                    currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
+                } else {
+                    currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                }
+                
                 lastKeyControlTime = Date()
-                return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+                if shiftMode == true {
+                    return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0].uppercased()
+                } else {
+                    return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+                }
             }else{
                 pointerAddress += 1
                 if !(KeysMap.NineKeys.mapping[mode]?[String(tag)]?.indices.contains(pointerAddress))! {
                     pointerAddress = 0
                 }
-                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                if keep == true {
+                    currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
+                } else {
+                    currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+                }
                 lastKeyControlTime = Date()
                 return storedInputs + currentInput
             }
         }else{
+            keep = shiftMode
             pointerAddress = 0
             previousTag = tag
             storedInputs = storedInputs + currentInput
-            currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+            if shiftMode == true {
+                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
+            } else {
+                currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
+            }
             lastKeyControlTime = Date()
-            return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+            if shiftMode == true {
+                return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0].uppercased()
+            } else {
+                return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
+            }
+            
         }
     }
     
     
     func backspace() -> String {
-        if storedInputs.characters.count > 0 {
+        if storedInputs.characters.count > 0 && currentInput != "" {
+            NSLog("stored inputs: " + storedInputs)
+            currentInput = ""
+            pointerAddress = 0
+            previousTag = -1
+            lastKeyControlTime = Date()
+            return storedInputs
+        } else if storedInputs.characters.count > 0 {
             storedInputs.characters.removeLast()
             currentInput = ""
             pointerAddress = 0
