@@ -91,7 +91,7 @@ class RoundButton: UIButton {
         }
     }
     
-    var shiftMode:String = "off"
+    var shiftMode:String = "on"
     func shift() {
         switch shiftMode {
         case "off":

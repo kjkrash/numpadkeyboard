@@ -332,14 +332,14 @@
                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4CA-Gs-7lM" customClass="RaisedButton" customModule="Material">
                             <rect key="frame" x="8" y="136" width="34" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                            <state key="normal" title="⇧">
+                            <state key="normal" title="⇪">
                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
-                                    <color key="value" red="0.0" green="0.0" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="value" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                             <connections>
@@ -490,7 +490,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="abc">
+                    <state key="normal" title="ABC">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -516,7 +516,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="ghi">
+                    <state key="normal" title="GHI">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -539,7 +539,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="jkl">
+                    <state key="normal" title="JKL">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -562,7 +562,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="mno">
+                    <state key="normal" title="MNO">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -585,7 +585,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="pqrs">
+                    <state key="normal" title="PQRS">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -608,7 +608,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="tuv">
+                    <state key="normal" title="TUV">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -631,7 +631,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="wxyz">
+                    <state key="normal" title="WXYZ">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -654,7 +654,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="def">
+                    <state key="normal" title="DEF">
                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                     </state>
                     <userDefinedRuntimeAttributes>

@@ -40,7 +40,7 @@ class KeyboardViewController: UIInputViewController {
     ////////////   INITIALIZATION   ////////////
     ////////////////////////////////////////////
     
-    var shift_m = "off"
+    var shift_m = "on"
     var num_mode = "off"
     var turnOff = false
     var manualMode = false
