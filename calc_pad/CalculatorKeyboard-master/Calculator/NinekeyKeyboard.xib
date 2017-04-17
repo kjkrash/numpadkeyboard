@@ -23,7 +23,7 @@
                 <outlet property="five" destination="2O9-Y3-npc" id="mJ6-3b-TdI"/>
                 <outlet property="four" destination="Ybl-8c-adi" id="O6D-2r-1mD"/>
                 <outlet property="leftRegion" destination="Ugk-Wo-qL2" id="d6D-NY-1Tm"/>
-                <outlet property="newlineButton" destination="VaU-Z3-5rb" id="wMh-5o-czz"/>
+                <outlet property="manualModeButton" destination="VaU-Z3-5rb" id="cJh-Lr-D9d"/>
                 <outlet property="nextKeyboardButton" destination="lPF-vC-7EG" id="Vas-Zb-p6y"/>
                 <outlet property="nine" destination="0ov-6p-ZqG" id="dAT-1r-hdo"/>
                 <outlet property="numberPadSwitcher" destination="KcW-pn-hMS" id="XVj-rJ-c6u"/>

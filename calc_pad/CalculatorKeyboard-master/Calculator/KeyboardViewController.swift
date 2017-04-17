@@ -58,7 +58,7 @@ class KeyboardViewController: UIInputViewController {
         }
     }
     @IBOutlet var addWords: RaisedButton!
-    @IBOutlet var newlineButton: RaisedButton!
+    @IBOutlet var manualModeButton: RaisedButton!
     @IBOutlet var sendButton: RaisedButton!
     @IBOutlet var spaceButton: RoundButton!{
         didSet{
@@ -280,7 +280,7 @@ class KeyboardViewController: UIInputViewController {
                 .top(Padding().sidePanels.rightRegion.forButton(withIndex: 1).top)
                 .height(Padding.SidePanels.RightRegion.buttonDimensions.height)
                 .width(Padding.SidePanels.RightRegion.buttonDimensions.width)
-            rightRegion.layout(newlineButton)
+            rightRegion.layout(manualModeButton)
                 .left(Padding().sidePanels.rightRegion.forButton(withIndex: 2).left)
                 .top(Padding().sidePanels.rightRegion.forButton(withIndex: 2).top)
                 .height(Padding.SidePanels.RightRegion.buttonDimensions.height)
@@ -1330,8 +1330,10 @@ extension KeyboardViewController {
     @IBAction func settingsAction() {
         if (manualMode == false) {
             manualMode = true
+            manualModeButton.setBackgroundColor(color: UIColor.blue, forState: .normal)
         } else if (manualMode == true) {
             manualMode = false
+            manualModeButton.setBackgroundColor(color: UIColor.black, forState: .normal)
         }
     }
     
