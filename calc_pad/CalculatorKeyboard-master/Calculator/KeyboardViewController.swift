@@ -1029,6 +1029,18 @@ extension KeyboardViewController {
             if predict1.currentTitle != "" {
                 var title = predict1.currentTitle
                 var newTitle = predict1.currentTitle?.substring(to: (predict1.currentTitle?.length)! - 1)
+                var c = title?.characters.last
+                let sC = String(describing: c)
+                if sC.substring(from: 8) == sC.uppercased().substring(from: 8) {
+                    NSLog("shift_m: " + shift_m)
+                    if shift_m == "off" {
+                        toggleShift(shift)
+                    }
+                } else {
+                    if shift_m == "on" {
+                        toggleShift(shift)
+                    }
+                }
                 predict1.setTitle(keyscontrol.backspace(), for: .normal)
             } else {
                 shouldDeleteText()
@@ -1048,6 +1060,9 @@ extension KeyboardViewController {
                 var text = proxy.documentContextBeforeInput
 				
 				if text == nil {
+                    if shift_m == "off" {
+                        toggleShift(shift)
+                    }
 					return
 				}
 				

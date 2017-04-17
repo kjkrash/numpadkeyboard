@@ -209,7 +209,7 @@ class KeysControl: NSObject {
     
     func backspace() -> String {
         if storedInputs.characters.count > 0 && currentInput != "" {
-            NSLog("stored inputs: " + storedInputs)
+            NSLog("sI.c.count > 0 and currI isn't empty\nstored inputs: " + storedInputs)
             currentInput = ""
             pointerAddress = 0
             previousTag = -1
