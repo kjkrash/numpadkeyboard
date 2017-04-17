@@ -1038,6 +1038,8 @@ extension KeyboardViewController {
         }
         // if there is no longer a current word
         if keyscontrol.storedKeySequence.length == 0 {
+			
+			
             // check if there are previous words
             if proxy.hasText {
 				
@@ -1060,7 +1062,7 @@ extension KeyboardViewController {
 					let c = UnicodeScalar((text?[(text?.length)! - 2])!)
 					
 					if !letters.contains(c!) {
-						proxy.deleteBackward()
+//						proxy.deleteBackward()
 						keyscontrol.t9Backspace()
 						keyscontrol.t9Communicator.backspace()
 						return
@@ -1283,7 +1285,10 @@ extension KeyboardViewController {
                 }
             }
             proxy.insertText(word + sender.currentTitle!!)
-        } else {
+		} else if keyscontrol.storedKeySequence.isEmpty {
+			proxy.insertText(sender.currentTitle!!)
+			return
+		} else {
 			let text = proxy.documentContextBeforeInput
 			if text?[(text?.length)!-1] != "\n" {
 				proxy.deleteBackward()
