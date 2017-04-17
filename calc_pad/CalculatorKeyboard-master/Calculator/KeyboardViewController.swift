@@ -564,36 +564,35 @@ extension KeyboardViewController {
         
         // If shiftState is on, toggle off (should only stay on for one click).
         var shiftState = false
-        
-        // fetch text from textfield for parsing
-        let proxy = textDocumentProxy as UITextDocumentProxy
-        
-        // if textfield is empty, then we want caps on
-        if !proxy.hasText {
-            toggleShift(shift)
-            shiftState = true
-        }
-        
-        // if there is text, parse it and check for
-        // [end-punctuation][space] format; if seen, then caps on
-        if proxy.hasText {
-            let text = proxy.documentContextBeforeInput
-            
-            if text != nil && (text?.length)! > 1 {
-                if (text?[(text?.length)!-1])! == " " &&
-                    ((text?[(text?.length)!-2])! == "." ||
-                        (text?[(text?.length)!-2])! == "?" ||
-                        (text?[(text?.length)!-2])! == "!") {
-                    toggleShift(shift)
-                    shiftState = true
-                }
-            }
-        }
-        
         if(operation.shiftMode == "on") {
             toggleShift(shift)
             shiftState = true
         }
+        // fetch text from textfield for parsing
+//        let proxy = textDocumentProxy as UITextDocumentProxy
+//        
+//        // if textfield is empty, then we want caps on
+//        //ok this is never going to happen 
+////        if !proxy.hasText {
+////            toggleShift(shift)
+////            shiftState = true
+////        }
+//        
+//        // if there is text, parse it and check for
+//        // [end-punctuation][space] format; if seen, then caps on
+//        if proxy.hasText {
+//            let text = proxy.documentContextBeforeInput
+//            
+//            if text != nil && (text?.length)! > 1 {
+//                if (text?[(text?.length)!-1])! == " " &&
+//                    ((text?[(text?.length)!-2])! == "." ||
+//                        (text?[(text?.length)!-2])! == "?" ||
+//                        (text?[(text?.length)!-2])! == "!") {
+//                    toggleShift(shift)
+//                    shiftState = true
+//                }
+//            }
+//        }
         
         if (manualMode == false) {
             var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
@@ -1019,12 +1018,10 @@ extension KeyboardViewController {
             if(keyscontrol.storedBoolSequence.last)!{
                 if(shift_m == "off"){
                     toggleShift(shift)
-                    shift_m = "on"
                 }
             } else {
                 if(shift_m == "on"){
                     toggleShift(shift)
-                    shift_m = "off"
                 }
             }
         }
@@ -1243,6 +1240,16 @@ extension KeyboardViewController {
             return
         }
         
+        // if textfield is empty, then we want caps on
+        //ok this is never going to happen
+        
+        // if there is text, parse it and check for
+        // [end-punctuation][space] format; if seen, then caps on
+        if sender.currentTitle == "!" || sender.currentTitle == "?" || sender.currentTitle == "." {
+            if shift_m == "off"{
+                toggleShift(shift)
+            }
+        }
         var s = proxy.documentContextBeforeInput
         
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
