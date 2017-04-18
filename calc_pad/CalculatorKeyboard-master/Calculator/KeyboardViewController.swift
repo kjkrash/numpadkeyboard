@@ -755,7 +755,7 @@ extension KeyboardViewController {
         }
         
         let proxy = textDocumentProxy as UITextDocumentProxy
-        
+        predictionSelect(predict1)
         predict1.setTitle("@", for: .normal)
         predict1.setTitleColor(Color.black, for: .normal)
         predict2.setTitle("/", for: .normal)
