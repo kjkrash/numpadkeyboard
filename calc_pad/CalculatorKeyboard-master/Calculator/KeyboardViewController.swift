@@ -546,14 +546,12 @@ extension KeyboardViewController {
     // function uses the t9Driver class to getSuggestions of words. Once that 
     // function returns, this function will iterate through that array and 
     //change the titles of the predict buttons on the keyboard to the suggestions.
-    // TO DO: 0 doesn't work for some reason?
+    // TODO: 0 doesn't work for some reason?
 
     @IBAction func proceedNineKeyOperations(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
             let input: String? = operation.currentTitle
-            NSLog(String(describing: operation.currentTitle))
-            NSLog(input!)
             
             if input != nil {
                 proxy.insertText(input!)
@@ -568,31 +566,6 @@ extension KeyboardViewController {
             toggleShift(shift)
             shiftState = true
         }
-        // fetch text from textfield for parsing
-//        let proxy = textDocumentProxy as UITextDocumentProxy
-//        
-//        // if textfield is empty, then we want caps on
-//        //ok this is never going to happen 
-////        if !proxy.hasText {
-////            toggleShift(shift)
-////            shiftState = true
-////        }
-//        
-//        // if there is text, parse it and check for
-//        // [end-punctuation][space] format; if seen, then caps on
-//        if proxy.hasText {
-//            let text = proxy.documentContextBeforeInput
-//            
-//            if text != nil && (text?.length)! > 1 {
-//                if (text?[(text?.length)!-1])! == " " &&
-//                    ((text?[(text?.length)!-2])! == "." ||
-//                        (text?[(text?.length)!-2])! == "?" ||
-//                        (text?[(text?.length)!-2])! == "!") {
-//                    toggleShift(shift)
-//                    shiftState = true
-//                }
-//            }
-//        }
         
         if (manualMode == false) {
             var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
@@ -1035,7 +1008,6 @@ extension KeyboardViewController {
                 var c = title?.characters.last
                 let sC = String(describing: c)
                 if sC.substring(from: 8) == sC.uppercased().substring(from: 8) {
-                    NSLog("shift_m: " + shift_m)
                     if shift_m == "off" {
                         toggleShift(shift)
                     }
@@ -1053,8 +1025,6 @@ extension KeyboardViewController {
         }
         // if there is no longer a current word
         if keyscontrol.storedKeySequence.length == 0 {
-			
-			
             // check if there are previous words
             if proxy.hasText {
 				
@@ -1068,9 +1038,7 @@ extension KeyboardViewController {
 					return
 				}
 				
-                NSLog("Text is: \(text)")
-				
-				if (text?.length)! > 1 {
+                if (text?.length)! > 1 {
 					
 					let letters = CharacterSet.letters
 					// second to last char in text field
@@ -1088,14 +1056,14 @@ extension KeyboardViewController {
 				
                 // split by whitespace into an array
                 var words = text?.components(separatedBy: CharacterSet.whitespaces)
-                NSLog("Words is: \(words)")
-				
 				var wordsExist = false
+                
 				for word in words! {
 					if word != "" {
 						wordsExist = true
 					}
 				}
+                
 				if !wordsExist {
 					proxy.deleteBackward()
 					return
@@ -1105,7 +1073,8 @@ extension KeyboardViewController {
 				let prevWord: String
 				
 				var i = (words?.count)! - 1
-				while words?[i] == "" && i >= 0 {
+				
+                while words?[i] == "" && i >= 0 {
 					i -= 1
 				}
 				
@@ -1115,37 +1084,30 @@ extension KeyboardViewController {
 				// comma), then we don't have to worry about loading the prev
 				// key sequence.
 				let letters = CharacterSet.letters
-				for i in 0..<prevWord.length {
+				
+                for i in 0..<prevWord.length {
 					if !letters.contains(UnicodeScalar(prevWord[i])!) {
 						return
 					}
 				}
-				
-                NSLog("prevWord is: \(prevWord)")
                 
                 // reverse map previous word into a keysequence
                 // and append it to the current empty keysequence
                 for i in 0...prevWord.length - 1 {
                     let char = prevWord[i]
-                    NSLog("char is: \(char)")
                     keyscontrol.storedKeySequence.append(String(lettersToDigits[char.lowercased()]!))
                 }
-                
-                NSLog("New storedKeySeq is: \(keyscontrol.storedKeySequence)")
                 
                 // determine upper or lower case for the previous word
                 // and repopulate the now-empty boolseq shift markers
                 for i in 0...prevWord.length - 1 {
                     let ch = prevWord[i]
-                    NSLog("ch is: \(ch)")
                     
                     // if capital: append true (i.e. shift on)
                     // if lowercase: append false (i.e. shift off)
                     if ch >= "A" && ch <= "Z" {
-                        NSLog("capital \(ch)")
                         keyscontrol.storedBoolSequence.append(true)
                     } else if ch >= "a" && ch <= "z" {
-                        NSLog("lowercase \(ch)")
                         keyscontrol.storedBoolSequence.append(false)
                     }
                 }
@@ -1155,6 +1117,7 @@ extension KeyboardViewController {
                 if shift_m == "off" {
                     toggleShift(shift)
                 }
+                
 				clearPredictionButtons()
 				clearCharButtons()
 			}
@@ -1169,7 +1132,6 @@ extension KeyboardViewController {
         // fetch updated suggestions
         var suggestionsUpdate = [String]()
         suggestionsUpdate = keyscontrol.t9Backspace()
-        NSLog("reached 4")
         
         // Reset predictions to empty
         predict1.setTitle("", for: .normal)
@@ -1199,8 +1161,6 @@ extension KeyboardViewController {
         predict3.setTitleColor(Color.black, for: .normal)
         predict4.setTitleColor(Color.black, for: .normal)
         
-        NSLog("reached 5")
-        
         for i in 0...19 {
             if !suggestionsUpdate.indices.contains(i) {
                 suggestionsUpdate.append("")
@@ -1220,7 +1180,6 @@ extension KeyboardViewController {
 			return
 		}
 		
-        NSLog("reached 6")
         suggestions = suggestionsUpdate
     }
     
@@ -1228,10 +1187,9 @@ extension KeyboardViewController {
     // Filters suggestions by letter pressed.
     func filterSuggestions(withCurrentChar char: String) -> [String] {
         var filteredSuggestions = suggestions.filter { suggestion in
-            print("String(describing: suggestion.lowercased().characters.last) -> \(String(describing: suggestion.lowercased().characters.last)) \r\n char -> \(char)")
             if let suggestionLastChar = suggestion.lowercased().characters.last {
                 return String(describing: suggestionLastChar) == char
-            }else{
+            } else {
                 return false
             }
         }
@@ -1240,6 +1198,7 @@ extension KeyboardViewController {
                 filteredSuggestions.append("")
             }
         }
+
         return filteredSuggestions
     }
 
@@ -1270,24 +1229,27 @@ extension KeyboardViewController {
                 toggleShift(shift)
             }
         }
+        
         var s = proxy.documentContextBeforeInput
 		
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
             keyscontrol.wordSelected(word: input!.lowercased())
             var num = keyscontrol.storedKeySequence.length
+            
             if(s?[(s?.length)!-1] != " "){
-                while(num > 0 && s?[(s?.length)!-1] != " "){
+                while(num > 0 && s?[(s?.length)!-1] != " ") {
                     proxy.deleteBackward()
                     num -= 1
                     s = proxy.documentContextBeforeInput //re capture so we don't go over
                 }
             }
+            
             proxy.insertText(input! + sender.currentTitle!!)
         }
         else if keyscontrol.storedKeySequence.length > 1 {
-            NSLog(String(keyscontrol.storedKeySequence))
             //keyscontrol.storedKeySequence.characters.removeLast()
             var intKS = [Int]()
+            
             for ch in keyscontrol.storedKeySequence.characters {
                 intKS.append(Int(String(ch))!)
             }
@@ -1295,6 +1257,7 @@ extension KeyboardViewController {
             var word = keyscontrol.t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: keyscontrol.storedBoolSequence)[0]
             keyscontrol.wordSelected(word: word.lowercased())
             var num = keyscontrol.storedKeySequence.length
+            
             if(s?[(s?.length)!-1] != " "){
                 while(num > 0 && s?[(s?.length)!-1] != " "){
                     proxy.deleteBackward()
@@ -1302,20 +1265,25 @@ extension KeyboardViewController {
                     s = proxy.documentContextBeforeInput //re capture so we don't go over
                 }
             }
+            
             proxy.insertText(word + sender.currentTitle!!)
 		} else if keyscontrol.storedKeySequence.isEmpty {
 			let text = proxy.documentContextBeforeInput
-			if text?[(text?.length)!-1] == " " {
+			
+            if text?[(text?.length)!-1] == " " {
 				proxy.deleteBackward()
 			}
-			proxy.insertText(sender.currentTitle!!)
+			
+            proxy.insertText(sender.currentTitle!!)
 			proxy.insertText(" ")
 			return
 		} else {
 			let text = proxy.documentContextBeforeInput
-			if text?[(text?.length)!-1] != "\n" {
+			
+            if text?[(text?.length)!-1] != "\n" {
 				proxy.deleteBackward()
 			}
+            
             proxy.insertText(sender.currentTitle!!)
             return
         }
@@ -1329,9 +1297,11 @@ extension KeyboardViewController {
     
     @IBAction func addWordsToDict(){
         let proxy = textDocumentProxy as UITextDocumentProxy
+        
         if proxy.hasText == false {
             return
         }
+        
         var largeString = proxy.documentContextBeforeInput
         var arrOfWords = largeString?.words()
         
@@ -1342,8 +1312,10 @@ extension KeyboardViewController {
                 }
                 return
             }
+            
             keyscontrol.t9Communicator.rememberChoice(word: word.lowercased()) // should this only happen if it already exists
         }
+        
         while proxy.hasText {
             proxy.deleteBackward()
         }
