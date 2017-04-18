@@ -828,17 +828,7 @@ extension KeyboardViewController {
             predict3.setTitle("", for: .normal)
             predict4.setTitle("", for: .normal)
         } else {
-			let text = proxy.documentContextBeforeInput
-			if text?[(text?.length)! - 1] == " " {
-				if (text?.length)! > 1 {
-					if text?[(text?.length)! - 2] != "." {
-						proxy.deleteBackward()
-						proxy.insertText(". ")
-					}
-				}
-			} else {
-				proxy.insertText(" ")
-			}
+			proxy.insertText(" ")
         }
     }
     
