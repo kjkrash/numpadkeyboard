@@ -97,18 +97,18 @@ struct Padding {
             func charLayouts(index: Int) -> (left: CGFloat, top: CGFloat) {
                 return (left: CGFloat(index - 1) * TopRegion.charDimensions.width, top: 0)
             }
-            func buttonsLayouts(index: Int) -> (left: CGFloat, top: CGFloat){
+            func buttonsLayouts(index: Int) -> (left: CGFloat, top: CGFloat) {
                 return (left: displayWidth + CGFloat(index - 1) * TopRegion.buttonsDimensions.width,
                         top: 0)
             }
-            func predictLayouts(index: Int) -> (left: CGFloat, top: CGFloat){
+            func predictLayouts(index: Int) -> (left: CGFloat, top: CGFloat) {
                 return (left: CGFloat(index - 4) * predictWidth, top: SidePanels.topRegionHeight / 2)
             }
         }
         
         struct LeftRegion {
             static let buttonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0) * UIScreen.main.bounds.width,
-                                                                              height: (30.0/320.0)*UIScreen.main.bounds.width)
+                                                                              height: (30.0 / 320.0) * UIScreen.main.bounds.width)
             func forButton(withIndex index: Int) -> (left: CGFloat, top: CGFloat) {
                 return (
                     left: (SidePanels.leftRegionSpacing / 320.0) * UIScreen.main.bounds.width,
@@ -122,8 +122,8 @@ struct Padding {
             static let buttonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0)*UIScreen.main.bounds.width,
                                                                               height: (30.0 / 320.0)*UIScreen.main.bounds.width)
             static let returnButtonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0) * UIScreen.main.bounds.width,
-                                                                                    height: (72.0 / 320.0)*UIScreen.main.bounds.width)
-            func forButton(withIndex index:Int) -> (left: CGFloat, top: CGFloat){
+                                                                                    height: (72.0 / 320.0) * UIScreen.main.bounds.width)
+            func forButton(withIndex index:Int) -> (left: CGFloat, top: CGFloat) {
                 return (
                     left: (SidePanels.rightRegionSpacing / 320.0) * UIScreen.main.bounds.width,
                     top: CGFloat(index) * SidePanels.rightRegionSpacing + CGFloat(index - 1) *
@@ -157,7 +157,8 @@ struct Padding {
                 switch num {
                 case 1,4,7:
                     return (
-                        left: UIScreen.main.bounds.width / 2 - NumberPads.buttonWidth / 2 - NumberPads.horizontalGap - NumberPads.buttonWidth,
+                        left: UIScreen.main.bounds.width / 2 - NumberPads.buttonWidth / 2 -
+                            NumberPads.horizontalGap - NumberPads.buttonWidth,
                         top: SidePanels.topRegionHeight + (modf(CGFloat(num) / 3.5).0 + 1) *
                             NumberPads.verticalGap + modf(CGFloat(num) / 3.5).0 * NumberPads.buttonHeight
                     )
