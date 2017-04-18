@@ -6,16 +6,20 @@ struct Padding {
     var numberPads = NumberPads()
     var sidePanels = SidePanels()
     var spaceRegion = SpaceRegion()
+    
     struct SpaceRegion {
         enum Keys {
             case global, space, switchKey
         }
+        
         var numberPads = NumberPads()
+        
         static let spaceWidth: CGFloat = 126.0
         static let spaceRegionVerticalSpacing: CGFloat = 10.0
         static let spaceRegionHorizontalSpacing: CGFloat = 10.0
         static let globalDimentions: (width: CGFloat, height: CGFloat) = (width: 30.0, height: 30.0)
         static let switchKeyDimentions: (width: CGFloat, height: CGFloat) = (width: 30.0, height: 30.0)
+        
         var space: (left: CGFloat, top: CGFloat) {
             get {
                 return (
@@ -24,6 +28,7 @@ struct Padding {
                 )
             }
         }
+        
         var global: (left: CGFloat, top: CGFloat) {
             get {
                 return (
@@ -32,6 +37,7 @@ struct Padding {
                 )
             }
         }
+        
         var switchKey: (left: CGFloat, top: CGFloat) {
             get {
                 return (
@@ -42,6 +48,7 @@ struct Padding {
         }
         
     }
+    
     struct SidePanels {
         enum Regions {
             case left, right, top

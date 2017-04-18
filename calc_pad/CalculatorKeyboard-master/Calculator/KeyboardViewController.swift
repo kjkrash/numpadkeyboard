@@ -50,8 +50,9 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet var numberPadSwitcher: UIButton!
     @IBOutlet var dismissButton: IconButton!
     @IBOutlet var displayBackspace: IconButton!{
-        didSet{
-            let gesture = UILongPressGestureRecognizer(target: self, action: #selector(self.shouldClearPreviousWordInTextField))
+        didSet {
+            let gesture = UILongPressGestureRecognizer(target: self,
+                                                       action: #selector(self.shouldClearPreviousWordInTextField))
             displayBackspace.addGestureRecognizer(gesture)
         }
     }
@@ -59,23 +60,26 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet var manualModeButton: RaisedButton!
     @IBOutlet var sendButton: RaisedButton!
     @IBOutlet var spaceButton: RoundButton!{
-        didSet{
+        didSet {
             spaceButton.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             
         }
     }
     
     @IBOutlet var display: UILabel! {
-        didSet{
+        didSet {
             display.isUserInteractionEnabled = true
-            display.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.shouldInsertText)))
+            display.addGestureRecognizer(UITapGestureRecognizer(target: self,
+                                                                action: #selector(self.shouldInsertText)))
         }
     }
+    
     @IBOutlet var syms_1: RaisedButton!
     @IBOutlet var syms_2: RaisedButton!
     @IBOutlet var syms_3: RaisedButton!
+    
     @IBOutlet var shift: RoundButton! {
-        didSet{
+        didSet {
             shift.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             shift.titleLabel!.font =  UIFont(name: "shift", size: 18)
         }
@@ -111,61 +115,70 @@ class KeyboardViewController: UIInputViewController {
     var predictionButtons: [UIButton] = []
     var charButtons: [UIButton] = []
     
-    @IBOutlet var one: RoundButton!{
-        didSet{
+    @IBOutlet var one: RoundButton! {
+        didSet {
             one.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             one.titleLabel!.font =  UIFont(name: "one", size: 18)
         }
     }
-    @IBOutlet var two: RoundButton!{
-        didSet{
+    
+    @IBOutlet var two: RoundButton! {
+        didSet {
             two.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             two.titleLabel!.font =  UIFont(name: "two", size: 18)
             
         }
     }
-    @IBOutlet var three: RoundButton!{
-        didSet{
+    
+    @IBOutlet var three: RoundButton! {
+        didSet {
             three.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             three.titleLabel!.font =  UIFont(name: "three", size: 18)
         }
     }
-    @IBOutlet var four: RoundButton!{
-        didSet{
+    
+    @IBOutlet var four: RoundButton! {
+        didSet {
             four.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             four.titleLabel!.font =  UIFont(name: "four", size: 18)
         }
     }
-    @IBOutlet var five: RoundButton!{
-        didSet{
+    
+    @IBOutlet var five: RoundButton! {
+        didSet {
             five.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             five.titleLabel!.font =  UIFont(name: "five", size: 18)
         }
     }
+    
     @IBOutlet var extensionView: UIView!
-    @IBOutlet var six: RoundButton!{
-        didSet{
+    
+    @IBOutlet var six: RoundButton! {
+        didSet {
             six.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             six.titleLabel!.font =  UIFont(name: "six", size: 18)
             
         }
     }
-    @IBOutlet var seven: RoundButton!{
-        didSet{
+    
+    @IBOutlet var seven: RoundButton! {
+        didSet {
             seven.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             seven.titleLabel!.font =  UIFont(name: "seven", size: 18)
             
         }
     }
-    @IBOutlet var eight: RoundButton!{
-        didSet{
+    
+    @IBOutlet var eight: RoundButton! {
+        didSet {
             eight.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             eight.titleLabel!.font =  UIFont(name: "eight", size: 18)
             
         }
     }
-    @IBOutlet var nine: RoundButton!{
-        didSet{
+    
+    @IBOutlet var nine: RoundButton! {
+        didSet {
             nine.setBackgroundColor(color: UIColor.lightGray, forState: .highlighted)
             nine.titleLabel!.font =  UIFont(name: "nine", size: 18)
             
@@ -176,8 +189,9 @@ class KeyboardViewController: UIInputViewController {
     var shouldClearDisplayBeforeInserting: Bool = true
     var keyscontrol = KeysControl()
     var motherViewsHaveConstrainted: Bool = false
+    
     var suggestions: [String] = [] {
-        didSet{
+        didSet {
             var i = 0
             while i < suggestions.count && i < 20 {
                 predictionButtons[i].setTitle(suggestions[i], for: .normal)
@@ -560,6 +574,7 @@ extension KeyboardViewController {
         
         // If shiftState is on, toggle off (should only stay on for one click).
         var shiftState = false
+        
         if(operation.shiftMode == "on") {
             toggleShift(shift)
             shiftState = true
@@ -572,9 +587,11 @@ extension KeyboardViewController {
                 for button in predictionButtons {
                     button.setTitle("", for: .normal)
                 }
+                
                 for button in charButtons {
                     button.setTitle("", for: .normal)
                 }
+                
                 return
             }
 
@@ -583,6 +600,7 @@ extension KeyboardViewController {
             
             // For suggestions not returned, fill expanded suggestions array with empty strings.
             let max = 20
+            
             if suggestionsToRender.count < max {
                 for _ in 0..<max - suggestionsToRender.count {
                     suggestionsToRender.append("")
@@ -596,6 +614,7 @@ extension KeyboardViewController {
             if suggestionsToRender[0] != "" {
                 predict1.setTitle(suggestionsToRender[0], for: .normal)
                 predict1.setTitleColor(Color.black, for: .normal)
+                
                 let proxy = textDocumentProxy as UITextDocumentProxy
                 
                 // Continually replace rendered text thus far with first suggestion.
@@ -611,15 +630,16 @@ extension KeyboardViewController {
                     }
                     proxy.insertText(suggestionsToRender[0])
                 } else {
-                    //This case causes bugs - could be eliminated by having a weighting algorithm
-                    //guarantee there's always going to be a suggestion of that length...
-                    //Unless we should always just show what's first idk?
+                    // This case causes bugs - could be eliminated by having a weighting algorithm
+                    // guarantee there's always going to be a suggestion of that length...
+                    // Unless we should always just show what's first idk?
 
-                    //Temp solution: If the length of the first suggestion 
+                    // Temp solution: If the length of the first suggestion
                     // (which is what is going to render as user types)
                     // is longer than what they've typed so far, truncate it.
                     var num = keyscontrol.storedKeySequence.length
                     var s = proxy.documentContextBeforeInput
+                    
                     if(s?[(s?.length)!-1] != " "){
                         while(num > 1 && s?[(s?.length)!-1] != " " ){
                             proxy.deleteBackward()
@@ -627,8 +647,10 @@ extension KeyboardViewController {
                             s = proxy.documentContextBeforeInput //re capture so we don't go over
                         }
                     }
+                    
                     var shiftedWord = suggestionsToRender[0]
                     var moreThan = suggestionsToRender[0].length - keyscontrol.storedKeySequence.length
+                    
                     while(moreThan > 0 && shiftedWord.length > 0){
                         moreThan -= 1
                         shiftedWord.characters.removeLast()
@@ -642,18 +664,21 @@ extension KeyboardViewController {
                 predict2.setTitle(suggestionsToRender[1], for: .normal)
                 predict2.setTitleColor(Color.black, for: .normal)
             }
+            
             if suggestionsToRender[2] != "" {
                 predict3.setTitle(suggestionsToRender[2], for: .normal)
                 predict3.setTitleColor(Color.black, for: .normal)
             }
+            
             if suggestionsToRender[3] != "" {
                 predict4.setTitle(suggestionsToRender[3], for: .normal)
                 predict4.setTitleColor(Color.black, for: .normal)
             }
         } else if (manualMode == true) {
-//            let proxy = textDocumentProxy as UITextDocumentProxy
-//            proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
-            predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag, shiftMode: shiftState), for:.normal)
+            // let proxy = textDocumentProxy as UITextDocumentProxy
+            // proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+            predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag,
+                                                 shiftMode: shiftState), for:.normal)
         }
 
     }
@@ -661,9 +686,11 @@ extension KeyboardViewController {
     /// Show current pushed key's alphabet representations in top panel
     func showCurrentKeyMapping(_ operation: RoundButton) {
         var currentKeyMapping: [String] = []
+        
         if let modeMapping = KeysMap.NineKeys.mapping["alphabets"] {
             if let mappingDict = modeMapping[String(operation.tag)] {
                 currentKeyMapping = mappingDict
+                
                 if currentKeyMapping.count < 4 {
                     for i in 0...3 {
                         if !currentKeyMapping.indices.contains(i) {
@@ -671,6 +698,7 @@ extension KeyboardViewController {
                         }
                     }
                 }
+                
                 // Set the text for the top panel buttons
                 for (i, charButton) in charButtons.enumerated() {
                     charButton.setTitle(currentKeyMapping[i], for: .normal)
@@ -683,11 +711,12 @@ extension KeyboardViewController {
     /// When press backspace, show previous key mapping of whatever key was pressed
     func showPreviousKeyMapping() {
         if let previousLastChar = keyscontrol.storedKeySequence.characters.last {
-            print("previousLastChar -> \(previousLastChar)")
             var currentKeyMapping: [String] = []
+            
             if let modeMapping = KeysMap.NineKeys.mapping["alphabets"] {
                 if let mappingDict = modeMapping[String(describing: previousLastChar)] {
                     currentKeyMapping = mappingDict
+                    
                     if currentKeyMapping.count < 4 {
                         for i in 0...3 {
                             if !currentKeyMapping.indices.contains(i) {
@@ -695,6 +724,7 @@ extension KeyboardViewController {
                             }
                         }
                     }
+                    
                     for (i, charButton) in charButtons.enumerated() {
                         charButton.setTitle(currentKeyMapping[i], for: .normal)
                     }
@@ -712,6 +742,7 @@ extension KeyboardViewController {
         if manualMode == true {
             return
         }
+        
         // OPTIONAL FILTERING OF SUGGESTION: MUST DECIDE WHAT METHOD WE WANT TO USE
         if let title = charButton.currentTitle {
             suggestions = filterSuggestions(withCurrentChar: title)
@@ -803,8 +834,6 @@ extension KeyboardViewController {
 		
 		var s = proxy.documentContextBeforeInput
 		
-		NSLog("Title of button pressed: \(operation.currentTitle)")
-		
 		// Checks that the prediction is not empty (in which case, shouldn't insert
 		// anything) and that it is not in punctuation mode (in which case, should
 		// go to 'else' and inputSymbols call.
@@ -818,7 +847,7 @@ extension KeyboardViewController {
 				while(num > 0 && s?[(s?.length)!-1] != " "){
 					proxy.deleteBackward()
 					num -= 1
-					s = proxy.documentContextBeforeInput //re capture so we don't go over
+					s = proxy.documentContextBeforeInput // recapture so we don't go over
 				}
 			}
 			proxy.insertText(input! + " ") // insert word
@@ -896,7 +925,6 @@ extension KeyboardViewController {
             shift_m = "off"
         }
       
-
         one.shift()
         two.shift()
         three.shift()
@@ -953,7 +981,6 @@ extension KeyboardViewController {
             predict4.setTitleColor(Color.black, for: .normal)
             num_mode = "off"
         }
-        
     }
     
     //Backspace in active textfield
@@ -970,6 +997,7 @@ extension KeyboardViewController {
             extensionView.isHidden = true
         }
     }
+    
     //Insert text in active textfield
     func shouldInsertText() {
         let proxy = textDocumentProxy as UITextDocumentProxy
@@ -1004,7 +1032,9 @@ extension KeyboardViewController {
                 var title = predict1.currentTitle
                 var newTitle = predict1.currentTitle?.substring(to: (predict1.currentTitle?.length)! - 1)
                 var c = title?.characters.last
+                
                 let sC = String(describing: c)
+                
                 if sC.substring(from: 8) == sC.uppercased().substring(from: 8) {
                     if shift_m == "off" {
                         toggleShift(shift)
@@ -1115,7 +1145,6 @@ extension KeyboardViewController {
                 if shift_m == "off" {
                     toggleShift(shift)
                 }
-                
 				clearPredictionButtons()
 				clearCharButtons()
 			}

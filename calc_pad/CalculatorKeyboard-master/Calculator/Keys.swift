@@ -13,10 +13,12 @@ let lettersToDigits = ["a" : 2, "b" : 2, "c" : 2,
 func getKeySequence(word: String) -> [Int] {
     var keySequence = [Int]()
     var lowerWord = word.lowercased()
+    
     for char in lowerWord.characters {
         assert(lettersToDigits[String(char)] != nil )
         keySequence.append(lettersToDigits[String(char)]!)
     }
+    
     return keySequence
 }
 
@@ -65,10 +67,11 @@ class KeysControl: NSObject {
     var numberJustPressed: String
     var keep: Bool
     var inputsDelay: TimeInterval {
-        get{
+        get {
             return Date().timeIntervalSince(lastKeyControlTime)
         }
     }
+    
     override init() {
         lastKeyControlTime = Date()
         storedInputs = ""
@@ -76,7 +79,9 @@ class KeysControl: NSObject {
         storedBoolSequence = [Bool]()
         numberJustPressed = ""
         keep = false
+        
         t9Communicator = T9(dictionaryFilename: "dict.txt", resetFilename: "dict.txt", suggestionDepth: 8, numResults: 20, numCacheResults: 10, cacheSize: 50)
+        
         super.init()
     }
     
@@ -86,25 +91,23 @@ class KeysControl: NSObject {
     func t9Toggle(mode: String, tag: Int, shiftState: Bool) -> [String] {
         var suggestions = [String]()
         numberJustPressed = String(tag)
-		NSLog("Pressed\t\(numberJustPressed)")
-		if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
-			NSLog("Key Sequence\t\(storedKeySequence)")
-			return []
+				
+        if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
+            return []
 		}
+        
         storedKeySequence += numberJustPressed
-        NSLog("Key Sequence\t\(storedKeySequence)")
         lastKeyControlTime = Date()
         storedBoolSequence.append(shiftState)
         
-        NSLog(String(describing: storedBoolSequence))
         var intKS = [Int]()
-        NSLog("num characters" + String(storedKeySequence.length))
+        
         for ch in storedKeySequence.characters {
             intKS.append(Int(String(ch))!)
         }
+        
         suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
 
-        NSLog("Number suggestions:\t\(suggestions.count)")
         return suggestions
     }
     
@@ -116,35 +119,24 @@ class KeysControl: NSObject {
         var suggestions = [String]()
         
         if storedKeySequence.characters.count > 0 {
-            NSLog("Stored keyseq is: \(storedKeySequence)")
-            NSLog("Num char in stored keyseq: \(String(storedKeySequence.characters.count))")
-            NSLog("Stored boolseq is: \(storedBoolSequence)")
-            NSLog("Num stored boolseq is: \(String(storedBoolSequence.count))")
-            
             // remove last key in sequence
             storedKeySequence.characters.removeLast()
             lastKeyControlTime = Date()
-            NSLog("keyseq after remove: \(storedKeySequence)")
             
             // remove shift marker for last key
             storedBoolSequence.removeLast()
-            NSLog("boolseq after remove: \(storedBoolSequence)")
             
             var intKS = [Int]()
             
             for ch in storedKeySequence.characters {
-                NSLog("reached 1")
                 intKS.append(Int(String(ch))!)
-                NSLog("reached 2")
             }
-            
-            NSLog("reached 3")
             
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         } else {
-            //idk this doesn't work with number mode as of now
+            // TODO: does not work with number mode as of now
         }
-        //NSLog("num keysequence == 0 so returning")
+        
         return suggestions
     }
     
@@ -160,6 +152,7 @@ class KeysControl: NSObject {
                 pointerAddress = 0
                 previousTag = tag
                 storedInputs = storedInputs + currentInput
+                
                 if shiftMode == true {
                     currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
                 } else {
@@ -167,13 +160,15 @@ class KeysControl: NSObject {
                 }
                 
                 lastKeyControlTime = Date()
+                
                 if shiftMode == true {
                     return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0].uppercased()
                 } else {
                     return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0]
                 }
-            }else{
+            } else {
                 pointerAddress += 1
+                
                 if !(KeysMap.NineKeys.mapping[mode]?[String(tag)]?.indices.contains(pointerAddress))! {
                     pointerAddress = 0
                 }
@@ -187,17 +182,20 @@ class KeysControl: NSObject {
                 lastKeyControlTime = Date()
                 return storedInputs + currentInput
             }
-        }else{
+        } else {
             keep = shiftMode
             pointerAddress = 0
             previousTag = tag
             storedInputs = storedInputs + currentInput
+            
             if shiftMode == true {
                 currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress].uppercased()
             } else {
                 currentInput = KeysMap.NineKeys.mapping[mode]![String(tag)]![pointerAddress]
             }
+            
             lastKeyControlTime = Date()
+            
             if shiftMode == true {
                 return storedInputs + KeysMap.NineKeys.mapping[mode]![String(tag)]![0].uppercased()
             } else {
@@ -206,10 +204,8 @@ class KeysControl: NSObject {
         }
     }
     
-    
     func backspace() -> String {
         if storedInputs.characters.count > 0 && currentInput != "" {
-            NSLog("sI.c.count > 0 and currI isn't empty\nstored inputs: " + storedInputs)
             currentInput = ""
             pointerAddress = 0
             previousTag = -1
@@ -223,8 +219,10 @@ class KeysControl: NSObject {
             lastKeyControlTime = Date()
             return storedInputs
         }
+        
         return ""
     }
+    
     func removeLastWord() {
         if let lastWordRange = storedInputs.range(of: " ") {
             currentInput = ""
@@ -232,10 +230,11 @@ class KeysControl: NSObject {
             pointerAddress = 0
             previousTag = -1
             lastKeyControlTime = Date()
-        }else{
+        } else {
             clear()
         }
     }
+    
     func clear() {
         currentInput = ""
         storedInputs = ""

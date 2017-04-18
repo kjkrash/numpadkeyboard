@@ -147,7 +147,6 @@ class RoundButton: UIButton {
         }
     }
     
-    
     func renderSuggestions(sugg: String){
         setTitle(sugg, for: .normal)
     }
