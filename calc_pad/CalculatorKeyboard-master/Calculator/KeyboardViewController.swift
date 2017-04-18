@@ -890,7 +890,7 @@ extension KeyboardViewController {
             keyscontrol.clear()
 			clearPredictionButtons()
 			clearCharButtons()
-			proxy.insertText(" ")
+			//proxy.insertText(" ")
         } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
             proxy.insertText(predict1.currentTitle!)
         } else if predict1.currentTitle != "" { //manualMode
@@ -1304,14 +1304,19 @@ extension KeyboardViewController {
             }
             proxy.insertText(word + sender.currentTitle!!)
 		} else if keyscontrol.storedKeySequence.isEmpty {
+			let text = proxy.documentContextBeforeInput
+			if text?[(text?.length)!-1] == " " {
+				proxy.deleteBackward()
+			}
 			proxy.insertText(sender.currentTitle!!)
+			proxy.insertText(" ")
 			return
 		} else {
 			let text = proxy.documentContextBeforeInput
 			if text?[(text?.length)!-1] != "\n" {
 				proxy.deleteBackward()
 			}
-            proxy.insertText(sender.currentTitle!!) //prob don't want added space
+            proxy.insertText(sender.currentTitle!!)
             return
         }
         
