@@ -104,14 +104,22 @@ struct Padding {
         struct LeftRegion {
             static let buttonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0/320.0)*UIScreen.main.bounds.width, height: (30.0/320.0)*UIScreen.main.bounds.width)
             func forButton(withIndex index:Int) -> (left: CGFloat, top: CGFloat){
-                return (left: (SidePanels.leftRegionSpacing/320.0)*UIScreen.main.bounds.width, top: CGFloat(index) * SidePanels.leftRegionSpacing + CGFloat(index-1)*(LeftRegion.buttonDimensions.height))
+                return (
+                    left: (SidePanels.leftRegionSpacing/320.0)*UIScreen.main.bounds.width,
+                    top: CGFloat(index) * SidePanels.leftRegionSpacing + CGFloat(index-1) *
+                        (LeftRegion.buttonDimensions.height)
+                )
             }
         }
         struct RightRegion {
             static let buttonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0/320.0)*UIScreen.main.bounds.width, height: (30.0/320.0)*UIScreen.main.bounds.width)
             static let returnButtonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0/320.0)*UIScreen.main.bounds.width, height: (72.0/320.0)*UIScreen.main.bounds.width)
             func forButton(withIndex index:Int) -> (left: CGFloat, top: CGFloat){
-                return (left: (SidePanels.rightRegionSpacing/320.0)*UIScreen.main.bounds.width, top: CGFloat(index) * SidePanels.rightRegionSpacing + CGFloat(index-1)*(RightRegion.buttonDimensions.height))
+                return (
+                    left: (SidePanels.rightRegionSpacing/320.0)*UIScreen.main.bounds.width,
+                    top: CGFloat(index) * SidePanels.rightRegionSpacing + CGFloat(index-1) *
+                        (RightRegion.buttonDimensions.height)
+                )
             }
         }
     }
@@ -135,17 +143,25 @@ struct Padding {
             case 1,2,4,5,7,8:
                 switch num {
                 case 1,4,7:
-                    return (left: UIScreen.main.bounds.width/2-NumberPads.buttonWidth/2-NumberPads.horizontalGap-NumberPads.buttonWidth,
-                            top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) * NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight)
+                    return (
+                        left: UIScreen.main.bounds.width/2-NumberPads.buttonWidth/2-NumberPads.horizontalGap-NumberPads.buttonWidth,
+                        top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) *
+                            NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight
+                    )
                 case 2,5,8:
-                    return (left:UIScreen.main.bounds.width/2-NumberPads.buttonWidth/2,
-                            top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) * NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight)
+                    return (
+                        left:UIScreen.main.bounds.width/2-NumberPads.buttonWidth/2,
+                        top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) *
+                            NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight
+                    )
                 default:
                     return (left:0.0, top:0.0)
                 }
             case 3,6,9:
-                return (left:UIScreen.main.bounds.width/2+NumberPads.buttonWidth/2+NumberPads.horizontalGap,
-                        top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) * NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight)
+                return (
+                    left:UIScreen.main.bounds.width/2+NumberPads.buttonWidth/2+NumberPads.horizontalGap,
+                    top: SidePanels.topRegionHeight + (modf(CGFloat(num)/3.5).0 + 1) *
+                        NumberPads.verticalGap + modf(CGFloat(num)/3.5).0 * NumberPads.buttonHeight)
             default:
                 return (left:0.0, top:0.0)
             }
