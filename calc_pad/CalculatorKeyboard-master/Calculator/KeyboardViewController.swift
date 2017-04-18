@@ -814,7 +814,7 @@ extension KeyboardViewController {
     
 	// Weight word selected in algorithm, replace what's in field with selected word.
 	@IBAction func predictionSelect(_ operation: RoundButton){
-        if manualMode == false {
+        if manualMode == false && one.mode != "numbers" {
             if keyscontrol.t9Communicator.getSuggestionStatus() != SuggestionStatus.EXIST {
                 return
             }
