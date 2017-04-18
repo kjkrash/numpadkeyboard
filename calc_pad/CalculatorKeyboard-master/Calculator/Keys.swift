@@ -88,7 +88,7 @@ class KeysControl: NSObject {
         numberJustPressed = String(tag)
 		NSLog("Pressed\t\(numberJustPressed)")
 		if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
-			NSLog("Key Sequence\t\(storedKeySequence)")
+			NSLog("Returning[]: Key Sequence\t\(storedKeySequence)")
 			return []
 		}
         storedKeySequence += numberJustPressed
@@ -103,7 +103,12 @@ class KeysControl: NSObject {
             intKS.append(Int(String(ch))!)
         }
         suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
-
+        if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
+            NSLog("Returning[] and removing last: Key Sequence\t\(storedKeySequence)")
+            storedKeySequence.characters.removeLast()
+            storedBoolSequence.removeLast()
+            return []
+        }
         NSLog("Number suggestions:\t\(suggestions.count)")
         return suggestions
     }
@@ -139,6 +144,7 @@ class KeysControl: NSObject {
             }
             
             NSLog("reached 3")
+            t9Communicator.backspace()
             
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
         } else {
