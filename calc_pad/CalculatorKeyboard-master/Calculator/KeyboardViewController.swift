@@ -917,11 +917,11 @@ extension KeyboardViewController {
 //        shift.switchColor()
         if (shift_m == "off") {
             shift.setTitle("⇪", for:.normal)
-            shift.setBackgroundColor(color: UIColor.black, forState: .normal)
+            shift.setBackgroundColor(color: UIColor.blue, forState: .normal)
             shift_m = "on"
         } else if (shift_m == "on") {
             shift.setTitle("⇧", for:.normal)
-            shift.setBackgroundColor(color: UIColor.blue, forState: .normal)
+            shift.setBackgroundColor(color: UIColor.black, forState: .normal)
             shift_m = "off"
         }
       
