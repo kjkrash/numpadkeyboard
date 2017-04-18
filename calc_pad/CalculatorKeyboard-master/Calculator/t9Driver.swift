@@ -197,7 +197,6 @@ class T9 {
 			return false
 		}
 		
-        NSLog("rememberChoice(\(word))")
         _ = trie.updateWeight(word: word)
 		
 		return true

@@ -38,11 +38,11 @@ class KeyboardViewController: UIInputViewController {
     ////////////   INITIALIZATION   ////////////
     ////////////////////////////////////////////
     
-    var shift_m = "on"
+    var shift_m = "on" // Keyboard starts with shift on
     var num_mode = "off"
-    var turnOff = false
     var manualMode = false
-
+    
+    // UI Panels and Variables Initialized
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
     @IBOutlet var rightRegion: UIView!
@@ -558,8 +558,6 @@ extension KeyboardViewController {
     // function uses the t9Driver class to getSuggestions of words. Once that 
     // function returns, this function will iterate through that array and 
     //change the titles of the predict buttons on the keyboard to the suggestions.
-    // TODO: 0 doesn't work for some reason?
-
     @IBAction func proceedNineKeyOperations(_ operation: RoundButton){
         if(operation.mode == "numbers"){
             let proxy = textDocumentProxy as UITextDocumentProxy
@@ -574,12 +572,13 @@ extension KeyboardViewController {
         
         // If shiftState is on, toggle off (should only stay on for one click).
         var shiftState = false
-        
         if(operation.shiftMode == "on") {
             toggleShift(shift)
             shiftState = true
         }
         
+        // T-9 default mode should begin algorithm through communication with
+        // the keys controller.
         if (manualMode == false) {
             var suggestionsToRender = keyscontrol.t9Toggle(mode: operation.mode, tag: operation.tag, shiftState: shiftState)
             
@@ -630,13 +629,6 @@ extension KeyboardViewController {
                     }
                     proxy.insertText(suggestionsToRender[0])
                 } else {
-                    // This case causes bugs - could be eliminated by having a weighting algorithm
-                    // guarantee there's always going to be a suggestion of that length...
-                    // Unless we should always just show what's first idk?
-
-                    // Temp solution: If the length of the first suggestion
-                    // (which is what is going to render as user types)
-                    // is longer than what they've typed so far, truncate it.
                     var num = keyscontrol.storedKeySequence.length
                     var s = proxy.documentContextBeforeInput
                     
@@ -675,8 +667,8 @@ extension KeyboardViewController {
                 predict4.setTitleColor(Color.black, for: .normal)
             }
         } else if (manualMode == true) {
-            // let proxy = textDocumentProxy as UITextDocumentProxy
-            // proxy.insertText(keyscontrol.toggle(mode: operation.mode, tag: operation.tag))
+            // Render manual typing in first prediction button. Text will render
+            // in field after space is pressed or the predict button is pressed.
             predict1.setTitle(keyscontrol.toggle(mode: operation.mode, tag:operation.tag,
                                                  shiftMode: shiftState), for:.normal)
         }
@@ -747,71 +739,6 @@ extension KeyboardViewController {
         if let title = charButton.currentTitle {
             suggestions = filterSuggestions(withCurrentChar: title)
         }
-        
-        // TODO: this caused bugs because of how text renders immediately, but
-        // will be fixed eventually
-        //let proxy = textDocumentProxy as UITextDocumentProxy
-        //proxy.insertText(charButton.currentTitle!)
-    }
-    
-
-    // TODO: don't remember exactly what this is for right now...
-    // Most of this is covered in inputSymbols - so maybe delete this function.
-    @IBAction func punctuationKeys(_ operation: RoundButton){
-        if(operation.mode == "numbers"){
-            let proxy = textDocumentProxy as UITextDocumentProxy
-            
-            let input: String? = operation.currentTitle
-            
-            if input != nil {
-                proxy.insertText(input!)
-                return
-            }
-            return
-        }
-        
-        let proxy = textDocumentProxy as UITextDocumentProxy
-        
-        predict1.setTitle("@", for: .normal)
-        predict1.setTitleColor(Color.black, for: .normal)
-        predict2.setTitle("/", for: .normal)
-        predict2.setTitleColor(Color.black, for: .normal)
-        predict3.setTitle("!", for: .normal)
-        predict3.setTitleColor(Color.black, for: .normal)
-        predict4.setTitle(".", for: .normal)
-        predict4.setTitleColor(Color.black, for: .normal)
-        predict5.setTitle(",", for: .normal)
-        predict5.setTitleColor(Color.black, for: .normal)
-        predict6.setTitle(";", for: .normal)
-        predict6.setTitleColor(Color.black, for: .normal)
-        predict7.setTitle(":", for: .normal)
-        predict7.setTitleColor(Color.black, for: .normal)
-        predict8.setTitle("^", for: .normal)
-        predict8.setTitleColor(Color.black, for: .normal)
-        predict9.setTitle("(", for: .normal)
-        predict9.setTitleColor(Color.black, for: .normal)
-        predict10.setTitle(")", for: .normal)
-        predict10.setTitleColor(Color.black, for: .normal)
-        predict11.setTitle("'", for: .normal)
-        predict11.setTitleColor(Color.black, for: .normal)
-        predict12.setTitle("{", for: .normal)
-        predict12.setTitleColor(Color.black, for: .normal)
-        predict13.setTitle("}", for: .normal)
-        predict13.setTitleColor(Color.black, for: .normal)
-        predict14.setTitle("#", for: .normal)
-        predict14.setTitleColor(Color.black, for: .normal)
-        predict15.setTitle("*", for: .normal)
-        predict15.setTitleColor(Color.black, for: .normal)
-        predict16.setTitle("&", for: .normal)
-        predict16.setTitleColor(Color.black, for: .normal)
-        predict17.setTitle("%", for: .normal)
-        predict17.setTitleColor(Color.black, for: .normal)
-        predict18.setTitle("$", for: .normal)
-        predict18.setTitleColor(Color.black, for: .normal)
-        predict19.setTitle("~", for: .normal)
-        predict19.setTitleColor(Color.black, for: .normal)
-        predict20.setTitle("|", for: .normal)
-        predict20.setTitleColor(Color.black, for: .normal)
     }
     
 	// Weight word selected in algorithm, replace what's in field with selected word.
@@ -883,14 +810,15 @@ extension KeyboardViewController {
         }
         
         let proxy = textDocumentProxy as UITextDocumentProxy
-        if keyscontrol.t9Communicator.getSuggestionStatus() != SuggestionStatus.PENDING && /*predict1.currentTitle != "" &&*/ predict1.currentTitle != "@" {
+        if keyscontrol.t9Communicator.getSuggestionStatus() !=
+            SuggestionStatus.PENDING && predict1.currentTitle != "@" {
             // Calls predictionSelect to do most of the work.
 
             predictionSelect(predict1)
             keyscontrol.clear()
 			clearPredictionButtons()
 			clearCharButtons()
-			//proxy.insertText(" ")
+            
         } else if (predict1.currentTitle == "@" || predict1.currentTitle == "+") {
             proxy.insertText(predict1.currentTitle!)
         } else if predict1.currentTitle != "" { //manualMode
@@ -904,17 +832,8 @@ extension KeyboardViewController {
         }
     }
     
-    // below is fn declaration for manual entry mode
-    //    @IBAction func proceedNineKeyOperations(_ operation: RoundButton) {
-    //        display.text = keyscontrol.toggle(mode: operation.mode, tag: operation.tag)
-    //    }
-    
-    // Called when user presses shift - TODO: VERY SLOW FOR SOME REASON
-
-//    var shift_m = "off"
-
+    // Switch shift and nine letter keys to other state
     @IBAction func toggleShift(_ toggleKey: RoundButton) {
-//        shift.switchColor()
         if (shift_m == "off") {
             shift.setTitle("⇪", for:.normal)
             shift.setBackgroundColor(color: UIColor.blue, forState: .normal)
@@ -948,7 +867,7 @@ extension KeyboardViewController {
         eight.switchMode()
         nine.switchMode()
         spaceButton.switchMode()
-        if (num_mode == "off"){
+        if (num_mode == "off"){ // Change punctuation keys to math related symbols
             syms_1.setTitle("=", for: .normal)
             syms_1.setTitleColor(Color.black, for: .normal)
             syms_2.setTitle(".", for: .normal)
@@ -985,7 +904,8 @@ extension KeyboardViewController {
     
     //Backspace in active textfield
     @IBAction func shouldDeleteText(){
-        // Pass textfield controller back to keyboard so keyboard can control active textfield in any apps
+        // Pass textfield controller back to keyboard so keyboard can control 
+        // active textfield in any apps
         (textDocumentProxy as UIKeyInput).deleteBackward()
     }
     
@@ -1210,7 +1130,6 @@ extension KeyboardViewController {
         suggestions = suggestionsUpdate
     }
     
-    // TODO: NOT USED AS OF NOW, FIGURE OUT MANUAL MODE THINGS FIRST 
     // Filters suggestions by letter pressed.
     func filterSuggestions(withCurrentChar char: String) -> [String] {
         var filteredSuggestions = suggestions.filter { suggestion in
@@ -1229,13 +1148,13 @@ extension KeyboardViewController {
         return filteredSuggestions
     }
 
-    // TODO: I DONT THINK THIS IS USED RIGHT NOW
+    // For long press backspace
     func shouldClearPreviousWordInTextField() {
         let proxy = textDocumentProxy as UITextDocumentProxy
         proxy.deleteBackward()
     }
     
-    //Insert symbols - TODO: probably can replace this by calling predictionSelect
+    // Using symbols instead of space to enter a word
     @IBAction func inputSymbols(_ sender: AnyObject) {
         let proxy = textDocumentProxy as UITextDocumentProxy
         let input: String? = predict1.currentTitle
@@ -1246,10 +1165,7 @@ extension KeyboardViewController {
             return
         }
         
-        // if textfield is empty, then we want caps on
-        //ok this is never going to happen
-        
-        // if there is text, parse it and check for
+        // If there is text, parse it and check for
         // [end-punctuation][space] format; if seen, then caps on
         if sender.currentTitle == "!" || sender.currentTitle == "?" || sender.currentTitle == "." {
             if shift_m == "off"{
@@ -1274,7 +1190,6 @@ extension KeyboardViewController {
             proxy.insertText(input! + sender.currentTitle!!)
         }
         else if keyscontrol.storedKeySequence.length > 1 {
-            //keyscontrol.storedKeySequence.characters.removeLast()
             var intKS = [Int]()
             
             for ch in keyscontrol.storedKeySequence.characters {
@@ -1322,6 +1237,7 @@ extension KeyboardViewController {
         }
     }
     
+    // Add new words to the dictionary (manual mode)
     @IBAction func addWordsToDict(){
         let proxy = textDocumentProxy as UITextDocumentProxy
         
@@ -1346,39 +1262,11 @@ extension KeyboardViewController {
         while proxy.hasText {
             proxy.deleteBackward()
         }
-        //need to deal with caps, punctuation, contractions, numbers, etc. - checking that 
-        // punct is stripped and its all alpha and lower?
-        // clear ?
-//        let alert = UIAlertController(title: "Numpad Keyboard",
-//                                      message: "Do you want to clear the text?",
-//                                      preferredStyle: .alert)
-//        let submitAction = UIAlertAction(title: "Clear", style: .default, handler: { (action) -> Void in
-//            // Get 1st TextField's text
-//            print("clear the field")
-//        })
-//        let cancel = UIAlertAction(title: "Keep Text", style: .destructive, handler: { (action) -> Void in })
-//        
-//        alert.addAction(submitAction)
-//        alert.addAction(cancel)
-//        present(alert, animated: true, completion: nil)
         return
     }
-    //Send key
-    @IBAction func returnKeyPressed() {
-//        let proxy = textDocumentProxy as UITextDocumentProxy
-//        
-//        if let input = predict1.currentTitle as String? {
-//            proxy.insertText(input + " ")
-//            keyscontrol.wordSelected(word: input.lowercased())
-//            //NOTE: this will add a space by default, or else it gets complicated and confusing
-//            // update weights because a word has effectively been chosen
-//        }
-//        
-//        display.text = ""
-//        keyscontrol.clear()
-//        
-        
     
+    //Return key
+    @IBAction func returnKeyPressed() {
         var proxy = textDocumentProxy as UITextDocumentProxy
         if (one.mode == "numbers"){
             proxy.insertText("\n")
@@ -1404,6 +1292,7 @@ extension KeyboardViewController {
         
     }
     
+    // Switch to manual mode
     @IBAction func settingsAction() {
         if (manualMode == false) {
             manualMode = true
@@ -1414,12 +1303,14 @@ extension KeyboardViewController {
         }
     }
     
+    // Clear all prediction button titles
 	internal func clearPredictionButtons() {
 		for button in predictionButtons {
 			button.setTitle("", for: .normal)
 		}
 	}
 	
+    // Clear character buttons
 	internal func clearCharButtons() {
 		for button in charButtons {
 			button.setTitle("", for: .normal)

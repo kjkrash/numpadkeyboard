@@ -56,17 +56,17 @@ struct KeysMap {
 
 //Control how 9 keys will input, {CONTROL DATA}
 class KeysControl: NSObject {
-    var pointerAddress = 0
-    var previousTag = -1
-    var currentInput = ""
-    var storedInputs: String
-    var lastKeyControlTime: Date
-    var t9Communicator: T9
+    var pointerAddress = 0 // Manual mode
+    var previousTag = -1 // Manual mode
+    var currentInput = "" // Manual mode
+    var storedInputs: String // Manual mode
+    var lastKeyControlTime: Date // Manual mode
+    var t9Communicator: T9 // T9 Mode (default)
     var storedKeySequence: String
     var storedBoolSequence: [Bool]
     var numberJustPressed: String
-    var keep: Bool
-    var inputsDelay: TimeInterval {
+    var keep: Bool // Helps maintain consistent shift value for backspacing
+    var inputsDelay: TimeInterval { // For manual mode
         get {
             return Date().timeIntervalSince(lastKeyControlTime)
         }
@@ -87,7 +87,6 @@ class KeysControl: NSObject {
     
     // This function calls the t9Driver to getSuggestions. It keeps a working string of the keySequence
     // thus far and adds the number most recently pressed.
-    // IGNORE the NSLog statements (they're just for printing)
     func t9Toggle(mode: String, tag: Int, shiftState: Bool) -> [String] {
         var suggestions = [String]()
         numberJustPressed = String(tag)
@@ -108,18 +107,13 @@ class KeysControl: NSObject {
         
         suggestions = t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
 
-        if t9Communicator.getSuggestionStatus() == SuggestionStatus.NONE {
-            storedKeySequence.characters.removeLast()
-            storedBoolSequence.removeLast()
-            return []
-        }
+        
         return suggestions
     }
     
     // If the backspace is pressed, we need new suggestions of shorter depth.
     // This will remove the last sequence in the working storedKeySequence and also call
     // getSuggestions to get a new list.
-    // NOTE: This gets messed up with number mode so it's something we need to fix.
     func t9Backspace() -> Array<String> {
         var suggestions = [String]()
         
@@ -140,18 +134,31 @@ class KeysControl: NSObject {
             t9Communicator.backspace()
             
             return t9Communicator.getSuggestions(keySequence: intKS, shiftSequence: storedBoolSequence)
-        } else {
-            // TODO: does not work with number mode as of now
         }
         
         return suggestions
     }
     
+    // If a word is selected via a prediction button, this is called.
     func wordSelected(word: String){
-		
 		t9Communicator.rememberChoice(word: word.lowercased())
     }
     
+    // This function takes all inputs that the current Keys Controller is storing
+    // and clears them. This occurs typically when a word is selected.
+    func clear() {
+        currentInput = ""
+        storedInputs = ""
+        storedKeySequence = ""
+        storedBoolSequence = [Bool]()
+        pointerAddress = 0
+        previousTag = -1
+        lastKeyControlTime = Date()
+    }
+    
+    // This toggle function operates manual mode. This causes the keyboard to act
+    // like a non T-9 algorithm 9 key keypad. Pressing a button X times will give 
+    // you the Xth character on that key.
     func toggle(mode: String, tag: Int, shiftMode: Bool) -> String {
         if tag == previousTag {
             if inputsDelay >= 0.8 {
@@ -211,6 +218,9 @@ class KeysControl: NSObject {
         }
     }
     
+    // This is a manual backspace function - it operates in conjunction with all 
+    // of the other manual functions. It will remove the last stored character in
+    // storedInputs and return what should be rendered in the prediction button.
     func backspace() -> String {
         if storedInputs.characters.count > 0 && currentInput != "" {
             currentInput = ""
@@ -228,27 +238,5 @@ class KeysControl: NSObject {
         }
         
         return ""
-    }
-    
-    func removeLastWord() {
-        if let lastWordRange = storedInputs.range(of: " ") {
-            currentInput = ""
-            storedInputs.removeSubrange(lastWordRange.lowerBound..<storedInputs.endIndex)
-            pointerAddress = 0
-            previousTag = -1
-            lastKeyControlTime = Date()
-        } else {
-            clear()
-        }
-    }
-    
-    func clear() {
-        currentInput = ""
-        storedInputs = ""
-        storedKeySequence = ""
-        storedBoolSequence = [Bool]()
-        pointerAddress = 0
-        previousTag = -1
-        lastKeyControlTime = Date()
     }
 }
