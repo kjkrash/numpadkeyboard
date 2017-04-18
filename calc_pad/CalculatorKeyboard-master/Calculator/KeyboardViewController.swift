@@ -832,10 +832,12 @@ extension KeyboardViewController {
 		
 		var s = proxy.documentContextBeforeInput
 		
+		NSLog("Title of button pressed: \(operation.currentTitle)")
+		
 		// Checks that the prediction is not empty (in which case, shouldn't insert
 		// anything) and that it is not in punctuation mode (in which case, should
 		// go to 'else' and inputSymbols call.
-		if input != nil && keyscontrol.t9Communicator.getSuggestionStatus() !=
+		if manualMode || operation.currentTitle != "" || input != nil && keyscontrol.t9Communicator.getSuggestionStatus() !=
 			SuggestionStatus.EXIST {
 			keyscontrol.wordSelected(word: input!.lowercased()) // update in trie
 			var num = keyscontrol.storedKeySequence.length
@@ -849,8 +851,9 @@ extension KeyboardViewController {
 				}
 			}
 			proxy.insertText(input! + " ") // insert word
-			keyscontrol.wordSelected(word: input!)
+
 			keyscontrol.t9Communicator.suggestionStatus = SuggestionStatus.PENDING
+			keyscontrol.clear()
 			
 		} else {
 			// Call inputSymbols
@@ -1268,7 +1271,7 @@ extension KeyboardViewController {
             }
         }
         var s = proxy.documentContextBeforeInput
-        
+		
         if input != nil && predict1.currentTitle != "" && predict1.currentTitle != "@" {
             keyscontrol.wordSelected(word: input!.lowercased())
             var num = keyscontrol.storedKeySequence.length
