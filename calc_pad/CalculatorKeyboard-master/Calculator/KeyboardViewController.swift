@@ -1237,6 +1237,8 @@ extension KeyboardViewController {
         }
 		
 		keyscontrol.t9Communicator.suggestionStatus = SuggestionStatus.PENDING
+		clearCharButtons()
+		clearPredictionButtons()
     }
     
     // Add new words to the dictionary (manual mode)
