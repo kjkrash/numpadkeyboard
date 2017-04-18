@@ -1053,8 +1053,6 @@ extension KeyboardViewController {
         }
         // if there is no longer a current word
         if keyscontrol.storedKeySequence.length == 0 {
-			
-			
             // check if there are previous words
             if proxy.hasText {
 				
@@ -1161,7 +1159,7 @@ extension KeyboardViewController {
 			
             return
         }
-		
+		NSLog("key sequence > 0")
 		
         // if not empty keysequence, just delete the last character
         shouldDeleteText()
