@@ -900,10 +900,20 @@ extension KeyboardViewController {
             predict3.setTitle("", for: .normal)
             predict4.setTitle("", for: .normal)
         } else {
-            proxy.insertText(" ")
+			let text = proxy.documentContextBeforeInput
+			if text?[(text?.length)! - 1] == " " {
+				if (text?.length)! > 1 {
+					if text?[(text?.length)! - 2] != "." {
+						proxy.deleteBackward()
+						proxy.insertText(". ")
+					}
+				}
+			} else {
+				proxy.insertText(" ")
+			}
         }
     }
-    
+
     // below is fn declaration for manual entry mode
     //    @IBAction func proceedNineKeyOperations(_ operation: RoundButton) {
     //        display.text = keyscontrol.toggle(mode: operation.mode, tag: operation.tag)
