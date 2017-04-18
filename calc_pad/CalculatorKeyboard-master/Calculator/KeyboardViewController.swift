@@ -7,7 +7,6 @@ import UIKit
 import Material //Find other 3rd-party dependencies here -> cocoapods.org
 
 extension String {
-	
 	var length: Int {
 		return self.characters.count
 	}
@@ -31,7 +30,6 @@ extension String {
 		let end = index(start, offsetBy: range.upperBound - range.lowerBound)
 		return self[Range(start ..< end)]
 	}
-	
 }
 
 class KeyboardViewController: UIInputViewController {
