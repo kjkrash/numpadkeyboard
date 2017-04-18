@@ -45,23 +45,29 @@ class T9_old: NSObject {
     var lastKeyControlTime: Date
     var storedInputs: String
     var dictTrie:Trie
+    
     override init() {
         lastKeyControlTime = Date()
         storedInputs = ""
         dictTrie = Trie(dictionaryFilename: "dictionary.txt")
         super.init()
     }
+    
     func genPerms(n:Int, a:inout Array<Character>) {
         var possibilites = [String]()
         permutations(n: n, &a, b: &possibilites)
     }
     
-    func permutations(n:Int, _ a:inout Array<Character>, b:inout Array<String>) {
-        if n == 1 {b.insert(String(a), at:0)}
-        for i in 0..<n-1 {
-            permutations(n: n-1,&a,b: &b)
-            swap(&a[n-1], &a[(n%2 == 1) ? 0 : i])
+    func permutations(n:Int, _ a: inout Array<Character>, b: inout Array<String>) {
+        if n == 1 {
+            b.insert(String(a), at: 0)
         }
+        
+        for i in 0..<n-1 {
+            permutations(n: n - 1, &a, b: &b)
+            swap(&a[n - 1], &a[(n % 2 == 1) ? 0 : i])
+        }
+        
         permutations(n: n-1,&a,b: &b)
     }
     
