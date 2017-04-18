@@ -1235,6 +1235,8 @@ extension KeyboardViewController {
         for predictionButton in predictionButtons {
             predictionButton.setTitle("", for: .normal)
         }
+		
+		keyscontrol.t9Communicator.suggestionStatus = SuggestionStatus.PENDING
     }
     
     // Add new words to the dictionary (manual mode)
