@@ -129,7 +129,9 @@ struct Padding {
             static let buttonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0)*UIScreen.main.bounds.width,
                                                                               height: (30.0 / 320.0)*UIScreen.main.bounds.width)
             static let returnButtonDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0) * UIScreen.main.bounds.width,
-                                                                                    height: (72.0 / 320.0) * UIScreen.main.bounds.width)
+                                                                                    height: (30.0 / 320.0) * UIScreen.main.bounds.width)
+            static let nightmodeDimensions: (width: CGFloat, height: CGFloat) = (width: (34.0 / 320.0) * UIScreen.main.bounds.width,
+                                                                                 height: (36.0 / 320.0) * UIScreen.main.bounds.width)
             func forButton(withIndex index:Int) -> (left: CGFloat, top: CGFloat) {
                 return (
                     left: (SidePanels.rightRegionSpacing / 320.0) * UIScreen.main.bounds.width,

@@ -41,7 +41,7 @@ class KeyboardViewController: UIInputViewController {
     var shift_m = "on" // Keyboard starts with shift on
     var num_mode = "off"
     var manualMode = false
-    
+    var moon_ispressed = false
     // UI Panels and Variables Initialized
     @IBOutlet var topRegion: UIView!
     @IBOutlet var leftRegion: UIView!
@@ -111,6 +111,7 @@ class KeyboardViewController: UIInputViewController {
     @IBOutlet weak var char2: UIButton!
     @IBOutlet weak var char3: UIButton!
     @IBOutlet weak var char4: UIButton!
+    @IBOutlet weak var nightmode: UIButton!
     
     var predictionButtons: [UIButton] = []
     var charButtons: [UIButton] = []
@@ -302,6 +303,11 @@ class KeyboardViewController: UIInputViewController {
                 .top(Padding().sidePanels.rightRegion.forButton(withIndex: 3).top)
                 .height(Padding.SidePanels.RightRegion.returnButtonDimensions.height)
                 .width(Padding.SidePanels.RightRegion.returnButtonDimensions.width)
+            rightRegion.layout(nightmode)
+                .left(Padding().sidePanels.rightRegion.forButton(withIndex: 4).left)
+                .top(Padding().sidePanels.rightRegion.forButton(withIndex: 4).top)
+                .height(Padding.SidePanels.RightRegion.buttonDimensions.height)
+                .width(Padding.SidePanels.RightRegion.buttonDimensions.width)
             topRegion.layout(char1)
                 .left(Padding().sidePanels.topRegion.charLayouts(index: 1).left)
                 .top(Padding().sidePanels.topRegion.charLayouts(index: 1).top)
@@ -971,8 +977,11 @@ extension KeyboardViewController {
     @IBAction func shouldDismissKeyboard() {
         if extensionView.isHidden {
             extensionView.isHidden = false
+//            dismissButton.setImage(UIImage(named: "ios7-arrow-up.png"), for: UIControlState.normal)
         }else{
             extensionView.isHidden = true
+//            dismissButton.setImage(UIImage(named: "ios7-arrow-down.png"), for: UIControlState.normal)
+
         }
     }
     
@@ -1326,7 +1335,16 @@ extension KeyboardViewController {
         }
         return
     }
+    //night mode 
     
+    @IBAction func moon_pressed() {
+ //        if (moon_ispressed == false) {
+ //           moon_ispressed = true
+ //           one.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+ //           nightmode.setBackgroundColor(color: UIColor.blue, forState: .normal)
+ //       }
+        
+    }
     //Return key
     @IBAction func returnKeyPressed() {
         var proxy = textDocumentProxy as UITextDocumentProxy
