@@ -1419,7 +1419,7 @@ extension KeyboardViewController {
     @IBAction func settingsAction() {
         if (manualMode == false) {
             manualMode = true
-            manualModeButton.setBackgroundColor(color: UIColor.blue, forState: .normal)
+            manualModeButton.setBackgroundColor(color: UIColor(red: 65/255, green:105/255, blue:225/255, alpha:1.0), forState: .normal)
         } else if (manualMode == true) {
             manualMode = false
             manualModeButton.setBackgroundColor(color: UIColor.black, forState: .normal)
