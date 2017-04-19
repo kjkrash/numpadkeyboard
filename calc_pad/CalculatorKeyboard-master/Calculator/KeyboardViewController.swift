@@ -1342,6 +1342,22 @@ extension KeyboardViewController {
             moon_ispressed = true
             one.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
             one.setTitleColor(UIColor.white, for: UIControlState.normal)
+            two.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            two.setTitleColor(UIColor.white, for: UIControlState.normal)
+            three.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            three.setTitleColor(UIColor.white, for: UIControlState.normal)
+            four.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            four.setTitleColor(UIColor.white, for: UIControlState.normal)
+            five.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            five.setTitleColor(UIColor.white, for: UIControlState.normal)
+            six.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            six.setTitleColor(UIColor.white, for: UIControlState.normal)
+            seven.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            seven.setTitleColor(UIColor.white, for: UIControlState.normal)
+            eight.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            eight.setTitleColor(UIColor.white, for: UIControlState.normal)
+            nine.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            nine.setTitleColor(UIColor.white, for: UIControlState.normal)
             nightmode.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
             
          } else if (moon_ispressed == true) {
@@ -1349,7 +1365,22 @@ extension KeyboardViewController {
             nightmode.setBackgroundColor(color: UIColor.lightGray, forState: .normal)
             one.setBackgroundColor(color: UIColor.white, forState: .normal)
             one.setTitleColor(UIColor.black, for: UIControlState.normal)
-            
+            two.setBackgroundColor(color: UIColor.white, forState: .normal)
+            two.setTitleColor(UIColor.black, for: UIControlState.normal)
+            three.setBackgroundColor(color: UIColor.white, forState: .normal)
+            three.setTitleColor(UIColor.black, for: UIControlState.normal)
+            four.setBackgroundColor(color: UIColor.white, forState: .normal)
+            four.setTitleColor(UIColor.black, for: UIControlState.normal)
+            five.setBackgroundColor(color: UIColor.white, forState: .normal)
+            five.setTitleColor(UIColor.black, for: UIControlState.normal)
+            six.setBackgroundColor(color: UIColor.white, forState: .normal)
+            six.setTitleColor(UIColor.black, for: UIControlState.normal)
+            seven.setBackgroundColor(color: UIColor.white, forState: .normal)
+            seven.setTitleColor(UIColor.black, for: UIControlState.normal)
+            eight.setBackgroundColor(color: UIColor.white, forState: .normal)
+            eight.setTitleColor(UIColor.black, for: UIControlState.normal)
+            nine.setBackgroundColor(color: UIColor.white, forState: .normal)
+            nine.setTitleColor(UIColor.black, for: UIControlState.normal)
         }
     }
     //Return key
