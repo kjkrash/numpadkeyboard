@@ -900,7 +900,7 @@ extension KeyboardViewController {
     @IBAction func toggleShift(_ toggleKey: RoundButton) {
         if (shift_m == "off") {
             shift.setTitle("⇪", for:.normal)
-            shift.setBackgroundColor(color: UIColor.blue, forState: .normal)
+            shift.setBackgroundColor(color: UIColor(red: 65/255, green:105/255, blue:225/255, alpha:1.0), forState: .normal)
             shift_m = "on"
         } else if (shift_m == "on") {
             shift.setTitle("⇧", for:.normal)
