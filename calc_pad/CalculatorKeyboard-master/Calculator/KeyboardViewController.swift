@@ -1338,12 +1338,19 @@ extension KeyboardViewController {
     //night mode 
     
     @IBAction func moon_pressed() {
- //        if (moon_ispressed == false) {
- //           moon_ispressed = true
- //           one.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
- //           nightmode.setBackgroundColor(color: UIColor.blue, forState: .normal)
- //       }
-        
+         if (moon_ispressed == false) {
+            moon_ispressed = true
+            one.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            one.setTitleColor(UIColor.white, for: UIControlState.normal)
+            nightmode.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            
+         } else if (moon_ispressed == true) {
+            moon_ispressed = false
+            nightmode.setBackgroundColor(color: UIColor.lightGray, forState: .normal)
+            one.setBackgroundColor(color: UIColor.white, forState: .normal)
+            one.setTitleColor(UIColor.black, for: UIControlState.normal)
+            
+        }
     }
     //Return key
     @IBAction func returnKeyPressed() {
