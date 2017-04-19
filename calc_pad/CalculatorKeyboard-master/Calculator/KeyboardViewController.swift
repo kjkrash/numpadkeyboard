@@ -1359,6 +1359,8 @@ extension KeyboardViewController {
             nine.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
             nine.setTitleColor(UIColor.white, for: UIControlState.normal)
             nightmode.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            spaceButton.setBackgroundColor(color: UIColor.darkGray, forState: .normal)
+            spaceButton.setTitleColor(UIColor.white, for: UIControlState.normal)
             
          } else if (moon_ispressed == true) {
             moon_ispressed = false
@@ -1381,6 +1383,9 @@ extension KeyboardViewController {
             eight.setTitleColor(UIColor.black, for: UIControlState.normal)
             nine.setBackgroundColor(color: UIColor.white, forState: .normal)
             nine.setTitleColor(UIColor.black, for: UIControlState.normal)
+            spaceButton.setBackgroundColor(color: UIColor.white, forState: .normal)
+            spaceButton.setTitleColor(UIColor.black, for: UIControlState.normal)
+
         }
     }
     //Return key
